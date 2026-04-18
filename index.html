@@ -1286,7 +1286,16 @@ window.saveCurrentCase=function(){
 window.loadPortfolio=function(){
   const el=document.getElementById('pp2-content');
   if(!el){console.log('pp2-content not found');return;}
+  // Show local data immediately
   renderPortfolio(el);
+  // Auto-sync with GitHub if connected
+  if(ghToken){
+    githubPull().then(()=>{
+      // Re-render after GitHub sync
+      if(el) renderPortfolio(el);
+    }).catch(()=>{});
+    return;
+  }
   if(driveToken){
     driveListFiles().then(files=>{
       const pfFile=files.find(f=>f.name===DRIVE_PORTFOLIO_FILE);
