@@ -1,0 +1,1932 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Return — Analizador de inversión inmobiliaria</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#ba7517">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Return">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <meta name="mobile-web-app-capable" content="yes">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,sans-serif;background:#f9f9f7;color:#1a1a1a;min-height:100vh;padding:24px}
+.app{max-width:1200px;margin:0 auto}
+.hdr{display:flex;align-items:baseline;gap:10px;padding-bottom:12px;border-bottom:1px solid #e5e5e0}
+.hdr-t{font-size:22px;font-weight:500}.hdr-s{font-size:12px;color:#999}
+.tabs{display:flex;border-bottom:1px solid #e5e5e0;margin-bottom:16px;flex-wrap:wrap}
+.tab{padding:10px 16px;border:none;background:transparent;cursor:pointer;font-family:inherit;font-size:13px;font-weight:500;color:#999;border-bottom:2px solid transparent;margin-bottom:-1px}
+.tab.active{color:#ba7517;border-bottom-color:#ba7517}
+.panel{display:none}.panel.active{display:block}
+.g2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px;align-items:start}
+@media(max-width:700px){.g2{grid-template-columns:1fr}}
+.sec{border:1px solid #e5e5e0;border-radius:10px;margin-bottom:8px;overflow:hidden}
+.sec-h{display:flex;align-items:center;justify-content:space-between;padding:9px 12px;background:#f4f4f0;cursor:pointer;user-select:none}
+.sec-h:hover{background:#eeeee8}
+.sec-ht{font-size:12px;font-weight:500;color:#555}
+.arr{font-size:11px;color:#aaa;display:inline-block;transition:transform .15s}
+.arr.open{transform:rotate(180deg)}
+.sec-b{padding:12px;border-top:1px solid #e5e5e0;display:none}
+.sec-b.open{display:block}
+.irow{margin-bottom:9px}.irow:last-child{margin-bottom:0}
+.ilbl{font-size:11px;color:#666;margin-bottom:3px}
+.iwrap{display:flex;align-items:center;border:1px solid #e5e5e0;border-radius:6px;overflow:hidden}
+.iwrap:focus-within{border-color:#ba7517;box-shadow:0 0 0 2px rgba(186,117,23,.1)}
+.iwrap input,.iwrap select{flex:1;border:none;background:#fff;padding:7px 10px;font-size:13px;font-family:inherit;color:#1a1a1a;outline:none;min-width:0;cursor:pointer}
+.iwrap select:disabled{color:#bbb;cursor:not-allowed;background:#fafaf8}
+.iunit{padding:6px 9px;font-size:11px;color:#aaa;font-family:'Courier New',monospace;background:#f4f4f0;border-left:1px solid #e5e5e0;white-space:nowrap}
+.irow-num .iwrap input{font-family:'Courier New',monospace;cursor:text}
+.trow{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px}
+.tlbl{font-size:12px;color:#555}.tsub{font-size:11px;color:#aaa;margin-top:1px}
+.tog{width:38px;height:21px;border-radius:11px;background:#ccc;cursor:pointer;position:relative;flex-shrink:0;transition:background .2s}
+.tog.on{background:#ba7517}
+.togk{position:absolute;top:3px;left:3px;width:15px;height:15px;border-radius:50%;background:#fff;transition:left .18s}
+.tog.on .togk{left:20px}
+.sum-card{background:#f4f4f0;border:1px solid #e5e5e0;border-radius:10px;padding:14px;margin-bottom:8px}
+.sum-title{font-size:12px;font-weight:500;color:#555;margin-bottom:10px}
+.note-card{border:1px solid #e5e5e0;border-radius:6px;padding:10px 12px;font-size:11px;color:#aaa;line-height:1.6;margin-bottom:8px}
+.verdict{border-radius:10px;padding:14px 16px;margin-bottom:12px;border:1px solid transparent}
+.verdict.buy{background:#f0fdf4;border-color:#86efac}
+.verdict.neg{background:#fffbeb;border-color:#fcd34d}
+.verdict.dis{background:#fef2f2;border-color:#fca5a5}
+.vt{display:flex;align-items:center;gap:10px;margin-bottom:7px}
+.vic{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;color:#fff}
+.verdict.buy .vic{background:#16a34a}.verdict.neg .vic{background:#d97706}.verdict.dis .vic{background:#dc2626}
+.vlb{font-size:11px;color:#aaa;margin-bottom:1px}.vvl{font-size:16px;font-weight:500}
+.verdict.buy .vvl{color:#16a34a}.verdict.neg .vvl{color:#d97706}.verdict.dis .vvl{color:#dc2626}
+.vrs{font-size:12px;line-height:1.5;color:#555}
+.kpis{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.kpi{background:#f4f4f0;border:1px solid #e5e5e0;border-radius:6px;padding:10px 12px}
+.kl{font-size:11px;color:#aaa;margin-bottom:4px}
+.kv{font-size:18px;font-weight:500;font-family:'Courier New',monospace;color:#1a1a1a;line-height:1.15}
+.kv.pos{color:#16a34a}.kv.warn{color:#d97706}.kv.neg{color:#dc2626}
+.ks{font-size:11px;color:#aaa;margin-top:2px;font-family:'Courier New',monospace}
+.dr{display:flex;justify-content:space-between;align-items:baseline;padding:5px 0;border-bottom:1px solid #f0f0ea}
+.dr:last-child{border-bottom:none}
+.dl{font-size:11px;color:#666}
+.dv{font-size:12px;font-family:'Courier New',monospace;color:#1a1a1a}
+.dv.hl{color:#ba7517;font-weight:500}.dv.pos{color:#16a34a;font-weight:500}.dv.neg{color:#dc2626;font-weight:500}.dv.warn{color:#d97706}
+.sttl{font-size:12px;font-weight:500;color:#555;margin-bottom:3px}
+.ssub{font-size:11px;color:#aaa;margin-bottom:8px;line-height:1.4}
+.st{width:100%;border-collapse:collapse;font-size:11px;font-family:'Courier New',monospace}
+.st th{padding:4px 6px;color:#aaa;font-weight:500;text-align:center;border-bottom:1px solid #e5e5e0}
+.st th:first-child{text-align:left}
+.st td{padding:4px 6px;text-align:center;color:#666}
+.st td:first-child{text-align:left;color:#aaa}
+.st tr.base{background:#f4f4f0}
+.sp{color:#16a34a;font-weight:500}.sw{color:#d97706}.sn{color:#dc2626}
+.refbox{border:1px solid #fcd34d;border-radius:6px;padding:10px 12px;font-size:11px;color:#92400e;line-height:1.6;margin-top:8px;background:#fffbeb}
+.refbox b{font-weight:500}
+.gap{height:5px}
+input[type=number]::-webkit-inner-spin-button{opacity:.4}
+#mapa{height:280px;border-radius:10px;border:1px solid #e5e5e0;margin-bottom:8px;overflow:hidden}
+.leaflet-popup-content-wrapper{border-radius:8px;font-family:system-ui,-apple-system,sans-serif}
+.mkt-card{border:1px solid #e5e5e0;border-radius:10px;overflow:hidden;margin-bottom:8px}
+.mkt-hdr{background:#f4f4f0;padding:9px 12px;font-size:12px;font-weight:500;color:#555;display:flex;align-items:center;justify-content:space-between}
+.mkt-loc{font-size:11px;color:#ba7517}
+.mkt-body{padding:12px}
+.mkt-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.mkt-kpi{background:#fff;border:1px solid #e5e5e0;border-radius:6px;padding:10px 12px}
+.mkt-kpi-lbl{font-size:10px;color:#aaa;margin-bottom:3px;text-transform:uppercase;letter-spacing:.04em}
+.mkt-kpi-val{font-size:20px;font-weight:500;font-family:'Courier New',monospace;color:#1a1a1a;line-height:1}
+.mkt-kpi-range{font-size:10px;color:#ba7517;margin-top:2px;font-family:'Courier New',monospace}
+.mkt-kpi-sub{font-size:10px;color:#888;margin-top:3px}
+.mkt-note{font-size:11px;color:#888;line-height:1.5;margin-bottom:8px}
+.mkt-src{font-size:10px;color:#ccc;margin-bottom:8px}
+.mkt-btns{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+.mkt-btn{display:inline-flex;align-items:center;gap:4px;padding:6px 10px;border-radius:6px;font-size:11px;font-family:inherit;font-weight:500;cursor:pointer;text-decoration:none;border:1px solid #e5e5e0;background:#fff;color:#555}
+.mkt-btn:hover{background:#f4f4f0}
+.mkt-btn.dark{background:#1a1a1a;color:#fff;border-color:#1a1a1a}.mkt-btn.dark:hover{background:#333}
+.mkt-btn.green{background:#f0fdf4;color:#15803d;border-color:#86efac}.mkt-btn.green:hover{background:#dcfce7}
+.mkt-apply{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.loc-breadcrumb{font-size:11px;color:#aaa;margin-bottom:8px;line-height:1.8}
+.loc-breadcrumb span{color:#ba7517;font-weight:500}
+.pb-wrap{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:14px;align-items:start}
+@media(max-width:700px){.pb-wrap{grid-template-columns:1fr}}
+.pb-summary{position:sticky;top:16px}
+.cat-block{border:1px solid #e5e5e0;border-radius:10px;margin-bottom:8px;overflow:hidden}
+.cat-hdr{display:flex;align-items:center;justify-content:space-between;padding:9px 12px;background:#f4f4f0;cursor:pointer;user-select:none}
+.cat-hdr:hover{background:#eeeee8}
+.cat-name{font-size:12px;font-weight:500;color:#555;display:flex;align-items:center;gap:8px}
+.cat-badge{font-size:10px;color:#999;font-weight:400;background:#e8e8e4;border-radius:3px;padding:1px 5px}
+.cat-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.cat-total-lbl{font-size:12px;font-family:'Courier New',monospace;color:#ba7517;font-weight:500}
+.cat-body{display:none;border-top:1px solid #e5e5e0}.cat-body.open{display:block}
+.ptable{width:100%;border-collapse:collapse}
+.ptable th{font-size:10px;color:#aaa;font-weight:500;padding:5px 8px;text-align:left;border-bottom:1px solid #ededea;background:#fafaf8}
+.ptable th.r{text-align:right}
+.ptable td{padding:5px 8px;font-size:12px;border-bottom:1px solid #f5f5f2;vertical-align:middle}
+.ptable tr:last-child td{border-bottom:none}
+.ptable td.r{text-align:right;font-family:'Courier New',monospace;color:#444}
+.ptable td.tc{text-align:right;font-family:'Courier New',monospace;color:#ba7517;font-weight:500}
+.precio-ref{font-size:10px;color:#bbb;font-family:'Courier New',monospace}
+.pinput{border:none;background:transparent;font-size:12px;font-family:inherit;color:#1a1a1a;width:100%;outline:none}
+.pinput:focus{background:#fffbeb;border-radius:3px}
+.pinput.mono{font-family:'Courier New',monospace;text-align:right}
+.chk{width:14px;height:14px;accent-color:#ba7517;cursor:pointer}
+.del-btn{background:none;border:none;cursor:pointer;color:#ddd;font-size:13px;padding:2px 4px}
+.del-btn:hover{color:#dc2626}
+.add-btn{display:flex;align-items:center;gap:5px;padding:7px 12px;font-size:11px;color:#ba7517;background:none;border:none;cursor:pointer;font-family:inherit;font-weight:500;width:100%}
+.add-btn:hover{background:#fffbeb}
+.pb-total-card{background:#1a1a1a;border-radius:10px;padding:16px;margin-bottom:8px}
+.pb-total-lbl{font-size:11px;color:#666;margin-bottom:4px}
+.pb-total-val{font-size:26px;font-weight:500;font-family:'Courier New',monospace;color:#fff;line-height:1}
+.pb-total-sub{font-size:11px;color:#555;margin-top:4px;font-family:'Courier New',monospace}
+.pb-sync-box{background:#f0fdf4;border:1px solid #86efac;border-radius:6px;padding:9px 12px;font-size:11px;color:#15803d;line-height:1.5;margin-bottom:8px}
+.csr{display:flex;justify-content:space-between;align-items:baseline;padding:5px 0;border-bottom:1px solid #f0f0ea}
+.csr:last-child{border-bottom:none}
+.csl{font-size:11px;color:#666;display:flex;align-items:center;gap:6px}
+.csv{font-size:12px;font-family:'Courier New',monospace;color:#1a1a1a}
+.pb-actions{display:flex;gap:8px;margin-top:8px}
+.pb-btn{padding:6px 12px;border:1px solid #e5e5e0;border-radius:6px;background:#fff;font-size:11px;font-family:inherit;cursor:pointer;color:#555;font-weight:500}
+.pb-btn:hover{background:#f4f4f0}
+.green-note{border:1px solid #86efac;background:#f0fdf4;border-radius:6px;padding:9px 12px;font-size:11px;color:#15803d;line-height:1.5;margin-bottom:8px}
+.green-note b{font-weight:500}
+</style>
+  <script src="https://apis.google.com/js/api.js"></script>
+  <script src="https://accounts.google.com/gsi/client"></script>
+</head>
+<body>
+<div class="app">
+<div class="hdr"><span class="hdr-t">Return</span><span class="hdr-s">Analizador de inversión inmobiliaria</span>
+<button id="pwa-install-btn" onclick="installPWA()" style="display:none;margin-left:auto;padding:5px 12px;border:1px solid #ba7517;border-radius:6px;background:#fff;font-size:11px;cursor:pointer;font-family:inherit;color:#ba7517;font-weight:500">+ Añadir a inicio</button></div>
+<div class="tabs">
+  <button class="tab active" onclick="sw('ap',this)">Activo</button>
+  <button class="tab" onclick="sw('pp',this)">Presupuesto</button>
+  <button class="tab" onclick="sw('fp',this)">Flip</button>
+  <button class="tab" onclick="sw('bp',this)">Buy to rent</button>
+  <button class="tab" onclick="sw('ip',this)">Importar</button>
+  <button class="tab" onclick="sw('pp2',this);loadPortfolio()">Portfolio</button>
+</div>
+<div id="ap" class="panel active"><div class="g2"><div id="si"></div><div id="sr"></div></div></div>
+<div id="pp" class="panel"><div id="presupuesto"></div></div>
+<div id="fp" class="panel"><div class="g2"><div id="fi"></div><div id="fr"></div></div></div>
+<div id="bp" class="panel"><div class="g2"><div id="bi"></div><div id="br"></div></div></div>
+<div id="ip" class="panel"><div id="ip-content"></div></div>
+<div id="pp2" class="panel"><div id="pp2-content"></div></div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+const ef=n=>isFinite(n)?new Intl.NumberFormat('es-ES',{maximumFractionDigits:0}).format(Math.round(n))+'\u202f\u20ac':'—';
+const ep=(n,d=1)=>isFinite(n)&&!isNaN(n)?n.toFixed(d)+'%':'—';
+const OS={};
+window.S={pc:75000,itp:7,not:1.5,dd:350,hon:0,fin:false,ltv:70,ti:4.5,hip:20};
+window.F={sup:65,rm2:350,ct:15,ind:2000,pl:8,pv:120000,gv:5};
+window.B={ref:8000,ct:15,rnt:550,vac:5,ibi:300,com:600,seg:180,imp:true,mnt:1,ges:0};
+let S=window.S, F=window.F, B=window.B;
+window._presupuestoTotal=null;
+
+// ─── ESTADO SELECCIÓN ────────────────────────────────────────────────
+let SEL={prov:'',mun:'',bar:'',sub:''};
+
+// ─── BASE DE DATOS GEO + PRECIOS ─────────────────────────────────────
+// poly: array de [lat,lng] — contorno aproximado del área
+// v: €/m² venta media | a: €/m² alquiler medio
+// vr/ar: rango orientativo | note: contexto inversor
+const GEO={
+  'Sevilla':{coords:[37.389,-5.984],zoom:11,municipios:{
+
+    'San Juan de Aznalfarache':{coords:[37.352,-6.034],zoom:15,v:1350,a:8.5,vr:'1.100–1.600',ar:'7,5–10',
+      note:'Aljarafe metropolitano. Buena demanda por proximidad a Sevilla capital.',slug:'san-juan-de-aznalfarache-sevilla',
+      poly:[[37.365,-6.024],[37.367,-6.031],[37.364,-6.040],[37.360,-6.046],[37.354,-6.049],[37.347,-6.047],[37.342,-6.042],[37.340,-6.034],[37.343,-6.027],[37.350,-6.023],[37.358,-6.022]],
+      barrios:{
+        'Barrio Alto':{coords:[37.357,-6.034],v:1380,a:8.7,vr:'1.200–1.650',ar:'8–10',
+          note:'Meseta alta. Mayor superficie de parcela y mejor estado medio de los inmuebles.',
+          poly:[[37.365,-6.024],[37.367,-6.031],[37.364,-6.040],[37.360,-6.046],[37.354,-6.045],[37.350,-6.040],[37.350,-6.031],[37.355,-6.025]],
+          subbarrios:{
+            'Zona Norte':{coords:[37.362,-6.031],v:1400,a:8.8,note:'Parte más alta. Mejor acceso desde la A-8058. Promociones de los 80-90.',
+              poly:[[37.365,-6.024],[37.367,-6.031],[37.364,-6.038],[37.360,-6.036],[37.357,-6.029],[37.360,-6.024]]},
+            'Zona Centro':{coords:[37.357,-6.037],v:1370,a:8.6,note:'Núcleo comercial y servicios. Alta rotación de inquilinos.',
+              poly:[[37.360,-6.036],[37.364,-6.038],[37.362,-6.044],[37.357,-6.043],[37.354,-6.040],[37.355,-6.035]]},
+            'Zona Sur':{coords:[37.352,-6.041],v:1340,a:8.5,note:'Colindante con Mairena. Tipología más variada.',
+              poly:[[37.354,-6.040],[37.357,-6.043],[37.354,-6.047],[37.350,-6.046],[37.350,-6.040]]},
+          }
+        },
+        'Barrio Bajo':{coords:[37.345,-6.032],v:1180,a:7.6,vr:'950–1.400',ar:'6,5–9',
+          note:'Zona baja histórica junto al Guadalquivir. Precios más bajos, mayor yield potencial pero menor liquidez.',
+          poly:[[37.350,-6.031],[37.350,-6.040],[37.347,-6.047],[37.342,-6.042],[37.340,-6.034],[37.343,-6.027],[37.348,-6.026]],
+          subbarrios:{
+            'Ribera Norte':{coords:[37.348,-6.029],v:1200,a:7.8,note:'Mejor conexión con Sevilla. Rehabilitación activa.',
+              poly:[[37.350,-6.026],[37.350,-6.033],[37.346,-6.033],[37.344,-6.028],[37.347,-6.025]]},
+            'Casco Histórico':{coords:[37.345,-6.036],v:1150,a:7.5,note:'Edificación antigua. Oportunidad de compra a bajo precio con reform integral.',
+              poly:[[37.348,-6.033],[37.350,-6.039],[37.347,-6.042],[37.342,-6.040],[37.342,-6.034],[37.345,-6.031]]},
+            'Ribera Sur':{coords:[37.342,-6.040],v:1120,a:7.3,note:'Zona más deprimida. Mayor potencial pero riesgo de vacancia elevado.',
+              poly:[[37.344,-6.039],[37.347,-6.042],[37.344,-6.048],[37.340,-6.045],[37.340,-6.038]]},
+          }
+        },
+      }
+    },
+
+    'Mairena del Aljarafe':{coords:[37.344,-6.063],zoom:14,v:1650,a:9.5,vr:'1.400–1.900',ar:'8,5–11',
+      note:'Aljarafe consolidado. Mayor poder adquisitivo y demanda más solvente que San Juan.',slug:'mairena-del-aljarafe-sevilla',
+      poly:[[37.358,-6.050],[37.361,-6.057],[37.358,-6.070],[37.352,-6.078],[37.343,-6.079],[37.335,-6.073],[37.332,-6.061],[37.337,-6.051],[37.347,-6.047]],
+      barrios:{
+        'Casco Urbano':{coords:[37.344,-6.062],v:1600,a:9.2,vr:'1.350–1.850',ar:'8–10,5',note:'Zona central. Buena demanda de alquiler familiar.',
+          poly:[[37.350,-6.054],[37.353,-6.062],[37.350,-6.072],[37.343,-6.074],[37.338,-6.069],[37.338,-6.058],[37.345,-6.053]],
+          subbarrios:{
+            'Centro':{coords:[37.344,-6.062],v:1620,a:9.3,note:'Servicios y comercio. Alta demanda.',
+              poly:[[37.347,-6.057],[37.350,-6.062],[37.347,-6.068],[37.342,-6.068],[37.340,-6.062],[37.343,-6.057]]},
+            'Zona Residencial Norte':{coords:[37.350,-6.060],v:1680,a:9.5,note:'Urbanizaciones de los 90-2000. Buen estado general.',
+              poly:[[37.352,-6.054],[37.355,-6.060],[37.352,-6.066],[37.348,-6.064],[37.347,-6.057]]},
+          }
+        },
+        'Las Palmeras':{coords:[37.338,-6.065],v:1700,a:9.8,vr:'1.500–1.950',ar:'9–11',note:'Zona residencial de mayor calidad. Buena demanda familiar.',
+          poly:[[37.343,-6.060],[37.345,-6.070],[37.340,-6.075],[37.333,-6.072],[37.333,-6.063],[37.338,-6.058]],
+          subbarrios:{
+            'Las Palmeras Norte':{coords:[37.341,-6.063],v:1720,a:9.9,note:'',poly:[[37.343,-6.060],[37.345,-6.066],[37.341,-6.068],[37.338,-6.064],[37.338,-6.059]]},
+            'Las Palmeras Sur':{coords:[37.337,-6.068],v:1680,a:9.7,note:'',poly:[[37.341,-6.065],[37.343,-6.070],[37.339,-6.074],[37.334,-6.072],[37.335,-6.065]]},
+          }
+        },
+      }
+    },
+
+    'Sevilla':{coords:[37.389,-5.984],zoom:13,v:2250,a:12.5,vr:'1.400–4.500',ar:'9–20',
+      note:'Media ciudad. Varía mucho por barrio.',slug:'sevilla-sevilla',
+      barrios:{
+        'Triana':{coords:[37.381,-6.002],v:2900,a:15,vr:'2.400–3.500',ar:'13–17',note:'Muy demandado. Buena liquidez para flip y BTR.',
+          poly:[[37.390,-5.997],[37.390,-6.005],[37.384,-6.012],[37.376,-6.009],[37.373,-6.001],[37.378,-5.993],[37.386,-5.994]],
+          subbarrios:{
+            'Triana Centro':{coords:[37.381,-6.002],v:3100,a:16,note:'Zona más cotizada. Alta demanda turística y residencial.',poly:[[37.387,-5.998],[37.387,-6.005],[37.382,-6.008],[37.377,-6.005],[37.377,-5.997],[37.383,-5.996]]},
+            'Triana Sur':{coords:[37.376,-6.003],v:2700,a:14,note:'Algo más tranquilo. Mejor precio de entrada.',poly:[[37.381,-6.005],[37.382,-6.010],[37.375,-6.010],[37.372,-6.004],[37.374,-5.999],[37.380,-6.000]]},
+          }
+        },
+        'Nervión':{coords:[37.385,-5.964],v:3100,a:16,vr:'2.600–3.700',ar:'14–18',note:'Zona prime residencial. Alta liquidez.',
+          poly:[[37.393,-5.970],[37.393,-5.958],[37.385,-5.955],[37.378,-5.960],[37.378,-5.970],[37.385,-5.974]],
+          subbarrios:{
+            'Nervión Norte':{coords:[37.390,-5.963],v:3200,a:16.5,note:'Próximo a estación Sevilla-Santa Justa.',poly:[[37.393,-5.970],[37.393,-5.958],[37.388,-5.957],[37.386,-5.964],[37.387,-5.971]]},
+            'Nervión Sur':{coords:[37.382,-5.963],v:3000,a:15.5,note:'Zona más tranquila. Buen perfil de inquilino.',poly:[[37.387,-5.964],[37.387,-5.957],[37.380,-5.958],[37.378,-5.963],[37.380,-5.969]]},
+          }
+        },
+        'Macarena':{coords:[37.402,-5.982],v:1900,a:11,vr:'1.600–2.200',ar:'9,5–12',note:'Barrio en transformación. Buena relación precio/yield.',
+          poly:[[37.412,-5.990],[37.412,-5.974],[37.404,-5.970],[37.396,-5.975],[37.396,-5.991],[37.404,-5.994]],
+          subbarrios:{
+            'Macarena Norte':{coords:[37.408,-5.982],v:1850,a:10.7,note:'Zona más obrera. Mayor yield potencial.',poly:[[37.412,-5.990],[37.412,-5.978],[37.406,-5.975],[37.403,-5.982],[37.404,-5.992]]},
+            'Macarena Sur':{coords:[37.400,-5.981],v:1950,a:11.2,note:'Mejor conectado con el centro. Gentrificación en proceso.',poly:[[37.404,-5.975],[37.404,-5.992],[37.397,-5.991],[37.396,-5.978],[37.400,-5.973]]},
+          }
+        },
+        'Los Remedios':{coords:[37.375,-5.997],v:2800,a:14,vr:'2.400–3.300',ar:'12–16',note:'Zona consolidada y muy demandada. Buen perfil de inquilino.',
+          poly:[[37.381,-5.993],[37.381,-6.001],[37.375,-6.001],[37.369,-5.996],[37.370,-5.988],[37.377,-5.985]],
+          subbarrios:{
+            'Remedios Norte':{coords:[37.379,-5.993],v:2900,a:14.5,note:'Más próximo al Casco Antiguo.',poly:[[37.382,-5.990],[37.382,-5.997],[37.377,-5.998],[37.374,-5.993],[37.377,-5.988]]},
+            'Remedios Sur':{coords:[37.373,-5.994],v:2700,a:13.5,note:'Zona más tranquila y familiar.',poly:[[37.377,-5.996],[37.377,-6.002],[37.370,-6.001],[37.368,-5.995],[37.371,-5.989],[37.375,-5.993]]},
+          }
+        },
+        'Doctor Fedriani':{coords:[37.408,-5.977],v:1750,a:10.5,vr:'1.400–2.000',ar:'9–12',note:'Macarena norte. Precios aún contenidos. Buenos comparables de yield.',
+          poly:[[37.415,-5.984],[37.415,-5.970],[37.408,-5.968],[37.403,-5.972],[37.403,-5.984],[37.408,-5.987]],
+          subbarrios:{
+            'Zona Fedriani':{coords:[37.410,-5.976],v:1800,a:10.7,note:'Eje principal. Mejor demanda.',poly:[[37.414,-5.980],[37.414,-5.970],[37.408,-5.970],[37.406,-5.977],[37.408,-5.983]]},
+            'Zona Cartuja':{coords:[37.408,-5.983],v:1700,a:10.2,note:'Colindante con Cartuja. En transformación.',poly:[[37.412,-5.983],[37.412,-5.990],[37.405,-5.989],[37.404,-5.982],[37.408,-5.980]]},
+          }
+        },
+        'Heliópolis':{coords:[37.370,-5.990],v:2300,a:12,vr:'2.000–2.700',ar:'10,5–13,5',note:'Zona media-alta. Estable. Buena demanda de profesionales.',
+          poly:[[37.377,-5.985],[37.377,-5.996],[37.370,-5.998],[37.363,-5.994],[37.363,-5.983],[37.370,-5.980]],
+          subbarrios:{
+            'Heliópolis Norte':{coords:[37.374,-5.989],v:2400,a:12.3,note:'',poly:[[37.377,-5.985],[37.377,-5.993],[37.372,-5.994],[37.369,-5.988],[37.371,-5.982]]},
+            'Heliópolis Sur':{coords:[37.367,-5.989],v:2200,a:11.7,note:'',poly:[[37.372,-5.991],[37.372,-5.997],[37.364,-5.996],[37.363,-5.989],[37.367,-5.986]]},
+          }
+        },
+        'Cerro-Amate':{coords:[37.362,-5.970],v:1300,a:8.5,vr:'1.050–1.550',ar:'7,5–10',note:'Zona sur. Yield alta potencial pero menor liquidez. Cuidado con vacancia.',
+          poly:[[37.370,-5.977],[37.370,-5.960],[37.360,-5.958],[37.354,-5.964],[37.354,-5.976],[37.362,-5.980]],
+          subbarrios:{
+            'Cerro Norte':{coords:[37.366,-5.968],v:1350,a:8.7,note:'Mejor conectado. Mayor demanda.',poly:[[37.370,-5.975],[37.370,-5.961],[37.364,-5.960],[37.361,-5.967],[37.363,-5.975]]},
+            'Amate':{coords:[37.359,-5.969],v:1250,a:8.3,note:'Zona más periférica. Mayor riesgo.',poly:[[37.364,-5.973],[37.364,-5.961],[37.356,-5.962],[37.354,-5.970],[37.357,-5.977]]},
+          }
+        },
+        'Casco Antiguo':{coords:[37.389,-5.990],v:3800,a:17,vr:'3.000–5.500',ar:'14–22',note:'Centro histórico. Alta demanda turística y residencial premium. Licencias de obra complejas.',
+          poly:[[37.397,-5.997],[37.397,-5.984],[37.389,-5.979],[37.381,-5.984],[37.380,-5.996],[37.388,-6.001]],
+          subbarrios:{
+            'Santa Cruz':{coords:[37.387,-5.985],v:4800,a:20,note:'El barrio más cotizado. Alta rotación turística. Cuidado con restricciones de alquiler.',poly:[[37.393,-5.990],[37.393,-5.981],[37.386,-5.979],[37.382,-5.984],[37.383,-5.992],[37.389,-5.994]]},
+            'Arenal':{coords:[37.386,-5.995],v:4200,a:18,note:'Junto al río. Muy turístico. Buena demanda BTR larga estancia.',poly:[[37.391,-5.994],[37.391,-6.001],[37.384,-6.002],[37.381,-5.997],[37.384,-5.991],[37.389,-5.992]]},
+            'Alfalfa':{coords:[37.393,-5.990],v:3800,a:17,note:'Zona de bares y comercio. Perfil joven.',poly:[[37.397,-5.996],[37.397,-5.985],[37.392,-5.983],[37.389,-5.989],[37.390,-5.997]]},
+          }
+        },
+      }
+    },
+
+    'Camas':{coords:[37.402,-6.035],zoom:14,v:1250,a:8,vr:'1.000–1.500',ar:'7–9',note:'Municipio limítrofe con Sevilla. Precios contenidos.',slug:'camas-sevilla',
+      poly:[[37.415,-6.024],[37.417,-6.032],[37.413,-6.042],[37.406,-6.047],[37.397,-6.044],[37.393,-6.035],[37.397,-6.025],[37.407,-6.022]],
+      barrios:{
+        'Casco Urbano':{coords:[37.402,-6.034],v:1250,a:8,note:'',poly:[[37.410,-6.026],[37.412,-6.035],[37.407,-6.043],[37.400,-6.044],[37.396,-6.037],[37.398,-6.027],[37.405,-6.024]],subbarrios:{}},
+      }
+    },
+
+    'Bormujos':{coords:[37.357,-6.076],zoom:14,v:1700,a:9.5,vr:'1.500–2.000',ar:'8,5–11',note:'Aljarafe. Buena demanda residencial familiar.',slug:'bormujos-sevilla',
+      poly:[[37.368,-6.063],[37.370,-6.073],[37.365,-6.084],[37.356,-6.088],[37.347,-6.085],[37.344,-6.075],[37.349,-6.065],[37.360,-6.062]],
+      barrios:{
+        'Bormujos Centro':{coords:[37.357,-6.076],v:1700,a:9.5,note:'',poly:[[37.365,-6.067],[37.367,-6.076],[37.361,-6.084],[37.353,-6.084],[37.349,-6.075],[37.355,-6.066]],subbarrios:{}},
+      }
+    },
+
+    'Tomares':{coords:[37.365,-6.057],zoom:14,v:2150,a:11.5,vr:'1.800–2.500',ar:'10–13',note:'Aljarafe premium. Alta demanda y poca rotación. El municipio más caro del Aljarafe.',slug:'tomares-sevilla',
+      poly:[[37.375,-6.044],[37.377,-6.054],[37.373,-6.065],[37.364,-6.069],[37.356,-6.065],[37.354,-6.055],[37.360,-6.045],[37.370,-6.043]],
+      barrios:{
+        'Tomares Residencial':{coords:[37.365,-6.056],v:2200,a:11.7,note:'Urbanizaciones de alta calidad. Demanda muy solvente.',poly:[[37.374,-6.046],[37.375,-6.057],[37.370,-6.065],[37.362,-6.066],[37.357,-6.058],[37.360,-6.048],[37.368,-6.045]],subbarrios:{}},
+      }
+    },
+
+    'Dos Hermanas':{coords:[37.284,-5.923],zoom:13,v:1550,a:8,vr:'1.300–1.800',ar:'7–9,5',note:'',slug:'dos-hermanas-sevilla',
+      poly:[[37.310,-5.948],[37.312,-5.905],[37.290,-5.890],[37.265,-5.905],[37.258,-5.940],[37.278,-5.958],[37.300,-5.958]],
+      barrios:{
+        'Centro':{coords:[37.284,-5.924],v:1550,a:8,note:'',poly:[[37.294,-5.934],[37.295,-5.914],[37.281,-5.910],[37.273,-5.918],[37.274,-5.934],[37.283,-5.939]],subbarrios:{}},
+      }
+    },
+  }},
+
+  'Madrid':{coords:[40.417,-3.704],zoom:11,municipios:{
+    'Madrid':{coords:[40.417,-3.704],zoom:12,v:4200,a:21,vr:'2.000–9.000',ar:'12–35',note:'Media ciudad.',slug:'madrid',
+      poly:[[40.536,-3.833],[40.560,-3.630],[40.478,-3.570],[40.370,-3.580],[40.340,-3.640],[40.350,-3.820],[40.440,-3.870]],
+      barrios:{
+        'Carabanchel':{coords:[40.383,-3.734],v:2800,a:16,vr:'2.400–3.300',ar:'14–18',note:'En revalorización activa. Buena yield y demanda creciente.',
+          poly:[[40.400,-3.755],[40.400,-3.718],[40.380,-3.710],[40.365,-3.718],[40.365,-3.750],[40.380,-3.760]],
+          subbarrios:{
+            'Carabanchel Alto':{coords:[40.390,-3.737],v:2900,a:16.5,note:'Mejor acceso y servicios.',poly:[[40.400,-3.750],[40.400,-3.723],[40.390,-3.720],[40.384,-3.730],[40.385,-3.750]]},
+            'Carabanchel Bajo':{coords:[40.374,-3.730],v:2700,a:15.5,note:'Más antiguo. Mayor potencial de reforma.',poly:[[40.385,-3.730],[40.385,-3.718],[40.368,-3.715],[40.365,-3.725],[40.367,-3.742],[40.376,-3.746]]},
+          }
+        },
+        'Vallecas':{coords:[40.389,-3.661],v:2300,a:14,vr:'1.900–2.800',ar:'12–16',note:'Yield alta. Mayor riesgo de impago que otras zonas.',
+          poly:[[40.410,-3.685],[40.410,-3.640],[40.385,-3.633],[40.370,-3.645],[40.372,-3.678],[40.393,-3.690]],
+          subbarrios:{
+            'Puente de Vallecas':{coords:[40.395,-3.665],v:2400,a:14.5,note:'Zona más consolidada. Mejor perfil de demanda.',poly:[[40.408,-3.680],[40.408,-3.650],[40.393,-3.645],[40.385,-3.655],[40.387,-3.677],[40.400,-3.683]]},
+            'Villa de Vallecas':{coords:[40.378,-3.658],v:2200,a:13.5,note:'Zona más periférica. Precios más bajos.',poly:[[40.390,-3.668],[40.390,-3.640],[40.372,-3.638],[37.366,-3.650],[40.370,-3.670],[40.380,-3.675]]},
+          }
+        },
+        'Salamanca':{coords:[40.425,-3.679],v:7500,a:28,vr:'6.000–10.000',ar:'22–35',note:'Barrio prime. Muy alta liquidez. Tickets altos.',
+          poly:[[40.440,-3.695],[40.440,-3.665],[40.420,-3.660],[40.410,-3.668],[40.411,-3.693],[40.425,-3.699]],
+          subbarrios:{
+            'Recoletos':{coords:[40.426,-3.690],v:8500,a:30,note:'Top del mercado madrileño.',poly:[[40.436,-3.698],[40.436,-3.680],[40.424,-3.676],[40.420,-3.685],[40.422,-3.698]]},
+            'Goya':{coords:[40.425,-3.673],v:7000,a:27,note:'Algo más accesible pero igualmente premium.',poly:[[40.435,-3.679],[40.435,-3.663],[40.418,-3.660],[40.416,-3.670],[40.420,-3.679]]},
+          }
+        },
+        'Tetuán':{coords:[40.459,-3.708],v:3800,a:19,vr:'3.200–4.500',ar:'17–22',note:'En revalorización. Buen punto de entrada para flip.',
+          poly:[[40.474,-3.722],[40.474,-3.693],[40.454,-3.689],[40.443,-3.698],[40.445,-3.720],[40.460,-3.726]],
+          subbarrios:{
+            'Berruguete':{coords:[40.460,-3.705],v:3900,a:19.5,note:'',poly:[[40.468,-3.718],[40.468,-3.698],[40.454,-3.695],[40.450,-3.706],[40.453,-3.720]]},
+            'Valdeacederas':{coords:[40.467,-3.710],v:3700,a:18.5,note:'',poly:[[40.474,-3.720],[40.474,-3.700],[40.466,-3.698],[40.462,-3.708],[40.463,-3.722]]},
+          }
+        },
+        'Usera':{coords:[40.388,-3.716],v:3000,a:16,vr:'2.600–3.500',ar:'14–18',note:'Zona multicultural en revalorización. Buena yield.',
+          poly:[[40.400,-3.728],[40.400,-3.703],[40.383,-3.700],[40.374,-3.708],[40.376,-3.727],[40.391,-3.733]],
+          subbarrios:{
+            'Pradolongo':{coords:[40.393,-3.713],v:3100,a:16.3,note:'',poly:[[40.400,-3.724],[40.400,-3.707],[40.391,-3.706],[40.387,-3.717],[40.389,-3.728]]},
+            'Orcasitas':{coords:[40.381,-3.714],v:2900,a:15.7,note:'',poly:[[40.388,-3.707],[40.388,-3.724],[40.376,-3.727],[40.374,-3.717],[40.379,-3.706]]},
+          }
+        },
+      }
+    },
+    'Getafe':{coords:[40.306,-3.733],zoom:13,v:2500,a:14.5,vr:'2.100–3.000',ar:'12–17',note:'',slug:'getafe-madrid',
+      poly:[[40.330,-3.760],[40.330,-3.705],[40.290,-3.700],[40.275,-3.715],[40.278,-3.755],[40.308,-3.768]],
+      barrios:{}
+    },
+    'Alcorcón':{coords:[40.349,-3.825],zoom:13,v:2300,a:14,vr:'2.000–2.700',ar:'12–16',note:'',slug:'alcorcon-madrid',
+      poly:[[40.370,-3.846],[40.370,-3.806],[40.338,-3.800],[40.325,-3.812],[40.330,-3.848],[40.352,-3.855]],
+      barrios:{}
+    },
+  }},
+
+  'Barcelona':{coords:[41.385,2.173],zoom:11,municipios:{
+    'Barcelona':{coords:[41.385,2.173],zoom:13,v:4500,a:22,vr:'2.500–12.000',ar:'14–40',note:'Media ciudad.',slug:'barcelona',
+      poly:[[41.468,2.070],[41.468,2.228],[41.410,2.230],[41.350,2.167],[41.345,2.090],[41.410,2.065]],
+      barrios:{
+        'Eixample':{coords:[41.394,2.162],v:5500,a:25,vr:'4.500–6.500',ar:'21–29',note:'El barrio más líquido de Barcelona. Alta demanda BTR y flip.',
+          poly:[[41.408,2.140],[41.408,2.180],[41.388,2.185],[41.378,2.178],[41.380,2.140],[41.398,2.135]],
+          subbarrios:{
+            'Esquerra de l\'Eixample':{coords:[41.393,2.151],v:5300,a:24.5,note:'Zona LGBT. Alta rotación de alquiler. Buen perfil flip.',poly:[[41.407,2.142],[41.407,2.163],[41.388,2.166],[41.381,2.160],[41.383,2.142],[41.398,2.138]]},
+            'Dreta de l\'Eixample':{coords:[41.394,2.172],v:5700,a:25.5,note:'Más cerca de Diagonal y Passeig de Gràcia.',poly:[[41.407,2.163],[41.407,2.182],[41.389,2.184],[41.381,2.178],[41.382,2.162],[41.395,2.160]]},
+          }
+        },
+        'Gràcia':{coords:[41.403,2.156],v:5000,a:23,vr:'4.000–6.000',ar:'19–27',note:'Barrio con mucho carácter. Alta demanda. Buenos retornos en BTR.',
+          poly:[[41.420,2.142],[41.420,2.172],[41.408,2.178],[41.398,2.178],[41.396,2.142],[41.408,2.138]],
+          subbarrios:{
+            'Vila de Gràcia':{coords:[41.406,2.156],v:5200,a:23.5,note:'Núcleo tradicional. Muy demandado.',poly:[[41.416,2.144],[41.416,2.165],[41.405,2.168],[41.398,2.163],[41.400,2.145]]},
+            'Camp d\'en Grassot':{coords:[41.412,2.164],v:4800,a:22.5,note:'Zona norte. Algo más tranquila.',poly:[[41.420,2.158],[41.420,2.172],[41.408,2.175],[41.405,2.165],[41.408,2.156]]},
+          }
+        },
+        'Nou Barris':{coords:[41.441,2.174],v:2800,a:15,vr:'2.300–3.400',ar:'13–17',note:'Yield alta. En transformación. Mayor riesgo que Eixample.',
+          poly:[[41.465,2.157],[41.465,2.193],[41.445,2.197],[41.430,2.187],[41.428,2.157],[41.448,2.153]],
+          subbarrios:{
+            'Roquetes':{coords:[41.455,2.170],v:2700,a:14.5,note:'Zona alta. Mayor riesgo pero mayor yield.',poly:[[41.463,2.157],[41.463,2.178],[41.450,2.180],[41.445,2.168],[41.447,2.155]]},
+            'Trinitat Vella':{coords:[41.441,2.181],v:2900,a:15.5,note:'Mejor conectado. Más demanda.',poly:[[41.450,2.175],[41.450,2.195],[41.433,2.195],[41.430,2.183],[41.435,2.172]]},
+          }
+        },
+      }
+    },
+    'Badalona':{coords:[41.445,2.247],zoom:13,v:2600,a:15,vr:'2.000–3.200',ar:'12–18',note:'',slug:'badalona-barcelona',
+      poly:[[41.468,2.220],[41.468,2.270],[41.435,2.275],[41.420,2.255],[41.425,2.218],[41.450,2.215]],
+      barrios:{}
+    },
+  }},
+
+  'Valencia':{coords:[39.470,-0.376],zoom:11,municipios:{
+    'Valencia':{coords:[39.470,-0.376],zoom:13,v:2200,a:11.5,vr:'1.200–5.000',ar:'7–20',note:'Media ciudad.',slug:'valencia-valencia',
+      poly:[[39.520,-0.415],[39.520,-0.330],[39.440,-0.325],[39.420,-0.360],[39.430,-0.415],[39.480,-0.430]],
+      barrios:{
+        'Ciutat Vella':{coords:[39.475,-0.377],v:3500,a:16,vr:'2.800–4.500',ar:'13–20',note:'Benchmark mínimo 9% bruta. Alta demanda turística.',
+          poly:[[39.482,-0.388],[39.482,-0.370],[39.471,-0.365],[39.466,-0.372],[39.468,-0.388],[39.476,-0.392]],
+          subbarrios:{
+            'El Carmen':{coords:[39.476,-0.380],v:3800,a:17,note:'El barrio más cotizado del casco histórico.',poly:[[39.481,-0.388],[39.481,-0.375],[39.474,-0.372],[39.471,-0.380],[39.474,-0.389]]},
+            'La Xerea':{coords:[39.472,-0.370],v:3200,a:15,note:'Zona más tranquila del centro.',poly:[[39.479,-0.374],[39.479,-0.362],[39.469,-0.362],[39.466,-0.370],[39.470,-0.376]]},
+          }
+        },
+        "L'Eixample":{coords:[39.469,-0.370],v:3200,a:15,vr:'2.600–4.000',ar:'12–18',note:'',
+          poly:[[39.480,-0.380],[39.480,-0.355],[39.462,-0.352],[39.456,-0.365],[39.460,-0.381],[39.471,-0.384]],
+          subbarrios:{
+            'Ruzafa':{coords:[39.462,-0.370],v:3500,a:16,note:'Barrio de moda. Muy alta demanda BTR joven.',poly:[[39.471,-0.378],[39.471,-0.360],[39.460,-0.358],[39.455,-0.368],[39.458,-0.380],[39.466,-0.383]]},
+            "Gran Via":{coords:[39.472,-0.367],v:3000,a:14.5,note:'Eje principal. Buena demanda.',poly:[[39.480,-0.377],[39.480,-0.358],[39.471,-0.355],[39.468,-0.363],[39.470,-0.379]]},
+          }
+        },
+        'Benimaclet':{coords:[39.483,-0.358],v:2300,a:12.5,vr:'1.900–2.800',ar:'10,5–14',note:'Benchmark mínimo 10% bruta. Alta demanda universitaria.',
+          poly:[[39.496,-0.368],[39.496,-0.348],[39.478,-0.344],[39.470,-0.352],[39.472,-0.370],[39.484,-0.373]],
+          subbarrios:{
+            'Benimaclet Centre':{coords:[39.483,-0.356],v:2400,a:13,note:'Núcleo del barrio. Muy demandado.',poly:[[39.490,-0.363],[39.490,-0.348],[39.479,-0.346],[39.475,-0.355],[39.477,-0.366],[39.486,-0.368]]},
+            'Camins al Grau':{coords:[39.476,-0.356],v:2200,a:12,note:'Zona sur. Más asequible.',poly:[[39.479,-0.366],[39.479,-0.348],[39.470,-0.348],[40.468,-0.358],[40.469,-0.370]]},
+          }
+        },
+        'Quatre Carreres':{coords:[39.448,-0.371],v:2100,a:11,vr:'1.700–2.600',ar:'9,5–13',note:'Benchmark mínimo 9,5% bruta.',
+          poly:[[39.465,-0.385],[39.465,-0.358],[39.440,-0.355],[39.428,-0.365],[39.432,-0.388],[39.452,-0.393]],
+          subbarrios:{
+            'Malilla':{coords:[39.449,-0.376],v:2050,a:10.8,note:'Zona sur. Demanda estable.',poly:[[39.460,-0.383],[39.460,-0.362],[39.446,-0.360],[39.440,-0.370],[39.443,-0.386],[39.455,-0.389]]},
+            'En Corts':{coords:[39.459,-0.368],v:2150,a:11.2,note:'Más próximo al centro.',poly:[[39.465,-0.378],[39.465,-0.360],[39.457,-0.358],[39.453,-0.366],[39.455,-0.380]]},
+          }
+        },
+      }
+    },
+    'Torrent':{coords:[39.435,-0.468],zoom:13,v:1750,a:9.5,vr:'1.400–2.100',ar:'8–11',note:'',slug:'torrent-valencia',
+      poly:[[39.460,-0.490],[39.460,-0.446],[39.426,-0.440],[39.410,-0.455],[39.415,-0.490],[39.440,-0.500]],
+      barrios:{}
+    },
+  }},
+
+  'Málaga':{coords:[36.721,-4.421],zoom:11,municipios:{
+    'Málaga':{coords:[36.721,-4.421],zoom:13,v:3200,a:15,vr:'1.800–7.000',ar:'10–25',note:'',slug:'malaga',
+      poly:[[36.760,-4.500],[36.760,-4.360],[36.700,-4.340],[36.670,-4.380],[36.680,-4.500],[36.720,-4.520]],
+      barrios:{
+        'Centro':{coords:[36.721,-4.426],v:4500,a:18,vr:'3.500–6.000',ar:'15–22',note:'Alta demanda. Restricciones crecientes al alquiler turístico.',
+          poly:[[36.730,-4.440],[36.730,-4.415],[36.715,-4.410],[36.708,-4.420],[36.710,-4.440],[36.722,-4.445]],
+          subbarrios:{
+            'Soho':{coords:[36.715,-4.428],v:4800,a:19,note:'Barrio de moda. Muy revalorizado en los últimos 5 años.',poly:[[36.723,-4.438],[36.723,-4.420],[36.712,-4.418],[36.708,-4.428],[36.712,-4.440]]},
+            'La Goleta':{coords:[36.724,-4.419],v:4300,a:17.5,note:'Zona histórica. Alta demanda.',poly:[[36.731,-4.432],[36.731,-4.413],[36.720,-4.411],[36.716,-4.420],[36.718,-4.434]]},
+          }
+        },
+        'Este':{coords:[36.717,-4.394],v:2500,a:13,vr:'2.000–3.200',ar:'11–15',note:'Zona residencial menos turística. Mejor yield.',
+          poly:[[36.735,-4.410],[36.735,-4.370],[36.710,-4.368],[36.700,-4.382],[36.703,-4.412],[36.720,-4.418]],
+          subbarrios:{
+            'Pedregalejo':{coords:[36.716,-4.385],v:2800,a:14,note:'Zona de playa. Alta demanda en verano.',poly:[[36.727,-4.398],[36.727,-4.372],[36.712,-4.370],[36.708,-4.382],[36.712,-4.400]]},
+            'El Palo':{coords:[36.718,-4.374],v:2200,a:12,note:'Más asequible. Mayor yield potencial.',poly:[[36.732,-4.383],[36.732,-4.363],[36.715,-4.360],[36.708,-4.372],[36.712,-4.385],[36.723,-4.386]]},
+          }
+        },
+      }
+    },
+    'Marbella':{coords:[36.510,-4.883],zoom:13,v:4800,a:20,vr:'3.000–15.000',ar:'14–35',note:'Mercado muy heterogéneo. Tickets altos.',slug:'marbella-malaga',
+      poly:[[36.545,-4.942],[36.545,-4.825],[36.492,-4.820],[36.477,-4.858],[36.484,-4.940],[36.518,-4.952]],
+      barrios:{}
+    },
+  }},
+
+  'Alicante':{coords:[38.345,-0.481],zoom:11,municipios:{
+    'Alicante':{coords:[38.345,-0.481],zoom:13,v:1900,a:10,vr:'1.200–4.000',ar:'7–16',note:'',slug:'alicante',
+      poly:[[38.380,-0.520],[38.380,-0.440],[38.330,-0.430],[38.308,-0.460],[38.318,-0.518],[38.355,-0.532]],
+      barrios:{
+        'Centro':{coords:[38.345,-0.481],v:2500,a:12,note:'',poly:[[38.360,-0.498],[38.360,-0.464],[38.335,-0.460],[38.325,-0.474],[38.330,-0.500],[38.348,-0.504]],subbarrios:{}},
+        'Playa San Juan':{coords:[38.368,-0.440],v:2800,a:13,note:'Alta demanda extranjera y vacacional.',poly:[[38.385,-0.456],[38.385,-0.425],[38.357,-0.422],[38.350,-0.440],[38.355,-0.459],[38.372,-0.462]],subbarrios:{}},
+      }
+    },
+    'Torrevieja':{coords:[37.978,-0.684],zoom:13,v:1600,a:9,vr:'1.200–2.500',ar:'7–12',note:'Fuerte demanda extranjera.',slug:'torrevieja-alicante',
+      poly:[[38.010,-0.720],[38.010,-0.648],[37.962,-0.645],[37.945,-0.670],[37.953,-0.715],[37.985,-0.728]],
+      barrios:{}
+    },
+  }},
+
+  'Vizcaya':{coords:[43.263,-2.935],zoom:11,municipios:{
+    'Bilbao':{coords:[43.263,-2.935],zoom:13,v:3800,a:17,vr:'2.500–6.000',ar:'13–25',note:'',slug:'bilbao',
+      poly:[[43.292,-2.980],[43.292,-2.885],[43.246,-2.880],[43.232,-2.910],[43.240,-2.978],[43.268,-2.992]],
+      barrios:{
+        'Abando':{coords:[43.263,-2.927],v:4800,a:20,note:'Zona prime. Muy alta liquidez.',poly:[[43.278,-2.945],[43.278,-2.912],[43.258,-2.908],[43.250,-2.920],[43.254,-2.945],[43.268,-2.950]],subbarrios:{}},
+        'Deusto':{coords:[43.272,-2.960],v:3200,a:15,note:'Zona universitaria. Alta demanda BTR.',poly:[[43.288,-2.978],[43.288,-2.942],[43.265,-2.940],[43.258,-2.952],[43.262,-2.980],[43.278,-2.985]],subbarrios:{}},
+        'Rekalde':{coords:[43.250,-2.930],v:2800,a:14,note:'Zona obrera en revalorización. Buena yield.',poly:[[43.263,-2.950],[43.263,-2.914],[43.242,-2.910],[43.232,-2.922],[43.238,-2.950],[43.252,-2.956]],subbarrios:{}},
+      }
+    },
+  }},
+
+  'Guipúzcoa':{coords:[43.318,-1.981],zoom:11,municipios:{
+    'San Sebastián':{coords:[43.318,-1.981],zoom:13,v:6000,a:23,vr:'4.000–12.000',ar:'17–30',note:'Uno de los mercados más caros de España. Muy poca oferta.',slug:'san-sebastian',
+      poly:[[43.342,-2.020],[43.342,-1.940],[43.300,-1.935],[43.287,-1.960],[43.295,-2.018],[43.320,-2.030]],
+      barrios:{
+        'Centro-Parte Vieja':{coords:[43.323,-1.983],v:8000,a:28,note:'Muy escasa oferta. Alta demanda turística.',poly:[[43.330,-1.998],[43.330,-1.968],[43.314,-1.966],[43.308,-1.980],[43.314,-1.999]],subbarrios:{}},
+        'Gros':{coords:[43.320,-1.970],v:6500,a:24,note:'Barrio moderno. Alta demanda joven.',poly:[[43.329,-1.978],[43.329,-1.955],[43.313,-1.953],[43.308,-1.966],[43.312,-1.980]],subbarrios:{}},
+      }
+    },
+  }},
+
+  'Baleares':{coords:[39.570,2.650],zoom:10,municipios:{
+    'Palma':{coords:[39.570,2.650],zoom:13,v:4200,a:19,vr:'2.500–10.000',ar:'13–30',note:'Mercado muy tensionado. Restricciones al alquiler turístico.',slug:'palma-de-mallorca',
+      poly:[[39.610,2.598],[39.610,2.698],[39.555,2.708],[39.528,2.670],[39.538,2.598],[39.578,2.582]],
+      barrios:{
+        'Centro Histórico':{coords:[39.570,2.650],v:5500,a:24,note:'Alta demanda. Licencias difíciles.',poly:[[39.582,2.630],[39.582,2.668],[39.561,2.672],[39.552,2.657],[39.558,2.630],[39.573,2.625]],subbarrios:{}},
+        'Santa Catalina':{coords:[39.572,2.637],v:5000,a:22,note:'Barrio de moda. Muy demandado.',poly:[[39.582,2.625],[39.582,2.643],[39.563,2.645],[39.557,2.634],[39.562,2.622],[39.575,2.620]],subbarrios:{}},
+      }
+    },
+  }},
+
+  'Zaragoza':{coords:[41.649,-0.889],zoom:11,municipios:{
+    'Zaragoza':{coords:[41.649,-0.889],zoom:13,v:1750,a:9,vr:'1.200–3.000',ar:'7–14',note:'',slug:'zaragoza',
+      poly:[[41.700,-0.960],[41.700,-0.820],[41.605,-0.815],[41.585,-0.855],[41.598,-0.955],[41.650,-0.975]],
+      barrios:{
+        'Centro':{coords:[41.649,-0.877],v:2500,a:12,note:'',poly:[[41.660,-0.900],[41.660,-0.856],[41.638,-0.853],[41.628,-0.870],[41.634,-0.900],[41.649,-0.907]],subbarrios:{}},
+        'Delicias':{coords:[41.643,-0.916],v:1600,a:8.5,note:'Zona obrera. Yield potencialmente alta.',poly:[[41.658,-0.935],[41.658,-0.904],[41.635,-0.901],[41.625,-0.913],[41.630,-0.936],[41.648,-0.942]],subbarrios:{}},
+      }
+    },
+  }},
+
+  'Granada':{coords:[37.177,-3.599],zoom:11,municipios:{
+    'Granada':{coords:[37.177,-3.599],zoom:13,v:1800,a:9.5,vr:'1.200–3.500',ar:'7–15',note:'',slug:'granada',
+      poly:[[37.220,-3.645],[37.220,-3.555],[37.155,-3.548],[37.135,-3.578],[37.148,-3.642],[37.185,-3.658]],
+      barrios:{
+        'Centro':{coords:[37.177,-3.599],v:2800,a:14,note:'Alta demanda universitaria y turística.',poly:[[37.192,-3.618],[37.192,-3.582],[37.169,-3.578],[37.160,-3.592],[37.165,-3.618],[37.180,-3.626]],subbarrios:{}},
+        'Albaicín':{coords:[37.184,-3.591],v:3200,a:15,note:'Zona histórica. Muy demandada pero obra compleja.',poly:[[37.196,-3.602],[37.196,-3.578],[37.180,-3.574],[37.173,-3.583],[37.177,-3.604],[37.190,-3.610]],subbarrios:{}},
+        'Zaidín':{coords:[37.157,-3.602],v:1500,a:8,note:'Zona sur. Buena yield.',poly:[[37.172,-3.618],[37.172,-3.585],[37.148,-3.582],[37.138,-3.595],[37.145,-3.618],[37.162,-3.626]],subbarrios:{}},
+      }
+    },
+  }},
+
+  'Valladolid':{coords:[41.652,-4.725],zoom:11,municipios:{
+    'Valladolid':{coords:[41.652,-4.725],zoom:13,v:1550,a:8.5,vr:'1.000–2.500',ar:'6,5–11',note:'',slug:'valladolid',
+      poly:[[41.700,-4.780],[41.700,-4.672],[41.610,-4.668],[41.595,-4.700],[41.608,-4.778],[41.655,-4.795]],
+      barrios:{
+        'Centro':{coords:[41.652,-4.725],v:2200,a:11,note:'',poly:[[41.668,-4.744],[41.668,-4.706],[41.640,-4.703],[41.630,-4.718],[41.635,-4.745],[41.655,-4.752]],subbarrios:{}},
+        'Parquesol':{coords:[41.666,-4.756],v:1800,a:9,note:'Zona residencial moderna.',poly:[[41.682,-4.775],[41.682,-4.735],[41.658,-4.732],[41.648,-4.748],[41.652,-4.778],[41.670,-4.783]],subbarrios:{}},
+      }
+    },
+  }},
+
+  'Córdoba':{coords:[37.888,-4.779],zoom:11,municipios:{
+    'Córdoba':{coords:[37.888,-4.779],zoom:13,v:1450,a:7.5,vr:'900–2.500',ar:'5,5–11',note:'',slug:'cordoba',
+      poly:[[37.940,-4.840],[37.940,-4.718],[37.862,-4.712],[37.838,-4.748],[37.852,-4.838],[37.900,-4.858]],
+      barrios:{
+        'Centro-Casco Histórico':{coords:[37.888,-4.779],v:2200,a:11,note:'Alta demanda turística. Restricciones de reforma.',poly:[[37.902,-4.795],[37.902,-4.762],[37.878,-4.758],[37.868,-4.772],[37.874,-4.797],[37.890,-4.803]],subbarrios:{}},
+        'Poniente':{coords:[37.888,-4.810],v:1200,a:6.5,note:'Zona obrera. Precios bajos. Alta yield potencial.',poly:[[37.903,-4.828],[37.903,-4.795],[37.875,-4.792],[37.865,-4.805],[37.872,-4.830],[37.891,-4.836]],subbarrios:{}},
+      }
+    },
+  }},
+
+  'Las Palmas':{coords:[28.125,-15.430],zoom:11,municipios:{
+    'Las Palmas de Gran Canaria':{coords:[28.125,-15.430],zoom:13,v:2400,a:12,vr:'1.500–5.000',ar:'9–18',note:'',slug:'las-palmas-de-gran-canaria',
+      poly:[[28.175,-15.480],[28.175,-15.375],[28.090,-15.368],[28.065,-15.405],[28.078,-15.478],[28.130,-15.498]],
+      barrios:{
+        'Triana-Vegueta':{coords:[28.101,-15.415],v:3500,a:16,note:'Casco histórico. Alta demanda.',poly:[[28.115,-15.430],[28.115,-15.400],[28.095,-15.398],[28.086,-15.410],[28.092,-15.432],[28.108,-15.437]],subbarrios:{}},
+        'Las Canteras':{coords:[28.134,-15.440],v:3200,a:15,note:'Zona de playa. Alta demanda turística y residencial.',poly:[[28.152,-15.456],[28.152,-15.426],[28.128,-15.423],[28.120,-15.436],[28.126,-15.458],[28.142,-15.463]],subbarrios:{}},
+      }
+    },
+  }},
+};
+
+// ─── MAPA ──────────────────────────────────────────────────────────────
+let mapObj=null,mapMarker=null,mapPoly=null,mapCircle=null,mapReady=false;
+
+function initMap(){
+  if(mapObj||!window.L)return;
+  const el=document.getElementById('mapa');
+  if(!el)return;
+  mapObj=L.map('mapa',{zoomControl:true,attributionControl:true}).setView([40.0,-3.7],6);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© <a href="https://openstreetmap.org/copyright">OpenStreetMap</a>',maxZoom:19}).addTo(mapObj);
+  mapReady=true;
+}
+
+function clearMapLayers(){
+  if(mapMarker){mapMarker.remove();mapMarker=null;}
+  if(mapPoly){mapPoly.remove();mapPoly=null;}
+  if(mapCircle){mapCircle.remove();mapCircle=null;}
+}
+
+function updateMap(data,label){
+  if(!mapReady)initMap();
+  if(!mapReady)return;
+  clearMapLayers();
+  const coords=data.coords,zoom=data.zoom||13;
+  mapObj.setView(coords,zoom,{animate:true});
+  // Marcador
+  const icon=L.divIcon({className:'',html:`<div style="background:#ba7517;width:12px;height:12px;border-radius:50%;border:3px solid #fff;box-shadow:0 1px 6px rgba(0,0,0,.5)"></div>`,iconSize:[12,12],iconAnchor:[6,6]});
+  mapMarker=L.marker(coords,{icon}).addTo(mapObj);
+  if(label)mapMarker.bindPopup(`<div style="font-family:system-ui;font-size:12px;font-weight:500;min-width:110px;line-height:1.5">${label}</div>`).openPopup();
+  // Polígono si existe
+  if(data.poly&&data.poly.length>2){
+    mapPoly=L.polygon(data.poly,{color:'#ba7517',weight:2.5,opacity:0.9,fillColor:'#ba7517',fillOpacity:0.10,dashArray:'6,4'}).addTo(mapObj);
+  } else {
+    // Círculo indicativo si no hay polígono
+    const radios={6:40000,9:20000,10:10000,11:8000,12:4000,13:1500,14:800,15:400,16:200};
+    const r=radios[zoom]||1500;
+    mapCircle=L.circle(coords,{color:'#ba7517',weight:1.5,opacity:0.7,fillColor:'#ba7517',fillOpacity:0.08,radius:r,dashArray:'5,5'}).addTo(mapObj);
+  }
+  setTimeout(()=>mapObj.invalidateSize(),100);
+}
+
+// ─── SELECCIÓN EN CASCADA ─────────────────────────────────────────────
+function getD(){
+  const p=GEO[SEL.prov],m=SEL.mun?p?.municipios?.[SEL.mun]:null,b=SEL.bar&&m?.barrios?m.barrios[SEL.bar]:null,s=SEL.sub&&b?.subbarrios?b.subbarrios[SEL.sub]:null;
+  return{p,m,b,s};
+}
+function getMuns(){const {p}=getD();return p?Object.keys(p.municipios):[];}
+function getBars(){const {m}=getD();return m?.barrios?Object.keys(m.barrios):[];}
+function getSubs(){const {b}=getD();return b?.subbarrios?Object.keys(b.subbarrios):[];}
+
+function setProv(v){SEL={prov:v,mun:'',bar:'',sub:''};rebuildSelects();doMapUpdate();}
+function setMun(v){SEL={...SEL,mun:v,bar:'',sub:''};rebuildSelects();doMapUpdate();}
+function setBar(v){SEL={...SEL,bar:v,sub:''};rebuildSelects();doMapUpdate();}
+function setSub(v){SEL={...SEL,sub:v};rebuildSelects();doMapUpdate();}
+
+function doMapUpdate(){
+  const {p,m,b,s}=getD();
+  const data=s||b||m||p;
+  if(!data)return;
+  let lbl=[];
+  if(SEL.sub)lbl.push(`<b>${SEL.sub}</b>`);
+  if(SEL.bar)lbl.push(SEL.bar);
+  if(SEL.mun)lbl.push(`<span style="color:#888;font-weight:400">${SEL.mun}</span>`);
+  updateMap(data,lbl.length?lbl.join('<br>'):SEL.prov);
+  rPreciosMercado();
+}
+
+function optList(items,sel,ph){
+  return`<option value="">${ph}</option>`+items.map(v=>`<option value="${v}"${v===sel?' selected':''}>${v}</option>`).join('');
+}
+
+function rebuildSelects(){
+  const muns=getMuns(),bars=getBars(),subs=getSubs();
+  const ms=document.getElementById('sel-mun');
+  if(ms){ms.innerHTML=optList(muns,SEL.mun,'— municipio —');ms.disabled=!SEL.prov;}
+  const row_b=document.getElementById('row-bar'),bs=document.getElementById('sel-bar');
+  if(row_b&&bs){row_b.style.display=muns.length&&SEL.mun&&bars.length?'':'none';bs.innerHTML=optList(bars,SEL.bar,'— barrio —');bs.disabled=!SEL.mun;}
+  const row_s=document.getElementById('row-sub'),ss=document.getElementById('sel-sub');
+  if(row_s&&ss){row_s.style.display=SEL.bar&&subs.length?'':'none';ss.innerHTML=optList(subs,SEL.sub,'— sub-barrio —');ss.disabled=!SEL.bar;}
+  rPreciosMercado();
+}
+
+function rPreciosMercado(){
+  const el=document.getElementById('mkt-panel');
+  if(!el)return;
+  const {m,b,s}=getD();
+  if(!m){el.innerHTML='';return;}
+  const precio=s||b||m;
+  const nivel=s?SEL.sub:b?SEL.bar:SEL.mun;
+  const nivel2=s?`${SEL.bar} · ${SEL.mun}`:b?SEL.mun:'';
+  const sup=+F.sup||65;
+  const pvEst=Math.round(precio.v*sup),rentEst=Math.round(precio.a*sup);
+  const slug=m.slug||'';
+  const rango_v=(s||b)?m.vr:m.vr;
+  const rango_a=(s||b)?m.ar:m.ar;
+  el.innerHTML=`<div class="mkt-card">
+    <div class="mkt-hdr">Mercado<span class="mkt-loc">${nivel}${nivel2?` · ${nivel2}`:''}</span></div>
+    <div class="mkt-body">
+      <div class="mkt-grid">
+        <div class="mkt-kpi"><div class="mkt-kpi-lbl">Venta</div>
+          <div class="mkt-kpi-val">${precio.v.toLocaleString('es-ES')} €/m²</div>
+          ${rango_v?`<div class="mkt-kpi-range">Rango mun.: ${rango_v} €/m²</div>`:''}
+          <div class="mkt-kpi-sub">Para ${sup} m² → <b>${pvEst.toLocaleString('es-ES')} €</b></div>
+        </div>
+        <div class="mkt-kpi"><div class="mkt-kpi-lbl">Alquiler</div>
+          <div class="mkt-kpi-val">${precio.a.toFixed(1)} €/m²</div>
+          ${rango_a?`<div class="mkt-kpi-range">Rango mun.: ${rango_a} €/m²</div>`:''}
+          <div class="mkt-kpi-sub">Para ${sup} m² → <b>${rentEst.toLocaleString('es-ES')} €/mes</b></div>
+        </div>
+      </div>
+      ${precio.note?`<div class="mkt-note">${precio.note}</div>`:''}
+      <div class="mkt-src">Estimación mercado 2024 (Idealista · MITMA · Tinsa). Verificar con anuncio real.</div>
+      <div class="mkt-btns">
+        ${slug?`<a class="mkt-btn dark" href="https://www.idealista.com/venta-viviendas/${slug}/" target="_blank">Ver venta →</a>
+        <a class="mkt-btn dark" href="https://www.idealista.com/alquiler-viviendas/${slug}/" target="_blank">Ver alquiler →</a>`:''}
+      </div>
+      <div class="mkt-apply">
+        <button class="mkt-btn green" onclick="applyPV(${pvEst})">Aplicar precio venta → Flip</button>
+        <button class="mkt-btn green" onclick="applyRent(${rentEst})">Aplicar renta → Buy to rent</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+window.applyPV=(v)=>{F.pv=v;rFI();rFR();sw('fp',document.querySelectorAll('.tab')[2]);};
+window.applyRent=(r)=>{B.rnt=r;rBI();rBR();sw('bp',document.querySelectorAll('.tab')[3]);};
+
+// ─── PRESUPUESTO ─────────────────────────────────────────────────────
+const COL={'Vaciado y demolición':'#e57373','Instalación eléctrica':'#ffd54f','Fontanería y saneamiento':'#4fc3f7','Suelos':'#ce93d8','Paredes y techos':'#80cbc4','Baño/s':'#81d4fa','Cocina':'#ffb74d','Carpintería interior':'#a1887f','Ventanas y exterior':'#90a4ae','Climatización':'#81c784','Acabados finales':'#f4a460','Gestión y licencias':'#b0bec5','Home staging (flip)':'#f48fb1'};
+window.CATS=[
+  {n:'Vaciado y demolición',open:true,items:[{d:'Levantado de pavimento existente',u:'m²',q:65,p:10,on:true,ref:'8–14 €/m²'},{d:'Derribo tabiques (si aplica)',u:'m²',q:15,p:20,on:false,ref:'15–28 €/m²'},{d:'Gestión de escombros y contenedor',u:'ud',q:1,p:450,on:true,ref:'350–600 €'},{d:'Retirada muebles y enseres',u:'ud',q:1,p:200,on:false,ref:'150–400 €'}]},
+  {n:'Instalación eléctrica',open:true,items:[{d:'Instalación eléctrica completa (~65m²)',u:'ud',q:1,p:3200,on:true,ref:'2.800–4.500 €'},{d:'Cuadro eléctrico y protecciones',u:'ud',q:1,p:350,on:true,ref:'300–500 €'},{d:'Puntos de luz adicionales',u:'ud',q:4,p:80,on:false,ref:'60–120 €/ud'},{d:'Boletín eléctrico',u:'ud',q:1,p:150,on:true,ref:'120–200 €'}]},
+  {n:'Fontanería y saneamiento',open:true,items:[{d:'Renovación fontanería completa',u:'ud',q:1,p:2500,on:true,ref:'2.000–3.500 €'},{d:'Sustitución bajante',u:'ud',q:1,p:550,on:false,ref:'350–900 €'},{d:'Bañera por plato de ducha',u:'ud',q:1,p:550,on:true,ref:'400–800 €'}]},
+  {n:'Suelos',open:true,items:[{d:'Porcelánico o gres (mat.+inst.)',u:'m²',q:65,p:38,on:true,ref:'28–55 €/m²'},{d:'Rodapié',u:'ml',q:55,p:8,on:true,ref:'6–12 €/ml'},{d:'Pulido terrazo existente',u:'m²',q:65,p:15,on:false,ref:'12–20 €/m²'},{d:'Parquet laminado (alternativa)',u:'m²',q:65,p:25,on:false,ref:'18–35 €/m²'}]},
+  {n:'Paredes y techos',open:true,items:[{d:'Picado de gotelé + alisado',u:'m²',q:180,p:9,on:true,ref:'7–13 €/m²'},{d:'Reparación humedades puntuales',u:'ud',q:1,p:250,on:false,ref:'150–500 €'},{d:'Falso techo pladur',u:'m²',q:30,p:32,on:false,ref:'25–45 €/m²'}]},
+  {n:'Baño/s',open:true,items:[{d:'Reforma integral baño (alicatado+sanitarios)',u:'ud',q:1,p:3800,on:true,ref:'3.000–5.500 €'},{d:'Baño adicional (si hay 2)',u:'ud',q:0,p:3200,on:false,ref:'2.500–4.500 €'},{d:'Mampara de ducha',u:'ud',q:1,p:400,on:true,ref:'280–650 €'},{d:'Mueble de baño con lavabo',u:'ud',q:1,p:350,on:true,ref:'250–600 €'}]},
+  {n:'Cocina',open:true,items:[{d:'Muebles cocina (~3m lineales)',u:'ud',q:1,p:2200,on:true,ref:'1.500–3.500 €'},{d:'Encimera (silestone o compacto)',u:'ud',q:1,p:450,on:true,ref:'300–800 €'},{d:'Fregadero + grifo monomando',u:'ud',q:1,p:220,on:true,ref:'150–350 €'},{d:'Electrodomésticos (horno+placa+campana)',u:'ud',q:1,p:900,on:true,ref:'600–1.500 €'},{d:'Alicatado frente cocina',u:'m²',q:8,p:35,on:true,ref:'25–50 €/m²'},{d:'Frigorífico (BTR)',u:'ud',q:1,p:500,on:false,ref:'350–900 €'}]},
+  {n:'Carpintería interior',open:false,items:[{d:'Puertas de paso lacadas (mat.+inst.)',u:'ud',q:5,p:320,on:true,ref:'250–420 €/ud'},{d:'Puerta de entrada (blindada)',u:'ud',q:1,p:1100,on:true,ref:'800–1.600 €'},{d:'Armario empotrado (~60cm/módulo)',u:'ud',q:4,p:480,on:false,ref:'350–700 €/ud'}]},
+  {n:'Ventanas y exterior',open:false,items:[{d:'Ventana PVC doble acristalamiento',u:'ud',q:6,p:480,on:false,ref:'320–650 €/ud'},{d:'Persiana (sustitución motorizada)',u:'ud',q:4,p:220,on:false,ref:'150–320 €/ud'}]},
+  {n:'Climatización',open:false,items:[{d:'Split 1×1 inverter instalado',u:'ud',q:2,p:950,on:false,ref:'750–1.300 €/ud'},{d:'Preinstalación (sin unidad)',u:'ud',q:2,p:200,on:false,ref:'150–280 €/ud'}]},
+  {n:'Acabados finales',open:true,items:[{d:'Pintura interior completa (2 manos)',u:'m²',q:200,p:7,on:true,ref:'5–10 €/m²'},{d:'Limpieza de obra final',u:'ud',q:1,p:280,on:true,ref:'200–400 €'},{d:'Pequeños remates y ajustes',u:'ud',q:1,p:300,on:true,ref:'200–500 €'}]},
+  {n:'Gestión y licencias',open:false,items:[{d:'Aparejador / arquitecto técnico',u:'ud',q:1,p:1200,on:true,ref:'800–2.000 €'},{d:'Licencia de obras menor',u:'ud',q:1,p:350,on:true,ref:'200–600 €'},{d:'Certificado energético',u:'ud',q:1,p:180,on:true,ref:'150–250 €'}]},
+  {n:'Home staging (flip)',open:false,items:[{d:'Home staging básico',u:'ud',q:1,p:1200,on:false,ref:'800–2.500 €'},{d:'Fotografía profesional',u:'ud',q:1,p:200,on:false,ref:'150–350 €'},{d:'Tour virtual 3D',u:'ud',q:1,p:350,on:false,ref:'250–600 €'}]},
+];
+let CATS=window.CATS;
+function catTot(c){return c&&c.items?c.items.filter(i=>i.on).reduce((s,i)=>s+(+i.q||0)*(+i.p||0),0):0;}
+function grandTot(){return CATS.reduce((s,c)=>s+catTot(c),0);}
+function syncAll(){window._presupuestoTotal=grandTot()||null;rFI();rFR();rBI();rBR();}
+function rPresupuesto(){
+  CATS=window.CATS;const tot=grandTot();let cats='';
+  CATS.forEach((cat,ci)=>{const ct=catTot(cat),col=COL[cat.n]||'#aaa',ac=cat.items.filter(i=>i.on).length;
+    cats+=`<div class="cat-block"><div class="cat-hdr" onclick="tCat(${ci})"><span class="cat-name"><span class="cat-dot" style="background:${col}"></span>${cat.n}<span class="cat-badge">${ac}/${cat.items.length}</span></span><div style="display:flex;align-items:center;gap:10px"><span class="cat-total-lbl" id="ct-${ci}">${ef(ct)}</span><span class="arr${cat.open?' open':''}" id="ca-${ci}">▼</span></div></div>`;
+    cats+=`<div class="cat-body${cat.open?' open':''}" id="cb-${ci}"><table class="ptable"><thead><tr><th style="width:3%"></th><th style="width:40%">Partida</th><th style="width:7%">Ud</th><th class="r" style="width:9%">Cant.</th><th class="r" style="width:12%">€/ud</th><th style="width:14%" class="r">Referencia</th><th class="r" style="width:12%">Total</th><th style="width:3%"></th></tr></thead><tbody>`;
+    cat.items.forEach((it,ii)=>{const itot=it.on?(+it.q||0)*(+it.p||0):0;cats+=`<tr style="${it.on?'':'opacity:.45'}"><td><input type="checkbox" class="chk" ${it.on?'checked':''} onchange="toggleItem(${ci},${ii},this.checked)"></td><td><input class="pinput" value="${it.d}" onchange="upItem(${ci},${ii},'d',this.value)" ${it.on?'':'disabled'}></td><td><input class="pinput" value="${it.u}" onchange="upItem(${ci},${ii},'u',this.value)" style="width:34px" ${it.on?'':'disabled'}></td><td><input class="pinput mono" type="number" value="${it.q}" step="any" oninput="upItem(${ci},${ii},'q',+this.value)" ${it.on?'':'disabled'}></td><td><input class="pinput mono" type="number" value="${it.p}" step="any" oninput="upItem(${ci},${ii},'p',+this.value)" ${it.on?'':'disabled'}></td><td class="precio-ref">${it.ref||''}</td><td class="tc" id="it-${ci}-${ii}">${it.on?ef(itot):'—'}</td><td><button class="del-btn" onclick="delItem(${ci},${ii})">✕</button></td></tr>`;});
+    cats+=`</tbody></table><button class="add-btn" onclick="addItem(${ci})">+ Añadir partida</button></div></div>`;
+  });
+  const sumRows=CATS.map((c,ci)=>`<div class="csr"><span class="csl"><span class="cat-dot" style="background:${COL[c.n]||'#aaa'}"></span>${c.n}</span><span class="csv" id="cs-${ci}">${ef(catTot(c))}</span></div>`).join('');
+  document.getElementById('presupuesto').innerHTML=`<div class="pb-wrap"><div>${cats}</div><div class="pb-summary"><div class="pb-total-card"><div class="pb-total-lbl">Total presupuesto activo</div><div class="pb-total-val" id="pb-grand">${ef(tot)}</div><div class="pb-total-sub" id="pb-m2">${F.sup?'≈ '+Math.round(tot/(+F.sup||1))+' €/m²':''}</div></div><div class="pb-sync-box">Sincronizado con Flip y Buy to rent. Solo suman las partidas con ✓.</div><div class="sum-card"><div class="sum-title">Por categoría</div>${sumRows}<div style="height:5px"></div><div class="csr" style="border-top:1px solid #e5e5e0;padding-top:6px"><span class="csl" style="font-weight:500;color:#1a1a1a">Total</span><span class="csv" style="color:#ba7517;font-weight:500" id="cs-total">${ef(tot)}</span></div></div><div class="pb-actions"><button class="pb-btn" onclick="addCat()">+ Categoría</button><button class="pb-btn" onclick="clearAll()" style="color:#dc2626;border-color:#fca5a5">Vaciar</button></div></div></div>`;
+  syncAll();
+}
+function toggleItem(ci,ii,val){CATS[ci].items[ii].on=val;refreshPbTotals();rPresupuesto();}
+function upItem(ci,ii,k,v){CATS[ci].items[ii][k]=v;const it=CATS[ci].items[ii],itot=it.on?(+it.q||0)*(+it.p||0):0;const el=document.getElementById(`it-${ci}-${ii}`);if(el)el.textContent=it.on?ef(itot):'—';refreshPbTotals();}
+function refreshPbTotals(){const tot=grandTot();CATS.forEach((c,ci)=>{const e=document.getElementById(`ct-${ci}`),s=document.getElementById(`cs-${ci}`);const v=ef(catTot(c));if(e)e.textContent=v;if(s)s.textContent=v;});const ge=document.getElementById('pb-grand'),m2=document.getElementById('pb-m2'),cst=document.getElementById('cs-total');if(ge)ge.textContent=ef(tot);if(m2)m2.textContent=F.sup?'≈ '+Math.round(tot/(+F.sup||1))+' €/m²':'';if(cst)cst.textContent=ef(tot);window._presupuestoTotal=tot||null;rFR();rBR();}
+function tCat(ci){CATS[ci].open=!CATS[ci].open;const b=document.getElementById(`cb-${ci}`),a=document.getElementById(`ca-${ci}`);if(b)b.classList.toggle('open',CATS[ci].open);if(a)a.classList.toggle('open',CATS[ci].open);}
+function addItem(ci){CATS[ci].items.push({d:'Nueva partida',u:'ud',q:1,p:0,on:true,ref:''});rPresupuesto();}
+function delItem(ci,ii){CATS[ci].items.splice(ii,1);rPresupuesto();}
+function addCat(){const name=prompt('Nombre de la nueva categoría:');if(!name)return;COL[name]='#b0bec5';CATS.push({n:name,open:true,items:[]});rPresupuesto();}
+function clearAll(){if(!confirm('¿Desactivar todas las partidas?'))return;CATS.forEach(c=>c.items.forEach(i=>i.on=false));rPresupuesto();}
+
+// ─── CÁLCULOS ──────────────────────────────────────────────────────────
+function cS(s){const it=s.pc*s.itp/100,nr=s.pc*s.not/100,hn=s.pc*s.hon/100,ga=it+nr+s.dd+hn,pr=s.fin?s.pc*s.ltv/100:0,r=s.ti/100/12,n=s.hip*12,cm=pr>0&&r>0?pr*r*Math.pow(1+r,n)/(Math.pow(1+r,n)-1):0;return{it,nr,hn,ga,pr,cm};}
+function cF(s,f){const b=cS(s),cr=window._presupuestoTotal||f.sup*f.rm2,co=cr*f.ct/100,io=s.fin?b.pr*s.ti/100*f.pl/12:0,tot=s.pc+b.ga+cr+co+f.ind+io,cap=Math.max(s.fin?s.pc*(1-s.ltv/100)+b.ga+cr+co+f.ind+io:tot,1),gve=f.pv*f.gv/100,ing=f.pv-gve,mb=f.pv-tot,mn=ing-tot,rt=mn/tot*100,rc=mn/cap*100,ra=f.pl>0?(Math.pow(Math.max(1+rc/100,.0001),12/f.pl)-1)*100:NaN,sens=[-10,-5,0,5,10].map(pp=>{const pve=f.pv*(1+pp/100);return[-15,0,15].map(rp=>{const crf=cr*(1+rp/100),cf2=crf*f.ct/100,t2=s.pc+b.ga+crf+cf2+f.ind+io,mn2=pve*(1-f.gv/100)-t2,c2=Math.max(s.fin?s.pc*(1-s.ltv/100)+b.ga+crf+cf2+f.ind+io:t2,1);return mn2/c2*100;});});return{...b,cr,co,io,tot,cap,gve,ing,mb,mn,rt,rc,ra,sens};}
+function cB(s,b2){const b=cS(s),ref=window._presupuestoTotal||b2.ref,co=ref*b2.ct/100,tot=s.pc+b.ga+ref+co,cap=Math.max(tot-b.pr,1),ca=b.cm*12,ra=b2.rnt*12,ve=ra*b2.vac/100,ie=ra-ve,si=b2.imp?ra*.045:0,mt=s.pc*b2.mnt/100,gs=ra*b2.ges/100,gt=b2.ibi+b2.com+b2.seg+si+mt+gs,bn=ie-gt,rb=ra/Math.max(tot,1)*100,rn=bn/Math.max(tot,1)*100,cf=bn-ca,coc=s.fin?cf/cap*100:rn,pb=bn>0?tot/bn:Infinity,gf=b2.ibi+b2.com+b2.seg+mt,dn=1-b2.vac/100-(b2.imp?.045:0)-b2.ges/100,r7=dn>.05?(tot*.07+gf)/dn/12:0;return{...b,co,ref,tot,cap,ca,ra,ve,ie,si,mt,gs,gt,bn,rb,rn,cf,coc,pb,r7};}
+// Expose calculation functions globally
+window.cS = cS;
+window.cF = cF;
+window.cB = cB;
+
+function vF(rc,mn){if(!isFinite(rc)||mn<=0)return{c:'dis',i:'✕',l:'Descartar',w:'Sin margen neto positivo.'};if(rc>=25)return{c:'buy',i:'✓',l:'Comprar',w:`ROI sobre capital del ${ep(rc)} en ${F.pl} meses. Margen sólido.`};if(rc>=15)return{c:'neg',i:'~',l:'Negociar',w:`ROI del ${ep(rc)} ajustado. Negociar precio o reducir reforma.`};return{c:'dis',i:'✕',l:'Descartar',w:`ROI del ${ep(rc)} insuficiente. No compensa riesgo ni iliquidez.`};}
+function vB(rn,coc,fin){const m=fin?coc:rn,lb=fin?'cash on cash':'rentabilidad neta';if(!isFinite(m)||m<=0)return{c:'dis',i:'✕',l:'Descartar',w:'Rentabilidad negativa.'};if(m>=7)return{c:'buy',i:'✓',l:'Comprar',w:`${ep(m)} de ${lb}. Yield sólido.`};if(m>=5)return{c:'neg',i:'~',l:'Negociar',w:`${ep(m)} de ${lb}. Correcto pero con margen. Negociar precio.`};if(m>=3.5)return{c:'neg',i:'~',l:'Negociar',w:`${ep(m)} de ${lb}. Ajustado. Solo válido con fuerte revalorización.`};return{c:'dis',i:'✕',l:'Descartar',w:`${ep(m)} de ${lb}. Por debajo del umbral mínimo.`};}
+
+function ir(lb,vl,un,fn){return`<div class="irow irow-num"><div class="ilbl">${lb}</div><div class="iwrap"><input type="number" value="${vl}" step="any" oninput="${fn}"><div class="iunit">${un}</div></div></div>`;}
+function tgrow(lb,vl,fn,sb){return`<div class="trow"><div><div class="tlbl">${lb}</div>${sb?`<div class="tsub">${sb}</div>`:''}</div><div class="tog${vl?' on':''}" onclick="${fn}"><div class="togk"></div></div></div>`;}
+function sec(tt,bd,id,df=true){if(OS[id]===undefined)OS[id]=df;const o=OS[id];return`<div class="sec"><div class="sec-h" onclick="ts('${id}')"><span class="sec-ht">${tt}</span><span class="arr${o?' open':''}" id="a-${id}">▼</span></div><div class="sec-b${o?' open':''}" id="${id}">${bd}</div></div>`;}
+function kp(lb,vl,sb,cl){return`<div class="kpi"><div class="kl">${lb}</div><div class="kv${cl?' '+cl:''}">${vl}</div>${sb?`<div class="ks">${sb}</div>`:''}</div>`;}
+function dr(lb,vl,cl){return`<div class="dr"><span class="dl">${lb}</span><span class="dv${cl?' '+cl:''}">${vl}</span></div>`;}
+function sc2(v){return v>=20?'sp':v>=10?'sw':v>=0?'':'sn';}
+
+window.us=(k,v)=>{S[k]=v;rSR();rFR();rBR();};
+window.uf=(k,v)=>{F[k]=v;if(k==='sup')rPreciosMercado();rFI();rFR();};
+window.ub=(k,v)=>{B[k]=v;rBR();};
+window.tsh=(k)=>{S[k]=!S[k];rSI();rSR();rFR();rBR();};
+window.tb2=(k)=>{B[k]=!B[k];rBI();rBR();};
+window.ts=(id)=>{OS[id]=!OS[id];const b=document.getElementById(id),a=document.getElementById('a-'+id);if(b)b.classList.toggle('open',OS[id]);if(a)a.classList.toggle('open',OS[id]);};
+window.sw=function(pid,btn){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  ['ap','pp','fp','bp','ip','pp2'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove('active');});
+  const panel=document.getElementById(pid);
+  if(panel) panel.classList.add('active');
+  if(pid==='ap'&&mapObj) setTimeout(()=>mapObj.invalidateSize(),80);
+  if(pid==='ip') setTimeout(initImport,50);
+  if(pid==='pp2') setTimeout(()=>window.loadPortfolio(),50);
+};
+window.setProv=setProv;window.setMun=setMun;window.setBar=setBar;window.setSub=setSub;
+
+function rSI(){
+  const provs=Object.keys(GEO).sort();
+  const muns=getMuns(),bars=getBars(),subs=getSubs();
+  document.getElementById('si').innerHTML=
+    sec('Ubicación del inmueble',
+      `<div class="irow"><div class="ilbl">Provincia</div><div class="iwrap"><select onchange="setProv(this.value)">${optList(provs,SEL.prov,'— provincia —')}</select></div></div>`+
+      `<div class="irow"><div class="ilbl">Municipio</div><div class="iwrap"><select id="sel-mun" onchange="setMun(this.value)"${!SEL.prov?' disabled':''}>${optList(muns,SEL.mun,'— municipio —')}</select></div></div>`+
+      `<div class="irow" id="row-bar" style="${SEL.mun&&bars.length?'':'display:none'}"><div class="ilbl">Barrio</div><div class="iwrap"><select id="sel-bar" onchange="setBar(this.value)"${!SEL.mun?' disabled':''}>${optList(bars,SEL.bar,'— barrio —')}</select></div></div>`+
+      `<div class="irow" id="row-sub" style="${SEL.bar&&subs.length?'':'display:none'}"><div class="ilbl">Sub-barrio / Zona</div><div class="iwrap"><select id="sel-sub" onchange="setSub(this.value)"${!SEL.bar?' disabled':''}>${optList(subs,SEL.sub,'— sub-barrio —')}</select></div></div>`
+    ,'sUbic')+
+    `<div id="mkt-panel"></div>`+
+    sec('Datos del inmueble',
+      ir('Precio de compra',S.pc,'€',"us('pc',+this.value)")+
+      ir('Superficie',F.sup,'m²',"uf('sup',+this.value)")
+    ,'sActivo')+
+    sec('Gastos de adquisición',
+      ir('ITP',S.itp,'%',"us('itp',+this.value)")+
+      ir('Notaría + Registro',S.not,'%',"us('not',+this.value)")+
+      ir('Due diligence',S.dd,'€',"us('dd',+this.value)")+
+      ir('Honorarios comprador',S.hon,'%',"us('hon',+this.value)")
+    ,'sGastos')+
+    sec('Financiación',
+      tgrow('Financiación hipotecaria',S.fin,"tsh('fin')")+(S.fin?ir('LTV',S.ltv,'%',"us('ltv',+this.value)")+ir('Tipo de interés',S.ti,'%',"us('ti',+this.value)")+ir('Plazo hipoteca',S.hip,'años',"us('hip',+this.value)"):'')
+    ,'sFin');
+  rPreciosMercado();
+}
+
+function rSR(){
+  const c=cS(S);
+  document.getElementById('sr').innerHTML=
+    `<div id="mapa"></div>`+
+    `<div class="sum-card"><div class="sum-title">Resumen de costes de entrada</div>${dr('Precio de compra',ef(S.pc))}${dr('ITP',ef(c.it))}${dr('Notaría + Registro',ef(c.nr))}${dr('Due diligence',ef(S.dd))}${S.hon>0?dr('Honorarios comprador',ef(c.hn)):''}<div class="gap"></div>${dr('Total gastos de adquisición',ef(c.ga),'hl')}${dr('Coste de entrada total',ef(S.pc+c.ga),'hl')}${S.fin?`<div class="gap"></div>${dr('Principal hipotecario',ef(c.pr))}${dr('Cuota mensual estimada',ef(c.cm)+'/mes')}${dr('Capital propio (sin reforma)',ef(S.pc*(1-S.ltv/100)),'warn')}`:''}
+    </div><div class="note-card">La reforma se define en la pestaña Presupuesto. Los precios de mercado y el mapa se actualizan con la ubicación seleccionada.</div>`;
+  setTimeout(()=>{initMap();doMapUpdate();},100);
+}
+
+function rFI(){const hasP=window._presupuestoTotal>0;document.getElementById('fi').innerHTML=(hasP?`<div class="green-note">Reforma desde presupuesto por partidas: <b>${ef(window._presupuestoTotal)}</b></div>`:'')+sec('Reforma y costes',(!hasP?ir('Coste €/m²',F.rm2,'€/m²',"uf('rm2',+this.value)"):'')+ir('Contingencia',F.ct,'%',"uf('ct',+this.value)")+ir('Costes indirectos',F.ind,'€',"uf('ind',+this.value)")+ir('Plazo total',F.pl,'meses',"uf('pl',+this.value)"),'fR')+sec('Venta',ir('Precio de venta',F.pv,'€',"uf('pv',+this.value)")+ir('Gastos de venta',F.gv,'%',"uf('gv',+this.value)"),'fV');}
+function rFR(){const c=cF(S,F),v=vF(c.rc,c.mn),sk=c.rc>=20?'pos':c.rc<0?'neg':c.rc>=15?'warn':'',ak=c.ra>=30?'pos':c.ra<0?'neg':'';document.getElementById('fr').innerHTML=`<div class="verdict ${v.c}"><div class="vt"><div class="vic">${v.i}</div><div><div class="vlb">Veredicto</div><div class="vvl">${v.l}</div></div></div><div class="vrs">${v.w}</div></div>`+`<div class="kpis">${kp('ROI sobre capital',ep(c.rc),F.pl+' meses',sk)}${kp('ROI anualizado',ep(c.ra),'',ak)}${kp('Margen neto',ef(c.mn),'',c.mn>0?'pos':'neg')}${kp('Coste total',ef(c.tot),'Capital: '+ef(c.cap))}</div>`+sec('Desglose completo',dr('Precio de compra',ef(S.pc))+dr('ITP',ef(c.it))+dr('Notaría + Registro',ef(c.nr))+dr('Due diligence',ef(S.dd))+(S.hon>0?dr('Honorarios comprador',ef(c.hn)):'')+dr('Reforma',ef(c.cr))+dr('Contingencia',ef(c.co))+dr('Costes indirectos',ef(F.ind))+(S.fin?dr('Intereses obra',ef(c.io)):'')+dr('Coste total proyecto',ef(c.tot),'hl')+'<div class="gap"></div>'+dr('Precio de venta',ef(F.pv))+dr('Gastos de venta','− '+ef(c.gve))+dr('Ingreso neto venta',ef(c.ing))+'<div class="gap"></div>'+dr('Margen bruto',ef(c.mb),c.mb>0?'pos':'neg')+dr('Margen neto',ef(c.mn),c.mn>0?'pos':'neg')+dr('ROI total sobre inversión',ep(c.rt))+dr('ROI sobre capital propio',ep(c.rc),sk||'warn')+dr('ROI anualizado',ep(c.ra),ak),'frD')+sec('Análisis de sensibilidad',`<div class="sttl">ROI sobre capital según precio de venta y coste de reforma</div><div class="ssub">Filas: precio venta (−10%→+10%) · Columnas: reforma (−15% / base / +15%)</div><table class="st"><thead><tr><th>PV/Reforma</th><th>−15%</th><th>Base</th><th>+15%</th></tr></thead><tbody>${[-10,-5,0,5,10].map((pp,i)=>`<tr class="${pp===0?'base':''}"><td>${pp>0?'+':''}${pp}%</td>${c.sens[i].map(x=>`<td class="${sc2(x)}">${x.toFixed(1)}%</td>`).join('')}</tr>`).join('')}</tbody></table>`,'frS');}
+function rBI(){const hasP=window._presupuestoTotal>0;document.getElementById('bi').innerHTML=(hasP?`<div class="green-note">Reforma desde presupuesto por partidas: <b>${ef(window._presupuestoTotal)}</b></div>`:'')+sec('Reforma',(!hasP?ir('Reforma total',B.ref,'€',"ub('ref',+this.value)"):'')+ir('Contingencia',B.ct,'%',"ub('ct',+this.value)"),'bR')+sec('Alquiler',ir('Renta mensual',B.rnt,'€/mes',"ub('rnt',+this.value)")+ir('Vacancia estimada',B.vac,'%',"ub('vac',+this.value)"),'bAlq')+sec('Gastos anuales',ir('IBI',B.ibi,'€/año',"ub('ibi',+this.value)")+ir('Comunidad',B.com,'€/año',"ub('com',+this.value)")+ir('Seguro hogar',B.seg,'€/año',"ub('seg',+this.value)")+tgrow('Seguro de impago',B.imp,"tb2('imp')",'4,5% renta anual')+ir('Mantenimiento',B.mnt,'% precio',"ub('mnt',+this.value)")+ir('Gestoría',B.ges,'% renta',"ub('ges',+this.value)"),'bGts');}
+function rBR(){const c=cB(S,B),v=vB(c.rn,c.coc,S.fin),bk=c.rb>=9?'pos':c.rb<5?'neg':'warn',nk=c.rn>=6?'pos':c.rn<0?'neg':'warn',ck=c.coc>=7?'pos':c.coc<0?'neg':'warn';document.getElementById('br').innerHTML=`<div class="verdict ${v.c}"><div class="vt"><div class="vic">${v.i}</div><div><div class="vlb">Veredicto</div><div class="vvl">${v.l}</div></div></div><div class="vrs">${v.w}</div></div>`+`<div class="kpis">${kp('Rent. bruta',ep(c.rb),'',bk)}${kp('Rent. neta',ep(c.rn),'',nk)}${S.fin?kp('Cash on cash',ep(c.coc),'',ck):kp('Beneficio neto',ef(c.bn),'por año',c.bn>0?'pos':'neg')}${S.fin?kp('Cash flow',ef(c.cf/12)+'/mes','tras hipoteca',c.cf>0?'pos':'neg'):kp('Payback',isFinite(c.pb)?c.pb.toFixed(1)+' años':'—','')}</div>`+sec('Inversión total',dr('Precio de compra',ef(S.pc))+dr('ITP',ef(c.it))+dr('Notaría + Registro',ef(c.nr))+dr('Due diligence',ef(S.dd))+dr('Reforma',ef(c.ref))+dr('Contingencia',ef(c.co))+dr('Coste total',ef(c.tot),'hl')+(S.fin?dr('Capital propio',ef(c.cap),'hl'):''),'brI')+sec('Cuenta de explotación anual',dr('Renta bruta anual',ef(c.ra))+dr('Vacancia','− '+ef(c.ve))+dr('Ingresos efectivos',ef(c.ie),'hl')+'<div class="gap"></div>'+dr('IBI','− '+ef(B.ibi))+dr('Comunidad','− '+ef(B.com))+dr('Seguro hogar','− '+ef(B.seg))+(B.imp?dr('Seguro impago (4,5%)','− '+ef(c.si)):'')+dr('Mantenimiento','− '+ef(c.mt))+(c.gs>0?dr('Gestoría','− '+ef(c.gs)):'')+'<div class="gap"></div>'+dr('Beneficio operativo neto',ef(c.bn),c.bn>0?'pos':'neg')+(S.fin?dr('Cuota hipoteca anual','− '+ef(c.ca))+dr('Cash flow tras hipoteca',ef(c.cf),c.cf>0?'pos':'neg'):'')+'<div class="gap"></div>'+dr('Rentabilidad bruta',ep(c.rb),bk)+dr('Rentabilidad neta',ep(c.rn),nk)+(S.fin?dr('Cash on cash',ep(c.coc),ck):''),'brE')+`<div class="refbox">Renta necesaria para yield neta del 7%: <b>${ef(c.r7)}/mes</b><br>Benchmark mínimo Valencia: 9–11% bruta · Media España 2024: 7,2% bruta<br>Seguro impago: 4,5% renta anual · Cobertura hasta 12 mensualidades</div>`;}
+
+rSI();rSR();rPresupuesto();rFI();rFR();rBI();rBR();
+</script>
+<script>
+// Registrar Service Worker para PWA
+// PWA Install prompt
+let deferredPrompt = null;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  const btn = document.getElementById('pwa-install-btn');
+  if(btn) btn.style.display = '';
+});
+window.addEventListener('appinstalled', () => {
+  const btn = document.getElementById('pwa-install-btn');
+  if(btn) btn.style.display = 'none';
+  deferredPrompt = null;
+});
+window.installPWA = async function(){
+  if(!deferredPrompt){ 
+    alert('Para instalar en iPhone:\n1. Pulsa el botón compartir (□↑) en Safari\n2. Selecciona "Añadir a pantalla de inicio"');
+    return;
+  }
+  deferredPrompt.prompt();
+  const result = await deferredPrompt.userChoice;
+  deferredPrompt = null;
+  const btn = document.getElementById('pwa-install-btn');
+  if(btn) btn.style.display = 'none';
+};
+
+if('serviceWorker' in navigator){
+  window.addEventListener('load', ()=>{
+    navigator.serviceWorker.register('/sw.js').then(reg=>{
+      console.log('SW registrado:', reg.scope);
+      // Notificar si hay actualización disponible
+      reg.addEventListener('updatefound', ()=>{
+        const newWorker = reg.installing;
+        newWorker.addEventListener('statechange', ()=>{
+          if(newWorker.state==='installed' && navigator.serviceWorker.controller){
+            if(confirm('Hay una nueva versión disponible. ¿Actualizar?')){
+              newWorker.postMessage('skipWaiting');
+              window.location.reload();
+            }
+          }
+        });
+      });
+    }).catch(err=>console.log('SW error:', err));
+  });
+}
+</script>
+</body>
+</html>
+<!-- PATCH: importar anuncio + base de datos -->
+<script>
+
+// ─── CONFIG localStorage ─────────────────────────────────────────────
+const CFG_KEY = 'return_config_v1';
+function loadConfig(){ try{ return JSON.parse(localStorage.getItem(CFG_KEY)||'{}'); }catch(e){ return {}; } }
+function saveConfig(c){ localStorage.setItem(CFG_KEY, JSON.stringify(c)); }
+
+window.saveApiConfig = function(){
+  const cfg = {
+    provider:      document.getElementById('ai-provider')?.value || 'openai',
+    openaiKey:     document.getElementById('openai-key')?.value?.trim() || '',
+    googKey:       document.getElementById('goog-key')?.value?.trim() || '',
+    anthKey:       document.getElementById('anth-key')?.value?.trim() || '',
+    proxyUrl:      document.getElementById('proxy-url')?.value?.trim() || '',
+    driveClientId: document.getElementById('drive-client-id')?.value?.trim() || '',
+  };
+  // Update driveClientId global
+  if(cfg.driveClientId) driveClientId = cfg.driveClientId;
+  saveConfig(cfg);
+  const st = document.getElementById('cfg-status');
+  if(st){ st.textContent = '✓ Configuración guardada'; st.style.color='#16a34a'; setTimeout(()=>{st.textContent='';},3000); }
+};
+
+window.toggleProviderFields = function(){
+  const p = document.getElementById('ai-provider')?.value;
+  ['row-openai','row-goog','row-anth'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.style.display='none';
+  });
+  const map={openai:'row-openai',google:'row-goog',anthropic:'row-anth'};
+  const show=document.getElementById(map[p]);
+  if(show) show.style.display='';
+};
+
+// ─── INICIALIZAR PESTAÑA IMPORTAR ────────────────────────────────────
+function initImport(){
+  const el = document.getElementById('ip-content');
+  if(!el) return;
+  if(el.dataset.init === '1') return; // Already initialized
+  el.dataset.init = '1';
+  const cfg = loadConfig();
+  el.innerHTML = importarHTML();
+  const setV = (id,v)=>{ const e=document.getElementById(id); if(e&&v) e.value=v; };
+  setV('ai-provider', cfg.provider||'openai');
+  setV('openai-key', cfg.openaiKey);
+  setV('goog-key', cfg.googKey);
+  setV('anth-key', cfg.anthKey);
+  setV('proxy-url', cfg.proxyUrl);
+  setV('drive-client-id', cfg.driveClientId);
+  if(cfg.driveClientId) driveClientId = cfg.driveClientId;
+  toggleProviderFields();
+  // Restore drive connection status if token exists
+  if(driveToken) updateDriveUI(true);
+}
+
+// sw patching moved to unified sw function below
+
+// ─── HTML IMPORTAR ───────────────────────────────────────────────────
+function importarHTML(){
+  return `<div style="max-width:820px">
+    <div class="sec">
+      <div class="sec-h" onclick="toggleSec2('sec-cfg')">
+        <span class="sec-ht">⚙ Configuración IA y servidor</span>
+        <span class="arr open" id="a-sec-cfg">▼</span>
+      </div>
+      <div class="sec-b open" id="sec-cfg">
+        <div class="irow">
+          <div class="ilbl">Proveedor de IA</div>
+          <div class="iwrap">
+            <select id="ai-provider" onchange="toggleProviderFields()">
+              <option value="openai">OpenAI (ChatGPT)</option>
+              <option value="google">Google Gemini — GRATIS hasta 1.500/día</option>
+              <option value="anthropic">Anthropic Claude</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="row-openai">
+          <div class="irow">
+            <div class="ilbl">OpenAI API Key</div>
+            <div class="iwrap"><input type="password" id="openai-key" placeholder="sk-proj-..." style="font-family:'Courier New',monospace;font-size:12px"></div>
+          </div>
+          <div style="font-size:10px;color:#bbb;margin:-4px 0 8px;line-height:1.5">
+            <a href="https://platform.openai.com/api-keys" target="_blank" style="color:#ba7517">platform.openai.com/api-keys</a> · Modelo: <b>gpt-4o-mini</b> (~0,002€ por anuncio)
+          </div>
+        </div>
+
+        <div id="row-goog" style="display:none">
+          <div class="irow">
+            <div class="ilbl">Google API Key <span style="color:#16a34a;font-weight:400">— gratuita</span></div>
+            <div class="iwrap"><input type="password" id="goog-key" placeholder="AIzaSy..." style="font-family:'Courier New',monospace;font-size:12px"></div>
+          </div>
+          <div style="font-size:10px;color:#bbb;margin:-4px 0 8px;line-height:1.5">
+            <a href="https://aistudio.google.com/apikey" target="_blank" style="color:#ba7517">aistudio.google.com/apikey</a> · Modelo: <b>gemini-1.5-flash</b> · 1.500 peticiones/día gratis
+          </div>
+        </div>
+
+        <div id="row-anth" style="display:none">
+          <div class="irow">
+            <div class="ilbl">Anthropic API Key</div>
+            <div class="iwrap"><input type="password" id="anth-key" placeholder="sk-ant-..." style="font-family:'Courier New',monospace;font-size:12px"></div>
+          </div>
+          <div style="font-size:10px;color:#bbb;margin:-4px 0 8px">
+            <a href="https://console.anthropic.com" target="_blank" style="color:#ba7517">console.anthropic.com</a>
+          </div>
+        </div>
+
+        <div class="irow">
+          <div class="ilbl">URL proxy servidor propio <span style="color:#bbb;font-weight:400">(opcional — para scraping de Idealista)</span></div>
+          <div class="iwrap"><input type="url" id="proxy-url" placeholder="https://tu-servidor.run.app/fetch" style="font-size:12px"></div>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:10px;margin-top:4px">
+          <button onclick="saveApiConfig()" style="padding:7px 16px;border:1px solid #1a1a1a;border-radius:6px;background:#1a1a1a;color:#fff;font-size:12px;cursor:pointer;font-family:inherit;font-weight:500">Guardar configuración</button>
+          <span id="cfg-status" style="font-size:11px"></span>
+        </div>
+
+        <div style="border-top:1px solid #e5e5e0;margin-top:14px;padding-top:14px">
+          <div style="font-size:12px;font-weight:500;color:#555;margin-bottom:8px">Google Drive — sincronización</div>
+          <div style="font-size:10px;color:#bbb;line-height:1.5;margin-bottom:10px;padding:8px 10px;background:#f9f9f7;border-radius:6px">
+            Guarda el portfolio y el estado en tu carpeta de Drive. Los archivos aparecerán como <b>return_portfolio.json</b> y <b>return_state.json</b>.
+          </div>
+          <div class="irow">
+            <div class="ilbl">OAuth 2.0 Client ID <span style="color:#bbb;font-weight:400">(de GCP Console → Clientes)</span></div>
+            <div class="iwrap"><input type="text" id="drive-client-id" placeholder="253233836006-xxxx.apps.googleusercontent.com" style="font-size:11px;font-family:'Courier New',monospace"></div>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center;margin-top:8px;flex-wrap:wrap">
+            <button id="drive-connect-btn" onclick="connectDrive()" style="padding:7px 14px;border:1px solid #4285f4;border-radius:6px;background:#4285f4;color:#fff;font-size:12px;cursor:pointer;font-family:inherit;font-weight:500">Conectar con Google Drive</button>
+            <button id="drive-disconnect-btn" onclick="disconnectDrive()" style="padding:7px 14px;border:1px solid #e5e5e0;border-radius:6px;background:#fff;font-size:12px;cursor:pointer;font-family:inherit;color:#dc2626;display:none">Desconectar</button>
+            <span id="drive-status" style="font-size:11px;color:#aaa"></span>
+          </div>
+          <div id="drive-actions" style="margin-top:8px;display:none">
+            <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+              <button onclick="drivePush()" style="padding:6px 12px;border:1px solid #e5e5e0;border-radius:6px;background:#fff;font-size:11px;cursor:pointer;font-family:inherit;color:#555">↑ Subir a Drive</button>
+              <button onclick="drivePull()" style="padding:6px 12px;border:1px solid #e5e5e0;border-radius:6px;background:#fff;font-size:11px;cursor:pointer;font-family:inherit;color:#555">↓ Descargar de Drive</button>
+              <button onclick="driveSyncAll()" style="padding:6px 12px;border:1px solid #86efac;border-radius:6px;background:#f0fdf4;font-size:11px;cursor:pointer;font-family:inherit;color:#15803d">⟳ Sincronizar ahora</button>
+              <span id="drive-last-sync" style="font-size:10px;color:#bbb"></span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-h" onclick="toggleSec2('sec-import')">
+        <span class="sec-ht">Importar anuncio</span>
+        <span class="arr open" id="a-sec-import">▼</span>
+      </div>
+      <div class="sec-b open" id="sec-import">
+        <div style="font-size:11px;color:#888;line-height:1.6;margin-bottom:10px;border:1px solid #e5e5e0;border-radius:6px;padding:10px 12px;background:#fafaf8">
+          <b style="color:#555">Cómo importar:</b><br>
+          1. Ve al anuncio en Idealista, Fotocasa, pisos.com, etc.<br>
+          2. Selecciona todo el texto de la página (Ctrl+A) y cópialo (Ctrl+C).<br>
+          3. Pégalo abajo y pulsa <b>Analizar</b>. La IA extrae todos los campos automáticamente.
+        </div>
+
+        <div class="ilbl" style="margin-bottom:4px">URL del anuncio <span style="color:#aaa">(opcional — funciona para portales sin bloqueo)</span></div>
+        <div style="display:flex;gap:8px;margin-bottom:10px">
+          <div class="iwrap" style="flex:1">
+            <input type="url" id="url-inp" placeholder="https://www.fotocasa.es/es/comprar/..." style="font-size:12px">
+          </div>
+          <button onclick="fetchUrl()" id="url-btn" style="padding:7px 14px;border:1px solid #e5e5e0;border-radius:6px;background:#fff;font-size:12px;cursor:pointer;font-family:inherit;font-weight:500;white-space:nowrap">Obtener →</button>
+        </div>
+
+        <div class="ilbl" style="margin-bottom:4px">Texto del anuncio</div>
+        <textarea id="listing-txt" rows="9" style="width:100%;border:1px solid #e5e5e0;border-radius:6px;padding:10px;font-size:12px;font-family:inherit;line-height:1.5;resize:vertical;outline:none;color:#1a1a1a;background:#fff" placeholder="Pega aquí el texto del anuncio...&#10;&#10;Ejemplo:&#10;Piso en venta en Triana, Sevilla&#10;Precio: 185.000 €&#10;75 m² · 3 hab · 1 baño · Planta 2ª sin ascensor&#10;Estado: Para reformar · Año 1963&#10;Comunidad: 45 €/mes · IBI: 280 €/año"></textarea>
+
+        <div style="display:flex;gap:8px;margin-top:8px;align-items:center;flex-wrap:wrap">
+          <button onclick="analizarAnuncio()" id="analyze-btn" style="padding:8px 18px;border:1px solid #1a1a1a;border-radius:6px;background:#1a1a1a;color:#fff;font-size:13px;cursor:pointer;font-family:inherit;font-weight:500">Analizar con IA</button>
+          <button onclick="clearImport()" style="padding:8px 12px;border:1px solid #e5e5e0;border-radius:6px;background:#fff;font-size:12px;cursor:pointer;font-family:inherit;color:#888">Limpiar</button>
+          <span id="analyze-status" style="font-size:11px;color:#aaa"></span>
+        </div>
+      </div>
+    </div>
+    <div id="import-result"></div>
+  </div>`;
+}
+
+window.toggleSec2 = function(id){
+  const b=document.getElementById(id),a=document.getElementById('a-'+id);
+  if(!b)return;
+  b.classList.toggle('open');
+  if(a)a.classList.toggle('open',b.classList.contains('open'));
+};
+
+// ─── FETCH URL ───────────────────────────────────────────────────────
+window.fetchUrl = async function(){
+  const url=document.getElementById('url-inp')?.value?.trim();
+  if(!url){alert('Introduce una URL');return;}
+  const cfg=loadConfig();
+  const btn=document.getElementById('url-btn'),st=document.getElementById('analyze-status');
+  btn.textContent='Obteniendo...';btn.disabled=true;
+  st.textContent='';st.style.color='#aaa';
+  try{
+    let text='';
+    if(cfg.proxyUrl){
+      st.textContent='Usando tu servidor proxy...';
+      const r=await fetch(cfg.proxyUrl+'?url='+encodeURIComponent(url),{signal:AbortSignal.timeout(12000)});
+      if(r.ok){const d=await r.json();text=(d.content||d.text||'').substring(0,8000);}
+    }
+    if(!text){
+      st.textContent='Intentando acceso directo...';
+      const r2=await fetch('https://api.allorigins.win/get?url='+encodeURIComponent(url),{signal:AbortSignal.timeout(8000)});
+      const d2=await r2.json();
+      if(d2.contents&&d2.contents.length>300){
+        text=d2.contents.replace(/<script[^>]*>[\s\S]*?<\/script>/gi,'').replace(/<style[^>]*>[\s\S]*?<\/style>/gi,'').replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').substring(0,8000);
+      }
+    }
+    if(text&&text.length>100){
+      document.getElementById('listing-txt').value=text;
+      st.textContent='✓ Contenido obtenido. Pulsa Analizar.';st.style.color='#16a34a';
+    }else{
+      st.textContent='Portal bloqueado. Pega el texto manualmente.';st.style.color='#d97706';
+    }
+  }catch(e){st.textContent='Error: '+e.message;st.style.color='#d97706';}
+  btn.textContent='Obtener →';btn.disabled=false;
+};
+
+// ─── PROMPTS Y LLAMADAS A IA ──────────────────────────────────────────
+const PROMPT_BASE=`Eres experto en inversión inmobiliaria española. Extrae los datos del anuncio y devuelve SOLO JSON válido, sin texto adicional ni backticks. Si un dato no aparece usa null.
+
+JSON requerido:
+{"precio":null,"superficie":null,"superficie_util":null,"habitaciones":null,"banos":null,"planta":null,"ascensor":null,"estado":null,"ano_construccion":null,"municipio":null,"barrio":null,"provincia":null,"gastos_comunidad":null,"ibi":null,"honorarios_agencia_pct":null,"garaje":null,"trastero":null,"orientacion":null,"certificado_energetico":null,"descripcion_breve":null,"plataforma":null,"notas_inversor":null}
+
+Valores posibles para estado: "buen estado"|"para reformar"|"obra nueva"|null
+Valores para plataforma: "idealista"|"fotocasa"|"pisos.com"|"habitaclia"|"otro"
+notas_inversor: 1-2 frases clave para un inversor (riesgos, oportunidades, alertas).
+
+ANUNCIO:
+`;
+
+async function callOpenAI(txt,key){
+  const r=await fetch('https://api.openai.com/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},body:JSON.stringify({model:'gpt-4o-mini',messages:[{role:'user',content:PROMPT_BASE+txt.substring(0,5000)}],max_tokens:900})});
+  if(!r.ok){const e=await r.json();throw new Error(e.error?.message||'Error OpenAI '+r.status);}
+  return (await r.json()).choices?.[0]?.message?.content||'';
+}
+
+async function callGemini(txt,key){
+  const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key='+key,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:PROMPT_BASE+txt.substring(0,5000)}]}]})});
+  if(!r.ok){const e=await r.json();throw new Error(e.error?.message||'Error Gemini '+r.status);}
+  return (await r.json()).candidates?.[0]?.content?.parts?.[0]?.text||'';
+}
+
+async function callClaude(txt,key){
+  const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:900,messages:[{role:'user',content:PROMPT_BASE+txt.substring(0,5000)}]})});
+  if(!r.ok){const e=await r.json();throw new Error(e.error?.message||'Error Claude '+r.status);}
+  return (await r.json()).content?.[0]?.text||'';
+}
+
+window.analizarAnuncio = async function(){
+  const txt=document.getElementById('listing-txt')?.value?.trim();
+  if(!txt){alert('Pega primero el texto del anuncio');return;}
+  const cfg=loadConfig();
+  const provider=cfg.provider||'openai';
+  const key=provider==='openai'?cfg.openaiKey:provider==='google'?cfg.googKey:cfg.anthKey;
+  if(!key){alert('Configura primero tu API key en la sección de Configuración IA');return;}
+  const btn=document.getElementById('analyze-btn'),st=document.getElementById('analyze-status');
+  btn.textContent='Analizando...';btn.disabled=true;
+  st.textContent='Enviando a '+(provider==='openai'?'ChatGPT':provider==='google'?'Gemini':'Claude')+'...';
+  st.style.color='#aaa';
+  try{
+    let raw='';
+    if(provider==='openai') raw=await callOpenAI(txt,key);
+    else if(provider==='google') raw=await callGemini(txt,key);
+    else raw=await callClaude(txt,key);
+    const m=raw.match(/\{[\s\S]*\}/);
+    if(!m)throw new Error('La IA no devolvió JSON válido. Revisa la API key.');
+    const parsed=JSON.parse(m[0]);
+    mostrarResultadoImport(parsed);
+    const pName=provider==='openai'?'GPT-4o mini':provider==='google'?'Gemini 1.5 Flash':'Claude Sonnet';
+    st.textContent='✓ Análisis completado con '+pName;st.style.color='#16a34a';
+  }catch(e){st.textContent='Error: '+e.message;st.style.color='#dc2626';}
+  btn.textContent='Analizar con IA';btn.disabled=false;
+};
+
+function mostrarResultadoImport(d){
+  const r=document.getElementById('import-result');if(!r)return;
+  window._lastImport=d;
+  const ef2=n=>n!=null?new Intl.NumberFormat('es-ES',{maximumFractionDigits:0}).format(n):'—';
+  const filas=[
+    ['Precio',d.precio!=null?ef2(d.precio)+' €':null],
+    ['Superficie',d.superficie!=null?d.superficie+' m²':null],
+    ['Superficie útil',d.superficie_util!=null?d.superficie_util+' m²':null],
+    ['Habitaciones',d.habitaciones],['Baños',d.banos],
+    ['Planta',d.planta!=null?(d.planta===0?'Bajo':d.planta+'ª'):null],
+    ['Ascensor',d.ascensor===true?'Sí':d.ascensor===false?'No':null],
+    ['Estado',d.estado],['Año construcción',d.ano_construccion],
+    ['Garaje',d.garaje===true?'Sí':null],['Trastero',d.trastero===true?'Sí':null],
+    ['Orientación',d.orientacion],['Certif. energético',d.certificado_energetico],
+    ['Municipio',d.municipio],['Barrio',d.barrio],['Provincia',d.provincia],
+    ['Comunidad',d.gastos_comunidad!=null?d.gastos_comunidad+' €/mes':null],
+    ['IBI',d.ibi!=null?d.ibi+' €/año':null],
+    ['Honorarios agencia',d.honorarios_agencia_pct!=null?d.honorarios_agencia_pct+'%':null],
+    ['Plataforma',d.plataforma],
+  ].filter(([,v])=>v!==null&&v!==undefined&&v!=='');
+  r.innerHTML=`<div class="sec" style="margin-top:8px">
+    <div class="sec-h" style="cursor:default;background:#f0fdf4;border-bottom:1px solid #86efac">
+      <span class="sec-ht" style="color:#15803d">✓ Datos extraídos del anuncio</span>
+    </div>
+    <div class="sec-b open" style="display:block">
+      ${d.descripcion_breve?`<div style="font-size:12px;color:#555;margin-bottom:10px;padding:8px 10px;background:#f9f9f7;border-radius:6px;line-height:1.5">${d.descripcion_breve}</div>`:''}
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0">
+        ${filas.map(([l,v],i)=>`<div class="dr" style="${i%2?'background:#fafaf8':''}"><span class="dl">${l}</span><span class="dv">${v}</span></div>`).join('')}
+      </div>
+      ${d.notas_inversor?`<div style="font-size:11px;color:#92400e;margin-top:10px;padding:9px 12px;background:#fffbeb;border:1px solid #fcd34d;border-radius:6px;line-height:1.6"><b>Nota inversor:</b> ${d.notas_inversor}</div>`:''}
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px">
+        <button onclick="aplicarActivo()" style="padding:8px;border:1px solid #1a1a1a;border-radius:6px;background:#1a1a1a;color:#fff;font-size:11px;cursor:pointer;font-family:inherit;font-weight:500">Aplicar a Activo</button>
+        <button onclick="aplicarYIrFlip()" style="padding:8px;border:1px solid #e5e5e0;border-radius:6px;background:#fff;font-size:11px;cursor:pointer;font-family:inherit;color:#555;font-weight:500">Ir a Flip →</button>
+        <button onclick="guardarComoCase()" style="padding:8px;border:1px solid #86efac;border-radius:6px;background:#f0fdf4;font-size:11px;cursor:pointer;font-family:inherit;color:#15803d;font-weight:500">Guardar en Portfolio</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+window.aplicarActivo=function(){
+  const d=window._lastImport;if(!d)return;
+  if(d.precio)window.S.pc=d.precio;
+  if(d.superficie)window.F.sup=d.superficie;
+  if(d.gastos_comunidad)window.B.com=Math.round(d.gastos_comunidad*12);
+  if(d.ibi)window.B.ibi=d.ibi;
+  if(d.honorarios_agencia_pct)window.S.hon=d.honorarios_agencia_pct;
+  window.rSI();window.rSR();window.rFI();window.rFR();window.rBI();window.rBR();
+  window.sw('ap',document.querySelectorAll('.tab')[0]);
+};
+window.aplicarYIrFlip=function(){window.aplicarActivo();setTimeout(()=>window.sw('fp',document.querySelectorAll('.tab')[2]),150);};
+window.clearImport=function(){
+  ['listing-txt','url-inp'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  const r=document.getElementById('import-result');if(r)r.innerHTML='';
+  const st=document.getElementById('analyze-status');if(st)st.textContent='';
+};
+
+// ─── PORTFOLIO ────────────────────────────────────────────────────────
+const DB_KEY='return_portfolio_v1';
+function getPortfolio(){try{return JSON.parse(localStorage.getItem(DB_KEY)||'[]');}catch(e){return[];}}
+function savePortfolio(c){localStorage.setItem(DB_KEY,JSON.stringify(c));}
+
+window.guardarComoCase=function(){
+  const d=window._lastImport||{};
+  const name=prompt('Nombre para este caso:',d.descripcion_breve||'Nuevo caso');
+  if(!name)return;
+  // Capture live values safely
+  const _S = window.S || {pc:0};
+  const _F = window.F || {sup:0,rm2:0,ct:15,ind:0,pl:0,pv:0,gv:5};
+  const _B = window.B || {ref:0,ct:15,rnt:0,vac:5,ibi:0,com:0,seg:0,imp:true,mnt:1,ges:0};
+  let resF={rc:0,mn:0,ra:0,tot:0,cr:0};
+  let resB={rn:0,rb:0,coc:0,bn:0,cf:0,tot:0};
+  try{ const r=cF(_S,_F); resF={rc:+(r.rc||0).toFixed(2),mn:Math.round(r.mn||0),ra:+(r.ra||0).toFixed(2),tot:Math.round(r.tot||0),cr:Math.round(r.cr||0)}; }catch(e){console.log('cF err:',e);}
+  try{ const r=cB(_S,_B); resB={rn:+(r.rn||0).toFixed(2),rb:+(r.rb||0).toFixed(2),coc:+(r.coc||0).toFixed(2),bn:Math.round(r.bn||0),cf:Math.round(r.cf||0),tot:Math.round(r.tot||0)}; }catch(e){console.log('cB err:',e);}
+  const caso={id:Date.now(),name,date:new Date().toISOString().slice(0,10),loc:window.SEL?{...window.SEL}:{},S:{..._S},F:{..._F},B:{..._B},presupuesto:window._presupuestoTotal||0,CATS:window.CATS?window.CATS.map(c=>({n:c.n,open:c.open,items:c.items.map(i=>({d:i.d,u:i.u,q:i.q,p:i.p,on:i.on,ref:i.ref||''}))})):[],importData:d,resultado:{flip:resF,btr:resB},notas:''};
+  const cases=getPortfolio();
+  cases.unshift(caso);
+  savePortfolio(cases);
+  // Refresh portfolio view immediately with local data (no Drive fetch)
+  const pp2el = document.getElementById('pp2-content');
+  if(pp2el) renderPortfolio(pp2el);
+  // Push to Drive in background
+  if(driveToken){
+    window.drivePush().then(()=>{
+      setDriveStatus('✓ Guardado y subido a Drive','#16a34a');
+    }).catch(e=>{ console.log('Drive push error:',e); setDriveStatus('Guardado local (Drive falló)','#d97706'); });
+  }
+  alert('✓ Guardado: "'+name+'"');
+};
+window.saveCurrentCase=function(){
+  // Force autoSave first so localStorage is up to date
+  if(window.autoSave) window.autoSave();
+  window._lastImport=window._lastImport||{};
+  window.guardarComoCase();
+};
+// Also refresh portfolio when tab is opened
+// sw unified below
+
+window.loadPortfolio=function(){
+  const el=document.getElementById('pp2-content');
+  if(!el){console.log('pp2-content not found');return;}
+  renderPortfolio(el);
+  if(driveToken){
+    driveListFiles().then(files=>{
+      const pfFile=files.find(f=>f.name===DRIVE_PORTFOLIO_FILE);
+      if(pfFile){
+        driveReadFile(pfFile.id).then(driveCases=>{
+          if(Array.isArray(driveCases)){
+            const localCases=getPortfolio();
+            const merged=[...localCases]; // local wins (most recent)
+            driveCases.forEach(dc=>{
+              if(!merged.find(lc=>lc.id===dc.id)) merged.push(dc);
+            });
+            merged.sort((a,b)=>b.id-a.id);
+            localStorage.setItem(DB_KEY,JSON.stringify(merged));
+            renderPortfolio(el); // re-render with merged data
+          }
+        }).catch(()=>{});
+      }
+    }).catch(()=>{});
+  }
+  return;
+  renderPortfolio(el);
+};
+
+function renderPortfolio(el){
+  CATS=window.CATS;
+  const cases=getPortfolio();
+  const N=cases.length;
+  const ef2=n=>isFinite(n)&&n!==null?new Intl.NumberFormat('es-ES',{maximumFractionDigits:0}).format(Math.round(n))+' €':'—';
+  const ep2=(n,d=1)=>isFinite(n)&&!isNaN(n)?n.toFixed(d)+'%':'—';
+  const avgF=N?+(cases.reduce((s,c)=>s+(c.resultado?.flip?.rc||0),0)/N).toFixed(1):0;
+  const avgB=N?+(cases.reduce((s,c)=>s+(c.resultado?.btr?.rn||0),0)/N).toFixed(1):0;
+  const totInv=cases.reduce((s,c)=>s+(c.S?.pc||0)+(c.presupuesto||0),0);
+  const driveIndicator=driveToken?'<span style="display:inline-flex;align-items:center;gap:4px;font-size:10px;color:#16a34a;background:#f0fdf4;border:1px solid #86efac;border-radius:4px;padding:2px 8px">● Drive conectado</span>':'';
+
+  el.innerHTML=`
+  <div style="max-width:1000px">
+    <!-- HEADER -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px">
+      <div>
+        <div style="font-size:18px;font-weight:500;color:#1a1a1a">Portfolio</div>
+        <div style="font-size:11px;color:#aaa;margin-top:2px">${N} operacion${N!==1?'es':''} guardada${N!==1?'s':''} ${driveIndicator}</div>
+      </div>
+      <button onclick="saveCurrentCase()" style="padding:8px 16px;border:1px solid #1a1a1a;border-radius:8px;background:#1a1a1a;color:#fff;font-size:12px;cursor:pointer;font-family:inherit;font-weight:500">+ Guardar análisis actual</button>
+    </div>
+
+    <!-- STATS -->
+    ${N>0?`<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px">
+      <div style="background:#f4f4f0;border-radius:10px;padding:14px">
+        <div style="font-size:11px;color:#aaa;margin-bottom:4px">Operaciones</div>
+        <div style="font-size:24px;font-weight:500;font-family:'Courier New',monospace">${N}</div>
+      </div>
+      <div style="background:#f4f4f0;border-radius:10px;padding:14px">
+        <div style="font-size:11px;color:#aaa;margin-bottom:4px">ROI flip medio</div>
+        <div style="font-size:24px;font-weight:500;font-family:'Courier New',monospace;color:${avgF>=20?'#16a34a':avgF>=10?'#d97706':'#dc2626'}">${ep2(avgF)}</div>
+        <div style="font-size:10px;color:#aaa;margin-top:2px">sobre capital</div>
+      </div>
+      <div style="background:#f4f4f0;border-radius:10px;padding:14px">
+        <div style="font-size:11px;color:#aaa;margin-bottom:4px">Yield BTR media</div>
+        <div style="font-size:24px;font-weight:500;font-family:'Courier New',monospace;color:${avgB>=7?'#16a34a':avgB>=5?'#d97706':'#dc2626'}">${ep2(avgB)}</div>
+        <div style="font-size:10px;color:#aaa;margin-top:2px">neta</div>
+      </div>
+      <div style="background:#f4f4f0;border-radius:10px;padding:14px">
+        <div style="font-size:11px;color:#aaa;margin-bottom:4px">Capital invertido</div>
+        <div style="font-size:22px;font-weight:500;font-family:'Courier New',monospace">${ef2(totInv)}</div>
+        <div style="font-size:10px;color:#aaa;margin-top:2px">compra + reforma</div>
+      </div>
+    </div>`:''}
+
+    <!-- CASOS -->
+    ${N===0?`<div style="text-align:center;padding:56px 24px;border:1px dashed #e5e5e0;border-radius:12px;color:#aaa">
+      <div style="font-size:36px;margin-bottom:10px">📁</div>
+      <div style="font-size:14px;font-weight:500;margin-bottom:6px;color:#999">Sin operaciones guardadas</div>
+      <div style="font-size:12px">Rellena los datos de una operación y pulsa<br><b>+ Guardar análisis actual</b></div>
+    </div>`:cases.map((c,i)=>{
+      const rc=c.resultado?.flip?.rc||0, rn=c.resultado?.btr?.rn||0, mn=c.resultado?.flip?.mn||0;
+      const tagF=rc>=20?'#16a34a':rc>=10?'#d97706':'#dc2626';
+      const tagB=rn>=7?'#16a34a':rn>=5?'#d97706':'#dc2626';
+      const locStr=[c.loc?.sub,c.loc?.bar,c.loc?.mun].filter(Boolean).join(' · ')||'';
+      const reforma=c.presupuesto>0?c.presupuesto:(c.F?.rm2||0)*(c.F?.sup||0);
+      const totProy=(c.S?.pc||0)+(reforma||0);
+      return `<div style="border:1px solid #e5e5e0;border-radius:12px;margin-bottom:10px;overflow:hidden">
+        <!-- CABECERA CASO -->
+        <div style="display:flex;align-items:start;justify-content:space-between;padding:14px 16px;gap:12px">
+          <div style="flex:1;min-width:0">
+            <div style="font-size:14px;font-weight:500;margin-bottom:2px;color:#1a1a1a">${c.name}</div>
+            <div style="font-size:11px;color:#aaa">${c.date}${locStr?' · '+locStr:''}</div>
+          </div>
+          <div style="display:flex;gap:6px;flex-shrink:0">
+            <button onclick="loadCase(${i})" style="padding:6px 14px;border:1px solid #e5e5e0;border-radius:6px;background:#fff;font-size:11px;cursor:pointer;font-family:inherit;color:#555;font-weight:500">Cargar</button>
+            <button onclick="addNoteCase(${i})" title="Nota" style="padding:6px 10px;border:1px solid #e5e5e0;border-radius:6px;background:#fff;font-size:12px;cursor:pointer;color:#aaa">📝</button>
+            <button onclick="deleteCase(${i})" style="padding:6px 10px;border:1px solid #fca5a5;border-radius:6px;background:#fef2f2;font-size:12px;cursor:pointer;color:#dc2626">✕</button>
+          </div>
+        </div>
+        <!-- DATOS CLAVE -->
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:0;border-top:1px solid #f0f0ea">
+          <div style="padding:10px 14px;border-right:1px solid #f0f0ea">
+            <div style="font-size:10px;color:#aaa;margin-bottom:3px">Compra</div>
+            <div style="font-size:14px;font-weight:500;font-family:'Courier New',monospace">${c.S?.pc>0?ef2(c.S.pc):'—'}</div>
+          </div>
+          <div style="padding:10px 14px;border-right:1px solid #f0f0ea">
+            <div style="font-size:10px;color:#aaa;margin-bottom:3px">Reforma${c.presupuesto>0?' (presup.)':''}</div>
+            <div style="font-size:14px;font-weight:500;font-family:'Courier New',monospace">${reforma>0?ef2(reforma):'—'}</div>
+          </div>
+          <div style="padding:10px 14px;border-right:1px solid #f0f0ea">
+            <div style="font-size:10px;color:#aaa;margin-bottom:3px">Superficie</div>
+            <div style="font-size:14px;font-weight:500;font-family:'Courier New',monospace">${c.F?.sup>0?c.F.sup+' m²':'—'}</div>
+          </div>
+          <div style="padding:10px 14px">
+            <div style="font-size:10px;color:#aaa;margin-bottom:3px">Inversión total</div>
+            <div style="font-size:14px;font-weight:500;font-family:'Courier New',monospace;color:#ba7517">${totProy>0?ef2(totProy):'—'}</div>
+          </div>
+        </div>
+        <!-- RESULTADOS -->
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:0;border-top:1px solid #f0f0ea;background:#fafaf8">
+          <div style="padding:10px 14px;border-right:1px solid #f0f0ea">
+            <div style="font-size:10px;color:#aaa;margin-bottom:3px">ROI flip</div>
+            <div style="font-size:16px;font-weight:500;font-family:'Courier New',monospace;color:${tagF}">${ep2(rc)}</div>
+          </div>
+          <div style="padding:10px 14px;border-right:1px solid #f0f0ea">
+            <div style="font-size:10px;color:#aaa;margin-bottom:3px">Margen neto</div>
+            <div style="font-size:16px;font-weight:500;font-family:'Courier New',monospace;color:${mn>0?'#16a34a':'#dc2626'}">${ef2(mn)}</div>
+          </div>
+          <div style="padding:10px 14px;border-right:1px solid #f0f0ea">
+            <div style="font-size:10px;color:#aaa;margin-bottom:3px">Yield BTR neta</div>
+            <div style="font-size:16px;font-weight:500;font-family:'Courier New',monospace;color:${tagB}">${ep2(rn)}</div>
+          </div>
+          <div style="padding:10px 14px">
+            <div style="font-size:10px;color:#aaa;margin-bottom:3px">${c.S?.fin?'Cash on cash':'Renta mensual'}</div>
+            <div style="font-size:16px;font-weight:500;font-family:'Courier New',monospace;color:${tagB}">${c.S?.fin?ep2(c.resultado?.btr?.coc):c.B?.rnt>0?ef2(c.B.rnt)+'/mes':'—'}</div>
+          </div>
+        </div>
+        ${c.notas?`<div style="padding:8px 16px;border-top:1px solid #f0f0ea;font-size:11px;color:#888;background:#fafaf8;line-height:1.5">📝 ${c.notas}</div>`:''}
+        ${c.importData?.notas_inversor?`<div style="padding:8px 16px;border-top:1px solid #f0f0ea;font-size:11px;color:#92400e;background:#fffbeb;line-height:1.5">${c.importData.notas_inversor}</div>`:''}
+      </div>`;
+    }).join('')}
+
+    <input type="file" id="import-file-input" accept=".json" style="display:none" onchange="handleImportFile(this)">
+  </div>`;
+}
+
+window.loadCase=function(i){
+  const c=getPortfolio()[i];if(!c)return;
+  if(!confirm('Cargar "'+c.name+'"? Reemplaza los datos actuales.'))return;
+  if(c.S)Object.assign(window.S,c.S);
+  if(c.F)Object.assign(window.F,c.F);
+  if(c.B)Object.assign(window.B,c.B);
+  if(c.loc)Object.assign(window.SEL,c.loc);
+  if(c.CATS&&c.CATS.length)window.CATS=c.CATS;
+  window._presupuestoTotal=c.presupuesto||null;
+  window._lastImport=c.importData||null;
+  window.rSI();window.rSR();
+  if(window.rPresupuesto)window.rPresupuesto();
+  window.rFI();window.rFR();window.rBI();window.rBR();
+  setTimeout(()=>{
+    if(window.SEL&&window.SEL.prov&&window.rebuildSelects)window.rebuildSelects();
+    if(window.doMapUpdate)window.doMapUpdate();
+  },250);
+  window.sw('ap',document.querySelectorAll('.tab')[0]);
+  alert('Cargado: "'+c.name+'"');
+};
+window.deleteCase=function(i){
+  const cases=getPortfolio();
+  if(!confirm('¿Eliminar "'+cases[i]?.name+'"?'))return;
+  cases.splice(i,1);
+  savePortfolio(cases);
+  // Refresh immediately
+  const pp2el=document.getElementById('pp2-content');
+  if(pp2el) renderPortfolio(pp2el);
+  // Push to Drive in background
+  if(driveToken) window.drivePush().catch(e=>console.log('Delete push error:',e));
+};
+window.addNoteCase=function(i){const cases=getPortfolio();const n=prompt('Nota:',cases[i]?.notas||'');if(n===null)return;cases[i].notas=n;savePortfolio(cases);window.loadPortfolio();};
+window.exportPortfolio=function(){const b=new Blob([JSON.stringify(getPortfolio(),null,2)],{type:'application/json'});const a=Object.assign(document.createElement('a'),{href:URL.createObjectURL(b),download:'return_portfolio_'+new Date().toISOString().slice(0,10)+'.json'});a.click();};
+window.importPortfolioFile=function(){document.getElementById('import-file-input')?.click();};
+window.handleImportFile=function(input){const f=input.files[0];if(!f)return;const reader=new FileReader();reader.onload=function(e){try{const imp=JSON.parse(e.target.result);if(!Array.isArray(imp))throw new Error('Formato incorrecto');savePortfolio([...imp,...getPortfolio()]);window.loadPortfolio();alert('✓ '+imp.length+' caso(s) importados');}catch(err){alert('Error: '+err.message);}};reader.readAsText(f);};
+
+window.SEL=window.SEL||{prov:'',mun:'',bar:'',sub:''};
+
+// ─── GOOGLE DRIVE SYNC ───────────────────────────────────────────────
+const DRIVE_FOLDER_ID = null;
+const DRIVE_PORTFOLIO_FILE = 'return_portfolio.json';
+const DRIVE_STATE_FILE     = 'return_state.json';
+const DRIVE_SCOPES         = 'https://www.googleapis.com/auth/drive';
+
+let driveToken = null;
+let driveClientId = '';
+let driveTokenClient = null;
+let gapiReady = false;
+
+// Load saved client ID
+(function(){
+  const cfg = loadConfig();
+  if(cfg.driveClientId) driveClientId = cfg.driveClientId;
+})();
+
+// Init GAPI
+function initGapi(){
+  return new Promise((resolve, reject)=>{
+    if(gapiReady){resolve();return;}
+    gapi.load('client', async ()=>{
+      try{
+        await gapi.client.init({});
+        gapiReady = true;
+        resolve();
+      }catch(e){ reject(e); }
+    });
+  });
+}
+
+window.connectDrive = async function(){
+  driveClientId = document.getElementById('drive-client-id')?.value?.trim();
+  if(!driveClientId){ alert('Introduce el Client ID de OAuth y guarda la configuración primero'); return; }
+  const cfg = loadConfig();
+  cfg.driveClientId = driveClientId;
+  saveConfig(cfg);
+  setDriveStatus('Conectando...','#d97706');
+  try{
+    driveTokenClient = google.accounts.oauth2.initTokenClient({
+      client_id: driveClientId,
+      scope: DRIVE_SCOPES,
+      callback: async (resp)=>{
+        if(resp.error){ setDriveStatus('Error OAuth: '+resp.error,'#dc2626'); return; }
+        driveToken = resp.access_token;
+        setDriveStatus('✓ Conectado a Google Drive','#16a34a');
+        updateDriveUI(true);
+        await driveSyncAll();
+      }
+    });
+    driveTokenClient.requestAccessToken({prompt:'consent'});
+  }catch(e){
+    setDriveStatus('Error: '+e.message+' — Asegúrate de que la Drive API está habilitada en GCP','#dc2626');
+  }
+};
+
+window.disconnectDrive = function(){
+  if(driveToken) google.accounts.oauth2.revoke(driveToken);
+  driveToken = null;
+  setDriveStatus('Desconectado','#aaa');
+  updateDriveUI(false);
+};
+
+function setDriveStatus(msg, color){
+  const el = document.getElementById('drive-status');
+  if(el){ el.textContent=msg; el.style.color=color||'#aaa'; }
+}
+
+function updateDriveUI(connected){
+  const btn = document.getElementById('drive-connect-btn');
+  const disc = document.getElementById('drive-disconnect-btn');
+  const actions = document.getElementById('drive-actions');
+  if(btn) btn.style.display = connected?'none':'';
+  if(disc) disc.style.display = connected?'':'none';
+  if(actions) actions.style.display = connected?'':'none';
+}
+
+// ─── DRIVE API HELPERS ────────────────────────────────────────────────
+async function driveListFiles(){
+  const pf = encodeURIComponent("name='" + DRIVE_PORTFOLIO_FILE + "' or name='" + DRIVE_STATE_FILE + "'");
+  const q = pf + '&fields=files(id,name,modifiedTime)&spaces=drive&q=' + encodeURIComponent('trashed=false');
+  const qFinal = encodeURIComponent("(name='" + DRIVE_PORTFOLIO_FILE + "' or name='" + DRIVE_STATE_FILE + "') and trashed=false");
+  const url = 'https://www.googleapis.com/drive/v3/files?q=' + qFinal + '&fields=files(id,name,modifiedTime)';
+  const r = await fetch(url, {headers:{'Authorization':'Bearer '+driveToken}});
+  if(!r.ok) throw new Error('Error listando archivos: '+r.status);
+  const d = await r.json();
+  return d.files || [];
+}
+
+async function driveReadFile(fileId){
+  const r = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`,
+    {headers:{'Authorization':'Bearer '+driveToken}});
+  if(!r.ok) throw new Error('Error leyendo archivo: '+r.status);
+  return await r.json();
+}
+
+async function driveWriteFile(name, data, existingId){
+  const token = driveToken;
+  const jsonStr = JSON.stringify(data);
+  if(!existingId){
+    // Multipart upload: metadata + content in one request
+    const boundary = 'return_app_boundary_xyz';
+    const meta = JSON.stringify(DRIVE_FOLDER_ID ? {name, parents:[DRIVE_FOLDER_ID]} : {name});
+    const body = '--'+boundary+'\r\n'+
+      'Content-Type: application/json; charset=UTF-8\r\n\r\n'+
+      meta+'\r\n'+
+      '--'+boundary+'\r\n'+
+      'Content-Type: application/json\r\n\r\n'+
+      jsonStr+'\r\n'+
+      '--'+boundary+'--';
+    const r = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart',{
+      method:'POST',
+      headers:{
+        'Authorization':'Bearer '+token,
+        'Content-Type':'multipart/related; boundary='+boundary
+      },
+      body
+    });
+    if(!r.ok){const e=await r.text();throw new Error('Error creando archivo: '+r.status+' '+e);}
+    const result = await r.json();
+    return result.id;
+  } else {
+    // Update existing file content
+    const r = await fetch(`https://www.googleapis.com/upload/drive/v3/files/${existingId}?uploadType=media`,{
+      method:'PATCH',
+      headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
+      body: jsonStr
+    });
+    if(!r.ok){const e=await r.text();throw new Error('Error actualizando archivo: '+r.status+' '+e);}
+    return existingId;
+  }
+}
+
+// ─── SYNC FUNCTIONS ───────────────────────────────────────────────────
+async function driveSyncAll(){
+  setDriveStatus('Sincronizando...','#d97706');
+  try{
+    const files = await driveListFiles();
+    const pfFile = files.find(f=>f.name===DRIVE_PORTFOLIO_FILE);
+    const stFile = files.find(f=>f.name===DRIVE_STATE_FILE);
+
+    // Merge Drive + local portfolio
+    let mergedPortfolio = JSON.parse(localStorage.getItem(DB_KEY)||'[]');
+    if(pfFile){
+      const drivePf = await driveReadFile(pfFile.id);
+      if(Array.isArray(drivePf)){
+        drivePf.forEach(dc=>{ if(!mergedPortfolio.find(lc=>lc.id===dc.id)) mergedPortfolio.push(dc); });
+        mergedPortfolio.sort((a,b)=>b.id-a.id);
+        localStorage.setItem(DB_KEY, JSON.stringify(mergedPortfolio));
+      }
+    }
+    // Push merged back to Drive
+    await driveWriteFile(DRIVE_PORTFOLIO_FILE, mergedPortfolio, pfFile?.id);
+    if(document.getElementById('pp2-content')) renderPortfolio(document.getElementById('pp2-content'));
+
+    // Pull state from Drive
+    if(stFile){
+      const state = await driveReadFile(stFile.id);
+      localStorage.setItem('return_state_v1', JSON.stringify(state));
+    }
+    // Push state to Drive
+    const localState = JSON.parse(localStorage.getItem('return_state_v1')||'{}');
+    await driveWriteFile(DRIVE_STATE_FILE, localState, stFile?.id);
+
+    const now = new Date().toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'});
+    setDriveStatus('✓ Sincronizado a las '+now,'#16a34a');
+    updateDriveLastSync(now);
+  }catch(e){
+    setDriveStatus('Error sync: '+e.message,'#dc2626');
+    console.error(e);
+  }
+}
+
+window.drivePush = async function(){
+  if(!driveToken){ alert('Conecta con Google Drive primero'); return; }
+  setDriveStatus('Subiendo a Drive...','#d97706');
+  try{
+    // Capture LIVE current state
+    const liveState = {
+      S: {...window.S},
+      F: {...window.F},
+      B: {...window.B},
+      SEL: {...(window.SEL||{})},
+      presupuesto: window._presupuestoTotal||null,
+      CATS: window.CATS ? window.CATS.map(c=>({n:c.n,open:c.open,items:c.items.map(i=>({...i}))})) : [],
+      savedAt: new Date().toISOString()
+    };
+    // Also update localStorage
+    localStorage.setItem('return_state_v1', JSON.stringify(liveState));
+
+    const portfolio = JSON.parse(localStorage.getItem('return_portfolio_v1')||'[]');
+
+    const files = await driveListFiles();
+    const pfFile = files.find(f=>f.name===DRIVE_PORTFOLIO_FILE);
+    const stFile = files.find(f=>f.name===DRIVE_STATE_FILE);
+
+    await Promise.all([
+      driveWriteFile(DRIVE_PORTFOLIO_FILE, portfolio, pfFile?.id),
+      driveWriteFile(DRIVE_STATE_FILE, liveState, stFile?.id)
+    ]);
+
+    const now = new Date().toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'});
+    setDriveStatus('✓ Subido a las '+now,'#16a34a');
+    updateDriveLastSync(now);
+  }catch(e){ setDriveStatus('Error: '+e.message,'#dc2626'); }
+};
+
+window.drivePull = async function(){
+  if(!driveToken){ alert('Conecta con Google Drive primero'); return; }
+  if(!confirm('¿Cargar desde Drive? Esto sobreescribirá los datos locales.'))return;
+  setDriveStatus('Descargando de Drive...','#d97706');
+  try{
+    const files = await driveListFiles();
+    const pfFile = files.find(f=>f.name===DRIVE_PORTFOLIO_FILE);
+    const stFile = files.find(f=>f.name===DRIVE_STATE_FILE);
+    if(pfFile){
+      const portfolio = await driveReadFile(pfFile.id);
+      localStorage.setItem('return_portfolio_v1', JSON.stringify(portfolio));
+      if(document.getElementById('pp2-content')) window.loadPortfolio();
+    }
+    if(stFile){
+      const state = await driveReadFile(stFile.id);
+      localStorage.setItem('return_state_v1', JSON.stringify(state));
+      autoRestore();
+    }
+    const now = new Date().toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'});
+    setDriveStatus('✓ Cargado a las '+now,'#16a34a');
+    updateDriveLastSync(now);
+  }catch(e){ setDriveStatus('Error: '+e.message,'#dc2626'); }
+};
+
+function updateDriveLastSync(time){
+  const el = document.getElementById('drive-last-sync');
+  if(el) el.textContent = 'Última sync: '+time;
+}
+
+// ─── AUTO-SAVE PATCH para push a Drive ───────────────────────────────
+let driveSaveTimer = null;
+const _origAutoSave = window.autoSave;
+window.autoSave = function(){
+  if(_origAutoSave) _origAutoSave();
+  if(driveToken){
+    clearTimeout(driveSaveTimer);
+    driveSaveTimer = setTimeout(window.drivePush, 3000); // Push 3s after last change
+  }
+};
+
+// Portfolio save patch
+const _origSavePortfolio = window.savePortfolio || function(){};
+// Single unified savePortfolio - always saves local, pushes Drive if connected
+function savePortfolio(c){
+  localStorage.setItem(DB_KEY, JSON.stringify(c));
+}
+window.savePortfolio = savePortfolio;
+
+// Drive UI now embedded directly in importarHTML
+
+
+// ─── AUTO-SAVE / AUTO-RESTORE ─────────────────────────────────────────
+const STATE_KEY='return_state_v1';
+
+function autoSave(){
+  try{
+    localStorage.setItem(STATE_KEY,JSON.stringify({
+      S:{...window.S},F:{...window.F},B:{...window.B},
+      SEL:{...window.SEL},
+      presupuesto:window._presupuestoTotal||null,
+      CATS:window.CATS?window.CATS.map(c=>({n:c.n,open:c.open,items:c.items.map(i=>({d:i.d,u:i.u,q:i.q,p:i.p,on:i.on,ref:i.ref||''}))})):[],
+      savedAt:new Date().toISOString()
+    }));
+  }catch(e){}
+}
+
+function autoRestore(){
+  try{
+    const raw=localStorage.getItem(STATE_KEY);
+    if(!raw)return;
+    const st=JSON.parse(raw);
+    if(st.S)Object.assign(window.S,st.S);
+    if(st.F)Object.assign(window.F,st.F);
+    if(st.B)Object.assign(window.B,st.B);
+    if(st.SEL)Object.assign(window.SEL,st.SEL);
+    if(st.presupuesto)window._presupuestoTotal=st.presupuesto;
+    if(st.CATS&&st.CATS.length)window.CATS=st.CATS;
+    // Rebuild UI after restore
+    if(window.rSI)window.rSI();
+    if(window.rSR)window.rSR();
+    if(window.rPresupuesto)window.rPresupuesto();
+    if(window.rFI)window.rFI();
+    if(window.rFR)window.rFR();
+    if(window.rBI)window.rBI();
+    if(window.rBR)window.rBR();
+    // Restore location dropdowns and map
+    if(window.SEL&&window.SEL.prov){
+      setTimeout(()=>{
+        if(window.rebuildSelects)window.rebuildSelects();
+        if(window.doMapUpdate)window.doMapUpdate();
+      },300);
+    }
+  }catch(e){console.log('Restore error:',e);}
+}
+
+// ─── SEARCH PREFERENCES ──────────────────────────────────────────────
+const PREFS_KEY='return_prefs_v1';
+function loadPrefs(){try{return JSON.parse(localStorage.getItem(PREFS_KEY)||'null')||{presMin:40000,presMax:90000,habMin:2,zonasText:'San Juan de Aznalfarache, Mairena del Aljarafe',ascensorRule:'3sin',estadoRef:'para reformar o buen estado',notasLibres:'',yieldMinBTR:7,roiMinFlip:20};}catch(e){return{};}}
+function savePrefs(p){localStorage.setItem(PREFS_KEY,JSON.stringify(p));}
+
+window.abrirPrefs=function(){
+  const p=loadPrefs();
+  const modal=document.createElement('div');
+  modal.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px';
+  modal.innerHTML=`
+    <div style="background:#fff;border-radius:12px;padding:24px;max-width:520px;width:100%;max-height:90vh;overflow-y:auto;font-family:system-ui,-apple-system,sans-serif">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+        <div style="font-size:16px;font-weight:500">Mis criterios de búsqueda</div>
+        <button onclick="this.closest('[style*=fixed]').remove()" style="background:none;border:none;font-size:20px;cursor:pointer;color:#aaa;line-height:1">×</button>
+      </div>
+
+      <div style="font-size:11px;color:#aaa;margin-bottom:16px;line-height:1.5;background:#f9f9f7;padding:8px 10px;border-radius:6px">
+        Estos criterios son tu referencia personal de inversión. Se guardan en el navegador y puedes consultarlos en cualquier momento. No afectan a los cálculos — son tu guía de decisión.
+      </div>
+
+      <div style="margin-bottom:12px">
+        <div style="font-size:11px;color:#666;margin-bottom:4px">Presupuesto de compra</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <div>
+            <div style="font-size:10px;color:#aaa;margin-bottom:3px">Mínimo</div>
+            <div style="display:flex;align-items:center;border:1px solid #e5e5e0;border-radius:6px;overflow:hidden">
+              <input type="number" id="pf-presMin" value="${p.presMin||40000}" style="flex:1;border:none;padding:7px 10px;font-size:13px;font-family:'Courier New',monospace;outline:none">
+              <span style="padding:6px 9px;font-size:11px;color:#aaa;background:#f4f4f0;border-left:1px solid #e5e5e0">€</span>
+            </div>
+          </div>
+          <div>
+            <div style="font-size:10px;color:#aaa;margin-bottom:3px">Máximo</div>
+            <div style="display:flex;align-items:center;border:1px solid #e5e5e0;border-radius:6px;overflow:hidden">
+              <input type="number" id="pf-presMax" value="${p.presMax||90000}" style="flex:1;border:none;padding:7px 10px;font-size:13px;font-family:'Courier New',monospace;outline:none">
+              <span style="padding:6px 9px;font-size:11px;color:#aaa;background:#f4f4f0;border-left:1px solid #e5e5e0">€</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-bottom:12px">
+        <div style="font-size:11px;color:#666;margin-bottom:4px">Habitaciones mínimas</div>
+        <div style="display:flex;align-items:center;border:1px solid #e5e5e0;border-radius:6px;overflow:hidden;max-width:160px">
+          <input type="number" id="pf-habMin" value="${p.habMin||2}" min="1" max="10" style="flex:1;border:none;padding:7px 10px;font-size:13px;font-family:'Courier New',monospace;outline:none">
+          <span style="padding:6px 9px;font-size:11px;color:#aaa;background:#f4f4f0;border-left:1px solid #e5e5e0">hab</span>
+        </div>
+      </div>
+
+      <div style="margin-bottom:12px">
+        <div style="font-size:11px;color:#666;margin-bottom:4px">Zonas prioritarias</div>
+        <div style="border:1px solid #e5e5e0;border-radius:6px;overflow:hidden">
+          <textarea id="pf-zonas" rows="3" style="width:100%;border:none;padding:8px 10px;font-size:12px;font-family:inherit;outline:none;resize:vertical">${p.zonasText||''}</textarea>
+        </div>
+      </div>
+
+      <div style="margin-bottom:12px">
+        <div style="font-size:11px;color:#666;margin-bottom:6px">Criterio planta / ascensor</div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          ${[
+            ['3sin','Descartar 3ª o superior sin ascensor (mi criterio actual)'],
+            ['cualquier','Cualquier planta con o sin ascensor'],
+            ['soloAsc','Solo con ascensor en cualquier planta'],
+            ['bajo','Preferencia planta baja o 1ª'],
+          ].map(([v,l])=>`<label style="display:flex;align-items:center;gap:8px;font-size:12px;color:#555;cursor:pointer">
+            <input type="radio" name="pf-asc" value="${v}" ${(p.ascensorRule||'3sin')===v?'checked':''} style="accent-color:#ba7517">
+            ${l}
+          </label>`).join('')}
+        </div>
+      </div>
+
+      <div style="margin-bottom:12px">
+        <div style="font-size:11px;color:#666;margin-bottom:4px">Estado del inmueble preferido</div>
+        <div style="border:1px solid #e5e5e0;border-radius:6px;overflow:hidden">
+          <select id="pf-estado" style="width:100%;border:none;padding:8px 10px;font-size:13px;font-family:inherit;outline:none;background:#fff;cursor:pointer">
+            <option value="para reformar o buen estado" ${(p.estadoRef||'')==='para reformar o buen estado'?'selected':''}>Para reformar o buen estado</option>
+            <option value="para reformar" ${p.estadoRef==='para reformar'?'selected':''}>Solo para reformar</option>
+            <option value="buen estado" ${p.estadoRef==='buen estado'?'selected':''}>Solo buen estado</option>
+            <option value="cualquier estado" ${p.estadoRef==='cualquier estado'?'selected':''}>Cualquier estado</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
+        <div>
+          <div style="font-size:11px;color:#666;margin-bottom:4px">Yield mínima BTR</div>
+          <div style="display:flex;align-items:center;border:1px solid #e5e5e0;border-radius:6px;overflow:hidden">
+            <input type="number" id="pf-yieldMin" value="${p.yieldMinBTR||7}" step="0.5" style="flex:1;border:none;padding:7px 10px;font-size:13px;font-family:'Courier New',monospace;outline:none">
+            <span style="padding:6px 9px;font-size:11px;color:#aaa;background:#f4f4f0;border-left:1px solid #e5e5e0">% neta</span>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:11px;color:#666;margin-bottom:4px">ROI mínimo Flip</div>
+          <div style="display:flex;align-items:center;border:1px solid #e5e5e0;border-radius:6px;overflow:hidden">
+            <input type="number" id="pf-roiMin" value="${p.roiMinFlip||20}" step="1" style="flex:1;border:none;padding:7px 10px;font-size:13px;font-family:'Courier New',monospace;outline:none">
+            <span style="padding:6px 9px;font-size:11px;color:#aaa;background:#f4f4f0;border-left:1px solid #e5e5e0">% capital</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-bottom:16px">
+        <div style="font-size:11px;color:#666;margin-bottom:4px">Notas libres</div>
+        <div style="border:1px solid #e5e5e0;border-radius:6px;overflow:hidden">
+          <textarea id="pf-notas" rows="3" placeholder="Ej: solo pisos, no locales. Evitar fincas sin ITE. Preferencia plantas intermedias..." style="width:100%;border:none;padding:8px 10px;font-size:12px;font-family:inherit;outline:none;resize:vertical">${p.notasLibres||''}</textarea>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:8px">
+        <button onclick="guardarPrefs()" style="flex:1;padding:9px;border:1px solid #1a1a1a;border-radius:6px;background:#1a1a1a;color:#fff;font-size:13px;cursor:pointer;font-family:inherit;font-weight:500">Guardar criterios</button>
+        <button onclick="this.closest('[style*=fixed]').remove()" style="padding:9px 16px;border:1px solid #e5e5e0;border-radius:6px;background:#fff;font-size:13px;cursor:pointer;font-family:inherit;color:#555">Cancelar</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+  modal.addEventListener('click',e=>{if(e.target===modal)modal.remove();});
+};
+
+window.guardarPrefs=function(){
+  const asc=document.querySelector('input[name="pf-asc"]:checked')?.value||'3sin';
+  const p={
+    presMin:+document.getElementById('pf-presMin')?.value||40000,
+    presMax:+document.getElementById('pf-presMax')?.value||90000,
+    habMin:+document.getElementById('pf-habMin')?.value||2,
+    zonasText:document.getElementById('pf-zonas')?.value||'',
+    ascensorRule:asc,
+    estadoRef:document.getElementById('pf-estado')?.value||'',
+    yieldMinBTR:+document.getElementById('pf-yieldMin')?.value||7,
+    roiMinFlip:+document.getElementById('pf-roiMin')?.value||20,
+    notasLibres:document.getElementById('pf-notas')?.value||'',
+  };
+  savePrefs(p);
+  document.querySelector('[style*=fixed]')?.remove();
+  mostrarBadgePrefs();
+};
+
+function mostrarBadgePrefs(){
+  const p=loadPrefs();
+  const el=document.getElementById('prefs-badge');
+  if(!el)return;
+  const zonas=p.zonasText?p.zonasText.split(',').map(z=>z.trim()).filter(Boolean):[];
+  el.innerHTML=`
+    <div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center">
+      <span style="font-size:11px;background:#1a1a1a;color:#fff;border-radius:4px;padding:2px 8px">${(p.presMin/1000).toFixed(0)}k – ${(p.presMax/1000).toFixed(0)}k €</span>
+      <span style="font-size:11px;background:#f4f4f0;border:1px solid #e5e5e0;border-radius:4px;padding:2px 8px">min. ${p.habMin} hab</span>
+      ${zonas.slice(0,3).map(z=>`<span style="font-size:11px;background:#fffbeb;border:1px solid #fcd34d;border-radius:4px;padding:2px 8px;color:#92400e">${z}</span>`).join('')}
+      <span style="font-size:11px;background:#f0fdf4;border:1px solid #86efac;border-radius:4px;padding:2px 8px;color:#15803d">BTR ≥${p.yieldMinBTR}%</span>
+      <span style="font-size:11px;background:#f0fdf4;border:1px solid #86efac;border-radius:4px;padding:2px 8px;color:#15803d">Flip ROI ≥${p.roiMinFlip}%</span>
+    </div>`;
+}
+
+// ─── PATCH rSR para inyectar badge de criterios ───────────────────────
+const _origRSR=window.rSR;
+window.rSR=function(){
+  if(_origRSR)_origRSR();
+  // Añadir botón de criterios si no existe
+  const sr=document.getElementById('sr');
+  if(!sr)return;
+  if(document.getElementById('prefs-card'))return;
+  const card=document.createElement('div');
+  card.id='prefs-card';
+  card.style.cssText='border:1px solid #e5e5e0;border-radius:10px;padding:12px;margin-bottom:8px;background:#fff';
+  card.innerHTML=`
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+      <div style="font-size:12px;font-weight:500;color:#555">Mis criterios de búsqueda</div>
+      <button onclick="abrirPrefs()" style="padding:4px 10px;border:1px solid #e5e5e0;border-radius:5px;background:#fff;font-size:11px;cursor:pointer;font-family:inherit;color:#555;font-weight:500">Editar</button>
+    </div>
+    <div id="prefs-badge"></div>`;
+  sr.insertBefore(card, sr.firstChild);
+  mostrarBadgePrefs();
+};
+
+// ─── PATCH us/uf/ub/tsh/tb2 para auto-save ───────────────────────────
+const _origUs=window.us,_origUf=window.uf,_origUb=window.ub,_origTsh=window.tsh,_origTb2=window.tb2;
+window.us=(k,v)=>{if(_origUs)_origUs(k,v);autoSave();};
+window.uf=(k,v)=>{if(_origUf)_origUf(k,v);autoSave();};
+window.ub=(k,v)=>{if(_origUb)_origUb(k,v);autoSave();};
+window.tsh=(k)=>{if(_origTsh)_origTsh(k);autoSave();};
+window.tb2=(k)=>{if(_origTb2)_origTb2(k);autoSave();};
+
+// Patch SEL updates to auto-save
+const _origSetProv=window.setProv,_origSetMun=window.setMun,_origSetBar=window.setBar,_origSetSub=window.setSub;
+window.setProv=(v)=>{if(_origSetProv)_origSetProv(v);autoSave();};
+window.setMun=(v)=>{if(_origSetMun)_origSetMun(v);autoSave();};
+window.setBar=(v)=>{if(_origSetBar)_origSetBar(v);autoSave();};
+window.setSub=(v)=>{if(_origSetSub)_origSetSub(v);autoSave();};
+
+// ─── RESTAURAR AL CARGAR ──────────────────────────────────────────────
+// Usar setTimeout para que el DOM esté listo
+setTimeout(autoRestore, 50);
+
+</script>
+</body>
+</html>
