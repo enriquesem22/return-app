@@ -897,9 +897,10 @@ window.saveApiConfig = function(){
     anthKey:       document.getElementById('anth-key')?.value?.trim() || '',
     proxyUrl:      document.getElementById('proxy-url')?.value?.trim() || '',
     driveClientId: document.getElementById('drive-client-id')?.value?.trim() || '',
+    ghToken:       document.getElementById('gh-token')?.value?.trim() || '',
   };
-  // Update driveClientId global
   if(cfg.driveClientId) driveClientId = cfg.driveClientId;
+  if(cfg.ghToken) ghToken = cfg.ghToken;
   saveConfig(cfg);
   const st = document.getElementById('cfg-status');
   if(st){ st.textContent = '✓ Configuración guardada'; st.style.color='#16a34a'; setTimeout(()=>{st.textContent='';},3000); }
@@ -930,7 +931,9 @@ function initImport(){
   setV('anth-key', cfg.anthKey);
   setV('proxy-url', cfg.proxyUrl);
   setV('drive-client-id', cfg.driveClientId);
+  setV('gh-token', cfg.ghToken);
   if(cfg.driveClientId) driveClientId = cfg.driveClientId;
+  if(cfg.ghToken){ ghToken=cfg.ghToken; setTimeout(()=>{ const a=document.getElementById('gh-actions'); if(a)a.style.display=''; setGhStatus('✓ Conectado a GitHub','#16a34a'); githubPull(); },300); }
   toggleProviderFields();
   // Restore drive connection status if token exists
   if(driveToken) updateDriveUI(true);
@@ -996,6 +999,32 @@ function importarHTML(){
         <div style="display:flex;align-items:center;gap:10px;margin-top:4px">
           <button onclick="saveApiConfig()" style="padding:7px 16px;border:1px solid #1a1a1a;border-radius:6px;background:#1a1a1a;color:#fff;font-size:12px;cursor:pointer;font-family:inherit;font-weight:500">Guardar configuración</button>
           <span id="cfg-status" style="font-size:11px"></span>
+        </div>
+
+        <div style="border-top:1px solid #e5e5e0;margin-top:14px;padding-top:14px">
+          <div style="font-size:12px;font-weight:500;color:#555;margin-bottom:8px;display:flex;align-items:center;gap:8px">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+            GitHub — almacenamiento del portfolio
+          </div>
+          <div style="font-size:10px;color:#bbb;line-height:1.5;margin-bottom:10px;padding:8px 10px;background:#f9f9f7;border-radius:6px">
+            Guarda el portfolio en tu repositorio de GitHub. Funciona desde cualquier dispositivo sin necesidad de Google Drive.
+          </div>
+          <div class="irow">
+            <div class="ilbl">Personal Access Token <span style="color:#bbb;font-weight:400">(github.com/settings/tokens)</span></div>
+            <div class="iwrap"><input type="password" id="gh-token" placeholder="ghp_..." style="font-size:12px;font-family:'Courier New',monospace"></div>
+          </div>
+          <div style="font-size:10px;color:#bbb;margin:-4px 0 8px">Crea un token en GitHub → Settings → Developer settings → Personal access tokens → Tokens (classic). Marca solo el permiso <b>repo</b>.</div>
+          <div style="display:flex;gap:8px;align-items:center;margin-top:8px;flex-wrap:wrap">
+            <button onclick="testGithubToken()" style="padding:7px 14px;border:1px solid #1a1a1a;border-radius:6px;background:#1a1a1a;color:#fff;font-size:12px;cursor:pointer;font-family:inherit;font-weight:500">Conectar GitHub</button>
+            <span id="gh-status" style="font-size:11px;color:#aaa"></span>
+          </div>
+          <div id="gh-actions" style="display:none;margin-top:8px">
+            <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+              <button onclick="githubPush()" style="padding:6px 12px;border:1px solid #e5e5e0;border-radius:6px;background:#fff;font-size:11px;cursor:pointer;font-family:inherit;color:#555">↑ Subir a GitHub</button>
+              <button onclick="githubPull()" style="padding:6px 12px;border:1px solid #e5e5e0;border-radius:6px;background:#fff;font-size:11px;cursor:pointer;font-family:inherit;color:#555">↓ Descargar de GitHub</button>
+              <span id="gh-last-sync" style="font-size:10px;color:#bbb"></span>
+            </div>
+          </div>
         </div>
 
         <div style="border-top:1px solid #e5e5e0;margin-top:14px;padding-top:14px">
@@ -1433,6 +1462,130 @@ window.addNoteCase=function(i){const cases=getPortfolio();const n=prompt('Nota:'
 window.exportPortfolio=function(){const b=new Blob([JSON.stringify(getPortfolio(),null,2)],{type:'application/json'});const a=Object.assign(document.createElement('a'),{href:URL.createObjectURL(b),download:'return_portfolio_'+new Date().toISOString().slice(0,10)+'.json'});a.click();};
 window.importPortfolioFile=function(){document.getElementById('import-file-input')?.click();};
 window.handleImportFile=function(input){const f=input.files[0];if(!f)return;const reader=new FileReader();reader.onload=function(e){try{const imp=JSON.parse(e.target.result);if(!Array.isArray(imp))throw new Error('Formato incorrecto');savePortfolio([...imp,...getPortfolio()]);window.loadPortfolio();alert('✓ '+imp.length+' caso(s) importados');}catch(err){alert('Error: '+err.message);}};reader.readAsText(f);};
+
+// ─── GITHUB STORAGE ──────────────────────────────────────────────────
+const GH_REPO = 'enriquesem22/return-app';
+const GH_FILE = 'portfolio.json';
+const GH_STATE_FILE = 'state.json';
+let ghToken = null;
+
+function setGhStatus(msg, color){ const el=document.getElementById('gh-status'); if(el){el.textContent=msg;el.style.color=color||'#aaa';} }
+function setGhLastSync(t){ const el=document.getElementById('gh-last-sync'); if(el)el.textContent='Última sync: '+t; }
+
+window.testGithubToken = async function(){
+  const token = document.getElementById('gh-token')?.value?.trim();
+  if(!token){ alert('Introduce el token de GitHub'); return; }
+  setGhStatus('Conectando...','#d97706');
+  try{
+    const r = await fetch(`https://api.github.com/repos/${GH_REPO}`,{
+      headers:{'Authorization':'Bearer '+token,'Accept':'application/vnd.github.v3+json'}
+    });
+    if(!r.ok) throw new Error('Token inválido o sin acceso al repositorio');
+    ghToken = token;
+    // Save to config
+    const cfg = loadConfig();
+    cfg.ghToken = token;
+    saveConfig(cfg);
+    setGhStatus('✓ Conectado a GitHub','#16a34a');
+    const actions = document.getElementById('gh-actions');
+    if(actions) actions.style.display = '';
+    // Auto-pull on connect
+    await githubPull();
+  }catch(e){ setGhStatus('Error: '+e.message,'#dc2626'); }
+};
+
+async function ghGetFile(filename){
+  const r = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/${filename}`,{
+    headers:{'Authorization':'Bearer '+ghToken,'Accept':'application/vnd.github.v3+json'}
+  });
+  if(r.status===404) return null;
+  if(!r.ok) throw new Error('Error leyendo '+filename+': '+r.status);
+  const d = await r.json();
+  return { content: JSON.parse(atob(d.content.replace(/\n/g,''))), sha: d.sha };
+}
+
+async function ghPutFile(filename, data, sha){
+  const body = { message: 'Update '+filename, content: btoa(unescape(encodeURIComponent(JSON.stringify(data,null,2)))) };
+  if(sha) body.sha = sha;
+  const r = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/${filename}`,{
+    method:'PUT',
+    headers:{'Authorization':'Bearer '+ghToken,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'},
+    body: JSON.stringify(body)
+  });
+  if(!r.ok){ const e=await r.json(); throw new Error(e.message||'Error guardando '+filename); }
+  return await r.json();
+}
+
+window.githubPush = async function(){
+  if(!ghToken){ alert('Conecta GitHub primero'); return; }
+  setGhStatus('Subiendo a GitHub...','#d97706');
+  try{
+    // Portfolio
+    const portfolio = getPortfolio();
+    const pfExisting = await ghGetFile(GH_FILE);
+    await ghPutFile(GH_FILE, portfolio, pfExisting?.sha);
+    // State
+    const state = JSON.parse(localStorage.getItem('return_state_v1')||'{}');
+    const stExisting = await ghGetFile(GH_STATE_FILE);
+    await ghPutFile(GH_STATE_FILE, state, stExisting?.sha);
+    const now = new Date().toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'});
+    setGhStatus('✓ Guardado en GitHub a las '+now,'#16a34a');
+    setGhLastSync(now);
+  }catch(e){ setGhStatus('Error: '+e.message,'#dc2626'); }
+};
+
+window.githubPull = async function(){
+  if(!ghToken) return;
+  setGhStatus('Descargando de GitHub...','#d97706');
+  try{
+    // Portfolio - merge
+    const pfData = await ghGetFile(GH_FILE);
+    if(pfData && Array.isArray(pfData.content)){
+      const local = getPortfolio();
+      const merged = [...local];
+      pfData.content.forEach(gc=>{ if(!merged.find(lc=>lc.id===gc.id)) merged.push(gc); });
+      merged.sort((a,b)=>b.id-a.id);
+      localStorage.setItem(DB_KEY, JSON.stringify(merged));
+      const pp2el = document.getElementById('pp2-content');
+      if(pp2el) renderPortfolio(pp2el);
+    }
+    // State
+    const stData = await ghGetFile(GH_STATE_FILE);
+    if(stData && stData.content){
+      localStorage.setItem('return_state_v1', JSON.stringify(stData.content));
+    }
+    const now = new Date().toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'});
+    setGhStatus('✓ Sincronizado a las '+now,'#16a34a');
+    setGhLastSync(now);
+  }catch(e){ setGhStatus('Error: '+e.message,'#dc2626'); }
+};
+
+// Auto-push to GitHub when saving
+const _origSavePortfolioGH = window.savePortfolio;
+window.savePortfolio = function(c){
+  if(_origSavePortfolioGH) _origSavePortfolioGH(c);
+  if(ghToken) setTimeout(window.githubPush, 1000);
+};
+
+// Restore GitHub token from config on init
+(function(){
+  const cfg = loadConfig();
+  if(cfg.ghToken){
+    ghToken = cfg.ghToken;
+    // Restore UI state when import tab opens
+    const origInit = window.initImport;
+    window.initImport = function(){
+      if(origInit) origInit();
+      setTimeout(()=>{
+        const el = document.getElementById('gh-token');
+        if(el && ghToken){ el.value=ghToken; }
+        const actions = document.getElementById('gh-actions');
+        if(actions && ghToken) actions.style.display='';
+        if(ghToken){ setGhStatus('✓ Conectado a GitHub','#16a34a'); githubPull(); }
+      }, 200);
+    };
+  }
+})();
 
 window.SEL=window.SEL||{prov:'',mun:'',bar:'',sub:''};
 
