@@ -977,7 +977,7 @@ function importarHTML(){
             <div class="iwrap"><input type="password" id="goog-key" placeholder="AIzaSy..." style="font-family:'Courier New',monospace;font-size:12px"></div>
           </div>
           <div style="font-size:10px;color:#bbb;margin:-4px 0 8px;line-height:1.5">
-            <a href="https://aistudio.google.com/apikey" target="_blank" style="color:#ba7517">aistudio.google.com/apikey</a> · Modelo: <b>gemini-1.5-flash</b> · 1.500 peticiones/día gratis
+            <a href="https://aistudio.google.com/apikey" target="_blank" style="color:#ba7517">aistudio.google.com/apikey</a> · Modelo: <b>gemini-2.0-flash</b> · 1.500 peticiones/día gratis
           </div>
         </div>
 
@@ -1149,7 +1149,7 @@ async function callOpenAI(txt,key){
 }
 
 async function callGemini(txt,key){
-  const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key='+key,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:PROMPT_BASE+txt.substring(0,5000)}]}]})});
+  const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key='+key,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:PROMPT_BASE+txt.substring(0,5000)}]}]})});
   if(!r.ok){const e=await r.json();throw new Error(e.error?.message||'Error Gemini '+r.status);}
   return (await r.json()).candidates?.[0]?.content?.parts?.[0]?.text||'';
 }
