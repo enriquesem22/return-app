@@ -884,7 +884,9 @@ function rFR(){const c=cF(S,F),v=vF(c.rc,c.mn),sk=c.rc>=20?‘pos’:c.rc<0?‘n
 function rBI(){const hasP=window._presupuestoTotal>0;document.getElementById(‘bi’).innerHTML=(hasP?`<div class="green-note">Reforma desde presupuesto por partidas: <b>${ef(window._presupuestoTotal)}</b></div>`:’’)+sec(‘Reforma’,(!hasP?ir(‘Reforma total’,B.ref,‘€’,“ub(‘ref’,+this.value)”):’’)+ir(‘Contingencia’,B.ct,’%’,“ub(‘ct’,+this.value)”),‘bR’)+sec(‘Alquiler’,ir(‘Renta mensual’,B.rnt,‘€/mes’,“ub(‘rnt’,+this.value)”)+ir(‘Vacancia estimada’,B.vac,’%’,“ub(‘vac’,+this.value)”),‘bAlq’)+sec(‘Gastos anuales’,ir(‘IBI’,B.ibi,‘€/año’,“ub(‘ibi’,+this.value)”)+ir(‘Comunidad’,B.com,‘€/año’,“ub(‘com’,+this.value)”)+ir(‘Seguro hogar’,B.seg,‘€/año’,“ub(‘seg’,+this.value)”)+tgrow(‘Seguro de impago’,B.imp,“tb2(‘imp’)”,‘4,5% renta anual’)+ir(‘Mantenimiento’,B.mnt,’% precio’,“ub(‘mnt’,+this.value)”)+ir(‘Gestoría’,B.ges,’% renta’,“ub(‘ges’,+this.value)”),‘bGts’);}
 function rBR(){const c=cB(S,B),v=vB(c.rn,c.coc,S.fin),bk=c.rb>=9?‘pos’:c.rb<5?‘neg’:‘warn’,nk=c.rn>=6?‘pos’:c.rn<0?‘neg’:‘warn’,ck=c.coc>=7?‘pos’:c.coc<0?‘neg’:‘warn’;document.getElementById(‘br’).innerHTML=`<div class="verdict ${v.c}"><div class="vt"><div class="vic">${v.i}</div><div><div class="vlb">Veredicto</div><div class="vvl">${v.l}</div></div></div><div class="vrs">${v.w}</div></div>`+`<div class="kpis">${kp('Rent. bruta',ep(c.rb),'',bk)}${kp('Rent. neta',ep(c.rn),'',nk)}${S.fin?kp('Cash on cash',ep(c.coc),'',ck):kp('Beneficio neto',ef(c.bn),'por año',c.bn>0?'pos':'neg')}${S.fin?kp('Cash flow',ef(c.cf/12)+'/mes','tras hipoteca',c.cf>0?'pos':'neg'):kp('Payback',isFinite(c.pb)?c.pb.toFixed(1)+' años':'—','')}</div>`+sec(‘Inversión total’,dr(‘Precio de compra’,ef(S.pc))+dr(‘ITP’,ef(c.it))+dr(‘Notaría + Registro’,ef(c.nr))+dr(‘Due diligence’,ef(S.dd))+dr(‘Reforma’,ef(c.ref))+dr(‘Contingencia’,ef(c.co))+dr(‘Coste total’,ef(c.tot),‘hl’)+(S.fin?dr(‘Capital propio’,ef(c.cap),‘hl’):’’),‘brI’)+sec(‘Cuenta de explotación anual’,dr(‘Renta bruta anual’,ef(c.ra))+dr(‘Vacancia’,‘− ‘+ef(c.ve))+dr(‘Ingresos efectivos’,ef(c.ie),‘hl’)+’<div class="gap"></div>’+dr(‘IBI’,’− ’+ef(B.ibi))+dr(‘Comunidad’,‘− ‘+ef(B.com))+dr(‘Seguro hogar’,‘− ‘+ef(B.seg))+(B.imp?dr(‘Seguro impago (4,5%)’,‘− ‘+ef(c.si)):’’)+dr(‘Mantenimiento’,‘− ‘+ef(c.mt))+(c.gs>0?dr(‘Gestoría’,‘− ‘+ef(c.gs)):’’)+’<div class="gap"></div>’+dr(‘Beneficio operativo neto’,ef(c.bn),c.bn>0?‘pos’:‘neg’)+(S.fin?dr(‘Cuota hipoteca anual’,‘− ‘+ef(c.ca))+dr(‘Cash flow tras hipoteca’,ef(c.cf),c.cf>0?‘pos’:‘neg’):’’)+’<div class="gap"></div>’+dr(‘Rentabilidad bruta’,ep(c.rb),bk)+dr(‘Rentabilidad neta’,ep(c.rn),nk)+(S.fin?dr(‘Cash on cash’,ep(c.coc),ck):’’),‘brE’)+`<div class="refbox">Renta necesaria para yield neta del 7%: <b>${ef(c.r7)}/mes</b><br>Benchmark mínimo Valencia: 9–11% bruta · Media España 2024: 7,2% bruta<br>Seguro impago: 4,5% renta anual · Cobertura hasta 12 mensualidades</div>`;}
 
+try{
 rSI();rSR();rPresupuesto();rFI();rFR();rBI();rBR();
+}catch(e){ console.error(‘Init error:’, e); }
 </script>
 
 <script>
@@ -933,214 +935,212 @@ if('serviceWorker' in navigator){
     }).catch(err=>console.log('SW error:', err));
   });
 }
-</script>
-
-</body>
-</html>
 <!-- PATCH: importar anuncio + base de datos -->
 <script>
+
 
 // ═══════════════════════════════════════════════════════════════
 // § 12 · CONFIGURACIÓN IA — Proveedores y API keys
 // ═══════════════════════════════════════════════════════════════
 // ─── CONFIG localStorage ─────────────────────────────────────────────
-const CFG_KEY = ‘return_config_v1’;
-function loadConfig(){ try{ return JSON.parse(localStorage.getItem(CFG_KEY)||’{}’); }catch(e){ return {}; } }
+const CFG_KEY = 'return_config_v1';
+function loadConfig(){ try{ return JSON.parse(localStorage.getItem(CFG_KEY)||'{}'); }catch(e){ return {}; } }
 function saveConfig(c){ localStorage.setItem(CFG_KEY, JSON.stringify(c)); }
 
 window.saveApiConfig = function(){
-const cfg = {
-provider:      document.getElementById(‘ai-provider’)?.value || ‘openai’,
-openaiKey:     document.getElementById(‘openai-key’)?.value?.trim() || ‘’,
-googKey:       document.getElementById(‘goog-key’)?.value?.trim() || ‘’,
-anthKey:       document.getElementById(‘anth-key’)?.value?.trim() || ‘’,
-proxyUrl:      document.getElementById(‘proxy-url’)?.value?.trim() || ‘’,
-driveClientId: document.getElementById(‘drive-client-id’)?.value?.trim() || ‘’,
-ghToken:       document.getElementById(‘gh-token’)?.value?.trim() || ‘’,
-};
-if(cfg.driveClientId) driveClientId = cfg.driveClientId;
-if(cfg.ghToken) ghToken = cfg.ghToken;
-saveConfig(cfg);
-const st = document.getElementById(‘cfg-status’);
-if(st){ st.textContent = ‘✓ Configuración guardada’; st.style.color=’#16a34a’; setTimeout(()=>{st.textContent=’’;},3000); }
+  const cfg = {
+    provider:      document.getElementById('ai-provider')?.value || 'openai',
+    openaiKey:     document.getElementById('openai-key')?.value?.trim() || '',
+    googKey:       document.getElementById('goog-key')?.value?.trim() || '',
+    anthKey:       document.getElementById('anth-key')?.value?.trim() || '',
+    proxyUrl:      document.getElementById('proxy-url')?.value?.trim() || '',
+    driveClientId: document.getElementById('drive-client-id')?.value?.trim() || '',
+    ghToken:       document.getElementById('gh-token')?.value?.trim() || '',
+  };
+  if(cfg.driveClientId) driveClientId = cfg.driveClientId;
+  if(cfg.ghToken) ghToken = cfg.ghToken;
+  saveConfig(cfg);
+  const st = document.getElementById('cfg-status');
+  if(st){ st.textContent = '✓ Configuración guardada'; st.style.color='#16a34a'; setTimeout(()=>{st.textContent='';},3000); }
 };
 
 window.toggleProviderFields = function(){
-const p = document.getElementById(‘ai-provider’)?.value;
-[‘row-openai’,‘row-goog’,‘row-anth’].forEach(id=>{
-const el=document.getElementById(id); if(el) el.style.display=‘none’;
-});
-const map={openai:‘row-openai’,google:‘row-goog’,anthropic:‘row-anth’};
-const show=document.getElementById(map[p]);
-if(show) show.style.display=’’;
+  const p = document.getElementById('ai-provider')?.value;
+  ['row-openai','row-goog','row-anth'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.style.display='none';
+  });
+  const map={openai:'row-openai',google:'row-goog',anthropic:'row-anth'};
+  const show=document.getElementById(map[p]);
+  if(show) show.style.display='';
 };
+
 
 // ═══════════════════════════════════════════════════════════════
 // § 13 · IMPORTAR ANUNCIO — UI y análisis con IA
 // ═══════════════════════════════════════════════════════════════
 // ─── INICIALIZAR PESTAÑA IMPORTAR ────────────────────────────────────
 function initImport(){
-const el = document.getElementById(‘ip-content’);
-if(!el) return;
-if(el.dataset.init === ‘1’) return; // Already initialized
-el.dataset.init = ‘1’;
-const cfg = loadConfig();
-el.innerHTML = importarHTML();
-const setV = (id,v)=>{ const e=document.getElementById(id); if(e&&v) e.value=v; };
-setV(‘ai-provider’, cfg.provider||‘openai’);
-setV(‘openai-key’, cfg.openaiKey);
-setV(‘goog-key’, cfg.googKey);
-setV(‘anth-key’, cfg.anthKey);
-setV(‘proxy-url’, cfg.proxyUrl);
-setV(‘drive-client-id’, cfg.driveClientId);
-setV(‘gh-token’, cfg.ghToken);
-if(cfg.driveClientId) driveClientId = cfg.driveClientId;
-if(cfg.ghToken){ ghToken=cfg.ghToken; setTimeout(()=>{ const a=document.getElementById(‘gh-actions’); if(a)a.style.display=’’; setGhStatus(‘✓ Conectado a GitHub’,’#16a34a’); githubPull(); },300); }
-toggleProviderFields();
-// Restore drive connection status if token exists
-if(driveToken) updateDriveUI(true);
+  const el = document.getElementById('ip-content');
+  if(!el) return;
+  if(el.dataset.init === '1') return; // Already initialized
+  el.dataset.init = '1';
+  const cfg = loadConfig();
+  el.innerHTML = importarHTML();
+  const setV = (id,v)=>{ const e=document.getElementById(id); if(e&&v) e.value=v; };
+  setV('ai-provider', cfg.provider||'openai');
+  setV('openai-key', cfg.openaiKey);
+  setV('goog-key', cfg.googKey);
+  setV('anth-key', cfg.anthKey);
+  setV('proxy-url', cfg.proxyUrl);
+  setV('drive-client-id', cfg.driveClientId);
+  setV('gh-token', cfg.ghToken);
+  if(cfg.driveClientId) driveClientId = cfg.driveClientId;
+  if(cfg.ghToken){ ghToken=cfg.ghToken; setTimeout(()=>{ const a=document.getElementById('gh-actions'); if(a)a.style.display=''; setGhStatus('✓ Conectado a GitHub','#16a34a'); githubPull(); },300); }
+  toggleProviderFields();
+  // Restore drive connection status if token exists
+  if(driveToken) updateDriveUI(true);
 }
 
 // sw patching moved to unified sw function below
 
 // ─── HTML IMPORTAR ───────────────────────────────────────────────────
 function importarHTML(){
-return `<div style="max-width:820px">
-<div class="sec">
-<div class="sec-h" onclick="toggleSec2('sec-cfg')">
-<span class="sec-ht">⚙ Configuración IA y servidor</span>
-<span class="arr open" id="a-sec-cfg">▼</span>
-</div>
-<div class="sec-b open" id="sec-cfg">
-<div class="irow">
-<div class="ilbl">Proveedor de IA</div>
-<div class="iwrap">
-<select id="ai-provider" onchange="toggleProviderFields()">
-<option value="openai">OpenAI (ChatGPT)</option>
-<option value="google">Google Gemini — GRATIS hasta 1.500/día</option>
-<option value="anthropic">Anthropic Claude</option>
-</select>
-</div>
-</div>
+  return `<div style="max-width:820px">
+    <div class="sec">
+      <div class="sec-h" onclick="toggleSec2('sec-cfg')">
+        <span class="sec-ht">⚙ Configuración IA y servidor</span>
+        <span class="arr open" id="a-sec-cfg">▼</span>
+      </div>
+      <div class="sec-b open" id="sec-cfg">
+        <div class="irow">
+          <div class="ilbl">Proveedor de IA</div>
+          <div class="iwrap">
+            <select id="ai-provider" onchange="toggleProviderFields()">
+              <option value="openai">OpenAI (ChatGPT)</option>
+              <option value="google">Google Gemini — GRATIS hasta 1.500/día</option>
+              <option value="anthropic">Anthropic Claude</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="row-openai">
+          <div class="irow">
+            <div class="ilbl">OpenAI API Key</div>
+            <div class="iwrap"><input type="password" id="openai-key" placeholder="sk-proj-..." style="font-family:'Courier New',monospace;font-size:12px"></div>
+          </div>
+          <div style="font-size:10px;color:#bbb;margin:-4px 0 8px;line-height:1.5">
+            <a href="https://platform.openai.com/api-keys" target="_blank" style="color:#ba7517">platform.openai.com/api-keys</a> · Modelo: <b>gpt-4o-mini</b> (~0,002€ por anuncio)
+          </div>
+        </div>
+
+        <div id="row-goog" style="display:none">
+          <div class="irow">
+            <div class="ilbl">Google API Key <span style="color:#16a34a;font-weight:400">— gratuita</span></div>
+            <div class="iwrap"><input type="password" id="goog-key" placeholder="AIzaSy..." style="font-family:'Courier New',monospace;font-size:12px"></div>
+          </div>
+          <div style="font-size:10px;color:#bbb;margin:-4px 0 8px;line-height:1.5">
+            <a href="https://aistudio.google.com/apikey" target="_blank" style="color:#ba7517">aistudio.google.com/apikey</a> · Modelo: <b>gemini-2.0-flash-lite</b> · 1.500 peticiones/día gratis
+          </div>
+        </div>
+
+        <div id="row-anth" style="display:none">
+          <div class="irow">
+            <div class="ilbl">Anthropic API Key</div>
+            <div class="iwrap"><input type="password" id="anth-key" placeholder="sk-ant-..." style="font-family:'Courier New',monospace;font-size:12px"></div>
+          </div>
+          <div style="font-size:10px;color:#bbb;margin:-4px 0 8px">
+            <a href="https://console.anthropic.com" target="_blank" style="color:#ba7517">console.anthropic.com</a>
+          </div>
+        </div>
+
+        <div class="irow">
+          <div class="ilbl">URL proxy servidor propio <span style="color:#bbb;font-weight:400">(opcional — para scraping de Idealista)</span></div>
+          <div class="iwrap"><input type="url" id="proxy-url" placeholder="https://tu-servidor.run.app/fetch" style="font-size:12px"></div>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:10px;margin-top:4px">
+          <button onclick="saveApiConfig()" style="padding:7px 16px;border:1px solid #1a1a1a;border-radius:6px;background:#1a1a1a;color:#fff;font-size:12px;cursor:pointer;font-family:inherit;font-weight:500">Guardar configuración</button>
+          <span id="cfg-status" style="font-size:11px"></span>
+        </div>
+
+        <div style="border-top:1px solid #e5e5e0;margin-top:14px;padding-top:14px">
+          <div style="font-size:12px;font-weight:500;color:#555;margin-bottom:8px;display:flex;align-items:center;gap:8px">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+            GitHub — almacenamiento del portfolio
+          </div>
+          <div style="font-size:10px;color:#bbb;line-height:1.5;margin-bottom:10px;padding:8px 10px;background:#f9f9f7;border-radius:6px">
+            Guarda el portfolio en tu repositorio de GitHub. Funciona desde cualquier dispositivo sin necesidad de Google Drive.
+          </div>
+          <div class="irow">
+            <div class="ilbl">Personal Access Token <span style="color:#bbb;font-weight:400">(github.com/settings/tokens)</span></div>
+            <div class="iwrap"><input type="password" id="gh-token" placeholder="ghp_..." style="font-size:12px;font-family:'Courier New',monospace"></div>
+          </div>
+          <div style="font-size:10px;color:#bbb;margin:-4px 0 8px">Crea un token en GitHub → Settings → Developer settings → Personal access tokens → Tokens (classic). Marca solo el permiso <b>repo</b>.</div>
+          <div style="display:flex;gap:8px;align-items:center;margin-top:8px;flex-wrap:wrap">
+            <button onclick="testGithubToken()" style="padding:7px 14px;border:1px solid #1a1a1a;border-radius:6px;background:#1a1a1a;color:#fff;font-size:12px;cursor:pointer;font-family:inherit;font-weight:500">Conectar GitHub</button>
+            <span id="gh-status" style="font-size:11px;color:#aaa"></span>
+          </div>
+          <div id="gh-actions" style="display:none;margin-top:8px">
+            <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+              <button onclick="githubPush()" style="padding:6px 12px;border:1px solid #e5e5e0;border-radius:6px;background:#fff;font-size:11px;cursor:pointer;font-family:inherit;color:#555">↑ Subir a GitHub</button>
+              <button onclick="githubPull()" style="padding:6px 12px;border:1px solid #e5e5e0;border-radius:6px;background:#fff;font-size:11px;cursor:pointer;font-family:inherit;color:#555">↓ Descargar de GitHub</button>
+              <span id="gh-last-sync" style="font-size:10px;color:#bbb"></span>
+            </div>
+          </div>
+        </div>
+
+        <div style="border-top:1px solid #e5e5e0;margin-top:14px;padding-top:14px">
+          <div style="font-size:12px;font-weight:500;color:#555;margin-bottom:8px">Google Drive — sincronización</div>
+          <div style="font-size:10px;color:#bbb;line-height:1.5;margin-bottom:10px;padding:8px 10px;background:#f9f9f7;border-radius:6px">
+            Guarda el portfolio y el estado en tu carpeta de Drive. Los archivos aparecerán como <b>return_portfolio.json</b> y <b>return_state.json</b>.
+          </div>
+          <div class="irow">
+            <div class="ilbl">OAuth 2.0 Client ID <span style="color:#bbb;font-weight:400">(de GCP Console → Clientes)</span></div>
+            <div class="iwrap"><input type="text" id="drive-client-id" placeholder="253233836006-xxxx.apps.googleusercontent.com" style="font-size:11px;font-family:'Courier New',monospace"></div>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center;margin-top:8px;flex-wrap:wrap">
+            <button id="drive-connect-btn" onclick="connectDrive()" style="padding:7px 14px;border:1px solid #4285f4;border-radius:6px;background:#4285f4;color:#fff;font-size:12px;cursor:pointer;font-family:inherit;font-weight:500">Conectar con Google Drive</button>
+            <button id="drive-disconnect-btn" onclick="disconnectDrive()" style="padding:7px 14px;border:1px solid #e5e5e0;border-radius:6px;background:#fff;font-size:12px;cursor:pointer;font-family:inherit;color:#dc2626;display:none">Desconectar</button>
+            <span id="drive-status" style="font-size:11px;color:#aaa"></span>
+          </div>
+          <div id="drive-actions" style="margin-top:8px;display:none">
+            <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+              <button onclick="drivePush()" style="padding:6px 12px;border:1px solid #e5e5e0;border-radius:6px;background:#fff;font-size:11px;cursor:pointer;font-family:inherit;color:#555">↑ Subir a Drive</button>
+              <button onclick="drivePull()" style="padding:6px 12px;border:1px solid #e5e5e0;border-radius:6px;background:#fff;font-size:11px;cursor:pointer;font-family:inherit;color:#555">↓ Descargar de Drive</button>
+              <button onclick="driveSyncAll()" style="padding:6px 12px;border:1px solid #86efac;border-radius:6px;background:#f0fdf4;font-size:11px;cursor:pointer;font-family:inherit;color:#15803d">⟳ Sincronizar ahora</button>
+              <span id="drive-last-sync" style="font-size:10px;color:#bbb"></span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-h" onclick="toggleSec2('sec-import')">
+        <span class="sec-ht">Importar anuncio</span>
+        <span class="arr open" id="a-sec-import">▼</span>
+      </div>
+      <div class="sec-b open" id="sec-import">
+        <div style="font-size:11px;color:#888;line-height:1.6;margin-bottom:10px;border:1px solid #e5e5e0;border-radius:6px;padding:10px 12px;background:#fafaf8">
+          <b style="color:#555">Cómo importar:</b><br>
+          1. Ve al anuncio en Idealista, Fotocasa, pisos.com, etc.<br>
+          2. Selecciona todo el texto de la página (Ctrl+A) y cópialo (Ctrl+C).<br>
+          3. Pégalo abajo y pulsa <b>Analizar</b>. La IA extrae todos los campos automáticamente.
+        </div>
+
+        <div class="ilbl" style="margin-bottom:4px">URL del anuncio <span style="color:#aaa">(opcional — funciona para portales sin bloqueo)</span></div>
+        <div style="display:flex;gap:8px;margin-bottom:10px">
+          <div class="iwrap" style="flex:1">
+            <input type="url" id="url-inp" placeholder="https://www.fotocasa.es/es/comprar/..." style="font-size:12px">
+          </div>
+          <button onclick="fetchUrl()" id="url-btn" style="padding:7px 14px;border:1px solid #e5e5e0;border-radius:6px;background:#fff;font-size:12px;cursor:pointer;font-family:inherit;font-weight:500;white-space:nowrap">Obtener →</button>
+        </div>
+
+        <div class="ilbl" style="margin-bottom:4px">Texto del anuncio</div>
+        <textarea id="listing-txt" rows="9" style="width:100%;border:1px solid #e5e5e0;border-radius:6px;padding:10px;font-size:12px;font-family:inherit;line-height:1.5;resize:vertical;outline:none;color:#1a1a1a;background:#fff" placeholder="Pega aquí el texto del anuncio...&#10;&#10;Ejemplo:&#10;Piso en venta en Triana, Sevilla&#10;Precio: 185.000 €&#10;75 m² · 3 hab · 1 baño · Planta 2ª sin ascensor&#10;Estado: Para reformar · Año 1963&#10;Comunidad: 45 €/mes · IBI: 280 €/año"></textarea>
 
 ```
-    <div id="row-openai">
-      <div class="irow">
-        <div class="ilbl">OpenAI API Key</div>
-        <div class="iwrap"><input type="password" id="openai-key" placeholder="sk-proj-..." style="font-family:'Courier New',monospace;font-size:12px"></div>
-      </div>
-      <div style="font-size:10px;color:#bbb;margin:-4px 0 8px;line-height:1.5">
-        <a href="https://platform.openai.com/api-keys" target="_blank" style="color:#ba7517">platform.openai.com/api-keys</a> · Modelo: <b>gpt-4o-mini</b> (~0,002€ por anuncio)
-      </div>
-    </div>
-
-    <div id="row-goog" style="display:none">
-      <div class="irow">
-        <div class="ilbl">Google API Key <span style="color:#16a34a;font-weight:400">— gratuita</span></div>
-        <div class="iwrap"><input type="password" id="goog-key" placeholder="AIzaSy..." style="font-family:'Courier New',monospace;font-size:12px"></div>
-      </div>
-      <div style="font-size:10px;color:#bbb;margin:-4px 0 8px;line-height:1.5">
-        <a href="https://aistudio.google.com/apikey" target="_blank" style="color:#ba7517">aistudio.google.com/apikey</a> · Modelo: <b>gemini-2.0-flash-lite</b> · 1.500 peticiones/día gratis
-      </div>
-    </div>
-
-    <div id="row-anth" style="display:none">
-      <div class="irow">
-        <div class="ilbl">Anthropic API Key</div>
-        <div class="iwrap"><input type="password" id="anth-key" placeholder="sk-ant-..." style="font-family:'Courier New',monospace;font-size:12px"></div>
-      </div>
-      <div style="font-size:10px;color:#bbb;margin:-4px 0 8px">
-        <a href="https://console.anthropic.com" target="_blank" style="color:#ba7517">console.anthropic.com</a>
-      </div>
-    </div>
-
-    <div class="irow">
-      <div class="ilbl">URL proxy servidor propio <span style="color:#bbb;font-weight:400">(opcional — para scraping de Idealista)</span></div>
-      <div class="iwrap"><input type="url" id="proxy-url" placeholder="https://tu-servidor.run.app/fetch" style="font-size:12px"></div>
-    </div>
-
-    <div style="display:flex;align-items:center;gap:10px;margin-top:4px">
-      <button onclick="saveApiConfig()" style="padding:7px 16px;border:1px solid #1a1a1a;border-radius:6px;background:#1a1a1a;color:#fff;font-size:12px;cursor:pointer;font-family:inherit;font-weight:500">Guardar configuración</button>
-      <span id="cfg-status" style="font-size:11px"></span>
-    </div>
-
-    <div style="border-top:1px solid #e5e5e0;margin-top:14px;padding-top:14px">
-      <div style="font-size:12px;font-weight:500;color:#555;margin-bottom:8px;display:flex;align-items:center;gap:8px">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
-        GitHub — almacenamiento del portfolio
-      </div>
-      <div style="font-size:10px;color:#bbb;line-height:1.5;margin-bottom:10px;padding:8px 10px;background:#f9f9f7;border-radius:6px">
-        Guarda el portfolio en tu repositorio de GitHub. Funciona desde cualquier dispositivo sin necesidad de Google Drive.
-      </div>
-      <div class="irow">
-        <div class="ilbl">Personal Access Token <span style="color:#bbb;font-weight:400">(github.com/settings/tokens)</span></div>
-        <div class="iwrap"><input type="password" id="gh-token" placeholder="ghp_..." style="font-size:12px;font-family:'Courier New',monospace"></div>
-      </div>
-      <div style="font-size:10px;color:#bbb;margin:-4px 0 8px">Crea un token en GitHub → Settings → Developer settings → Personal access tokens → Tokens (classic). Marca solo el permiso <b>repo</b>.</div>
-      <div style="display:flex;gap:8px;align-items:center;margin-top:8px;flex-wrap:wrap">
-        <button onclick="testGithubToken()" style="padding:7px 14px;border:1px solid #1a1a1a;border-radius:6px;background:#1a1a1a;color:#fff;font-size:12px;cursor:pointer;font-family:inherit;font-weight:500">Conectar GitHub</button>
-        <span id="gh-status" style="font-size:11px;color:#aaa"></span>
-      </div>
-      <div id="gh-actions" style="display:none;margin-top:8px">
-        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
-          <button onclick="githubPush()" style="padding:6px 12px;border:1px solid #e5e5e0;border-radius:6px;background:#fff;font-size:11px;cursor:pointer;font-family:inherit;color:#555">↑ Subir a GitHub</button>
-          <button onclick="githubPull()" style="padding:6px 12px;border:1px solid #e5e5e0;border-radius:6px;background:#fff;font-size:11px;cursor:pointer;font-family:inherit;color:#555">↓ Descargar de GitHub</button>
-          <span id="gh-last-sync" style="font-size:10px;color:#bbb"></span>
-        </div>
-      </div>
-    </div>
-
-    <div style="border-top:1px solid #e5e5e0;margin-top:14px;padding-top:14px">
-      <div style="font-size:12px;font-weight:500;color:#555;margin-bottom:8px">Google Drive — sincronización</div>
-      <div style="font-size:10px;color:#bbb;line-height:1.5;margin-bottom:10px;padding:8px 10px;background:#f9f9f7;border-radius:6px">
-        Guarda el portfolio y el estado en tu carpeta de Drive. Los archivos aparecerán como <b>return_portfolio.json</b> y <b>return_state.json</b>.
-      </div>
-      <div class="irow">
-        <div class="ilbl">OAuth 2.0 Client ID <span style="color:#bbb;font-weight:400">(de GCP Console → Clientes)</span></div>
-        <div class="iwrap"><input type="text" id="drive-client-id" placeholder="253233836006-xxxx.apps.googleusercontent.com" style="font-size:11px;font-family:'Courier New',monospace"></div>
-      </div>
-      <div style="display:flex;gap:8px;align-items:center;margin-top:8px;flex-wrap:wrap">
-        <button id="drive-connect-btn" onclick="connectDrive()" style="padding:7px 14px;border:1px solid #4285f4;border-radius:6px;background:#4285f4;color:#fff;font-size:12px;cursor:pointer;font-family:inherit;font-weight:500">Conectar con Google Drive</button>
-        <button id="drive-disconnect-btn" onclick="disconnectDrive()" style="padding:7px 14px;border:1px solid #e5e5e0;border-radius:6px;background:#fff;font-size:12px;cursor:pointer;font-family:inherit;color:#dc2626;display:none">Desconectar</button>
-        <span id="drive-status" style="font-size:11px;color:#aaa"></span>
-      </div>
-      <div id="drive-actions" style="margin-top:8px;display:none">
-        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
-          <button onclick="drivePush()" style="padding:6px 12px;border:1px solid #e5e5e0;border-radius:6px;background:#fff;font-size:11px;cursor:pointer;font-family:inherit;color:#555">↑ Subir a Drive</button>
-          <button onclick="drivePull()" style="padding:6px 12px;border:1px solid #e5e5e0;border-radius:6px;background:#fff;font-size:11px;cursor:pointer;font-family:inherit;color:#555">↓ Descargar de Drive</button>
-          <button onclick="driveSyncAll()" style="padding:6px 12px;border:1px solid #86efac;border-radius:6px;background:#f0fdf4;font-size:11px;cursor:pointer;font-family:inherit;color:#15803d">⟳ Sincronizar ahora</button>
-          <span id="drive-last-sync" style="font-size:10px;color:#bbb"></span>
-        </div>
-      </div>
-    </div>
-
-  </div>
-</div>
-
-<div class="sec">
-  <div class="sec-h" onclick="toggleSec2('sec-import')">
-    <span class="sec-ht">Importar anuncio</span>
-    <span class="arr open" id="a-sec-import">▼</span>
-  </div>
-  <div class="sec-b open" id="sec-import">
-    <div style="font-size:11px;color:#888;line-height:1.6;margin-bottom:10px;border:1px solid #e5e5e0;border-radius:6px;padding:10px 12px;background:#fafaf8">
-      <b style="color:#555">Cómo importar:</b><br>
-      1. Ve al anuncio en Idealista, Fotocasa, pisos.com, etc.<br>
-      2. Selecciona todo el texto de la página (Ctrl+A) y cópialo (Ctrl+C).<br>
-      3. Pégalo abajo y pulsa <b>Analizar</b>. La IA extrae todos los campos automáticamente.
-    </div>
-
-    <div class="ilbl" style="margin-bottom:4px">URL del anuncio <span style="color:#aaa">(opcional — funciona para portales sin bloqueo)</span></div>
-    <div style="display:flex;gap:8px;margin-bottom:10px">
-      <div class="iwrap" style="flex:1">
-        <input type="url" id="url-inp" placeholder="https://www.fotocasa.es/es/comprar/..." style="font-size:12px">
-      </div>
-      <button onclick="fetchUrl()" id="url-btn" style="padding:7px 14px;border:1px solid #e5e5e0;border-radius:6px;background:#fff;font-size:12px;cursor:pointer;font-family:inherit;font-weight:500;white-space:nowrap">Obtener →</button>
-    </div>
-
-    <div class="ilbl" style="margin-bottom:4px">Texto del anuncio</div>
-    <textarea id="listing-txt" rows="9" style="width:100%;border:1px solid #e5e5e0;border-radius:6px;padding:10px;font-size:12px;font-family:inherit;line-height:1.5;resize:vertical;outline:none;color:#1a1a1a;background:#fff" placeholder="Pega aquí el texto del anuncio...&#10;&#10;Ejemplo:&#10;Piso en venta en Triana, Sevilla&#10;Precio: 185.000 €&#10;75 m² · 3 hab · 1 baño · Planta 2ª sin ascensor&#10;Estado: Para reformar · Año 1963&#10;Comunidad: 45 €/mes · IBI: 280 €/año"></textarea>
-
     <div style="display:flex;gap:8px;margin-top:8px;align-items:center;flex-wrap:wrap">
       <button onclick="analizarAnuncio()" id="analyze-btn" style="padding:8px 18px;border:1px solid #1a1a1a;border-radius:6px;background:#1a1a1a;color:#fff;font-size:13px;cursor:pointer;font-family:inherit;font-weight:500">Analizar con IA</button>
       <button onclick="clearImport()" style="padding:8px 12px;border:1px solid #e5e5e0;border-radius:6px;background:#fff;font-size:12px;cursor:pointer;font-family:inherit;color:#888">Limpiar</button>
@@ -1174,15 +1174,15 @@ try{
 let text=’’;
 if(cfg.proxyUrl){
 st.textContent=‘Usando tu servidor proxy…’;
-const r=await fetch(cfg.proxyUrl+’?url=’+encodeURIComponent(url),{signal:AbortSignal.timeout(12000)});
+const r=await fetch(cfg.proxyUrl+’?url=’+encodeURIComponent(url),{signal:(()=>{const c=new AbortController();setTimeout(()=>c.abort(),12000);return c.signal;})()});
 if(r.ok){const d=await r.json();text=(d.content||d.text||’’).substring(0,8000);}
 }
 if(!text){
 st.textContent=‘Intentando acceso directo…’;
-const r2=await fetch(‘https://api.allorigins.win/get?url=’+encodeURIComponent(url),{signal:AbortSignal.timeout(8000)});
+const r2=await fetch(‘https://api.allorigins.win/get?url=’+encodeURIComponent(url),{signal:(()=>{const c=new AbortController();setTimeout(()=>c.abort(),8000);return c.signal;})()});
 const d2=await r2.json();
 if(d2.contents&&d2.contents.length>300){
-text=d2.contents.replace(/<script[^>]*>[\s\S]*?</script>/gi,’’).replace(/<style[^>]*>[\s\S]*?</style>/gi,’’).replace(/<[^>]+>/g,’ ‘).replace(/\s+/g,’ ‘).substring(0,8000);
+text=d2.contents.replace(/<[sS][cC][rR][iI][pP][tT][^>]*>[\s\S]*?</[sS][cC][rR][iI][pP][tT]>/g,’’).replace(/<[sS][tT][yY][lL][eE][^>]*>[\s\S]*?</[sS][tT][yY][lL][eE]>/g,’’).replace(/<[^>]+>/g,’ ‘).replace(/\s+/g,’ ‘).substring(0,8000);
 }
 }
 if(text&&text.length>100){
@@ -1690,6 +1690,7 @@ if(cfg.driveClientId) driveClientId = cfg.driveClientId;
 function initGapi(){
 return new Promise((resolve, reject)=>{
 if(gapiReady){resolve();return;}
+if(!window.gapi){reject(new Error(‘gapi not loaded’));return;}
 gapi.load(‘client’, async ()=>{
 try{
 await gapi.client.init({});
@@ -1708,6 +1709,7 @@ cfg.driveClientId = driveClientId;
 saveConfig(cfg);
 setDriveStatus(‘Conectando…’,’#d97706’);
 try{
+if(!window.google?.accounts?.oauth2){ setDriveStatus(‘Google API no disponible en este entorno’,’#dc2626’); return; }
 driveTokenClient = google.accounts.oauth2.initTokenClient({
 client_id: driveClientId,
 scope: DRIVE_SCOPES,
@@ -2160,7 +2162,10 @@ window.setSub=(v)=>{if(_origSetSub)_origSetSub(v);autoSave();};
 
 // ─── RESTAURAR AL CARGAR ──────────────────────────────────────────────
 // Usar setTimeout para que el DOM esté listo
-setTimeout(autoRestore, 50);
+setTimeout(()=>{
+try{ autoRestore(); }
+catch(e){ console.log(‘Restore error:’, e); }
+}, 50);
 
 </script>
 </body>
