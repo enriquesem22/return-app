@@ -149,8 +149,7 @@ input[type=number]::-webkit-inner-spin-button{opacity:.4}
 .green-note{border:1px solid #86efac;background:#f0fdf4;border-radius:6px;padding:9px 12px;font-size:11px;color:#15803d;line-height:1.5;margin-bottom:8px}
 .green-note b{font-weight:500}
 </style>
-  <script src="https://apis.google.com/js/api.js"></script>
-  <script src="https://accounts.google.com/gsi/client"></script>
+  <!-- Google APIs loaded lazily when Drive connect is clicked -->
 </head>
 <body>
 <div class="app">
@@ -832,7 +831,6 @@ if(btn) btn.classList.add(‘active’);
 const panel=document.getElementById(pid);
 if(panel) panel.classList.add(‘active’);
 if(pid===‘ap’&&mapObj) setTimeout(()=>mapObj.invalidateSize(),80);
-if(pid===‘ip’) setTimeout(initImport,50);
 if(pid===‘pp2’) setTimeout(()=>window.loadPortfolio(),50);
 };
 window.setProv=setProv;window.setMun=setMun;window.setBar=setBar;window.setSub=setSub;
@@ -982,7 +980,6 @@ window.toggleProviderFields = function(){
 function initImport(){
   const el = document.getElementById('ip-content');
   if(!el) return;
-  if(el.dataset.init === '1') return; // Already initialized
   el.dataset.init = '1';
   const cfg = loadConfig();
   el.innerHTML = importarHTML();
@@ -2165,7 +2162,15 @@ window.setSub=(v)=>{if(_origSetSub)_origSetSub(v);autoSave();};
 setTimeout(()=>{
 try{ autoRestore(); }
 catch(e){ console.log(‘Restore error:’, e); }
-}, 50);
+// Pre-render Importar and Portfolio tabs
+try{ initImport(); }
+catch(e){ console.log(‘initImport error:’, e); }
+try{
+const pp2el = document.getElementById(‘pp2-content’);
+if(pp2el) renderPortfolio(pp2el);
+}
+catch(e){ console.log(‘Portfolio error:’, e); }
+}, 100);
 
 </script>
 </body>
