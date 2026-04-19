@@ -6,14 +6,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Return — Analizador de inversión inmobiliaria</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
-  <!-- PWA -->
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#ba7517">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="Return">
-  <link rel="apple-touch-icon" href="icon-192.png">
-  <meta name="mobile-web-app-capable" content="yes">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:system-ui,-apple-system,sans-serif;background:#f9f9f7;color:#1a1a1a;min-height:100vh;padding:24px}
@@ -154,8 +146,7 @@ input[type=number]::-webkit-inner-spin-button{opacity:.4}
 </head>
 <body>
 <div class="app">
-<div class="hdr"><span class="hdr-t">Return</span><span class="hdr-s">Analizador de inversión inmobiliaria</span>
-<button id="pwa-install-btn" onclick="installPWA()" style="display:none;margin-left:auto;padding:5px 12px;border:1px solid #ba7517;border-radius:6px;background:#fff;font-size:11px;cursor:pointer;font-family:inherit;color:#ba7517;font-weight:500">+ Añadir a inicio</button></div>
+<div class="hdr"><span class="hdr-t">Return</span><span class="hdr-s">Analizador de inversión inmobiliaria</span></div>
 <div class="tabs">
   <button class="tab active" onclick="sw('ap',this)">Activo</button>
   <button class="tab" onclick="sw('pp',this)">Presupuesto</button>
@@ -764,16 +755,7 @@ window.ub=(k,v)=>{B[k]=v;rBR();};
 window.tsh=(k)=>{S[k]=!S[k];rSI();rSR();rFR();rBR();};
 window.tb2=(k)=>{B[k]=!B[k];rBI();rBR();};
 window.ts=(id)=>{OS[id]=!OS[id];const b=document.getElementById(id),a=document.getElementById(‘a-’+id);if(b)b.classList.toggle(‘open’,OS[id]);if(a)a.classList.toggle(‘open’,OS[id]);};
-window.sw=function(pid,btn){
-document.querySelectorAll(’.tab’).forEach(t=>t.classList.remove(‘active’));
-if(btn) btn.classList.add(‘active’);
-[‘ap’,‘pp’,‘fp’,‘bp’,‘ip’,‘pp2’].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove(‘active’);});
-const panel=document.getElementById(pid);
-if(panel) panel.classList.add(‘active’);
-if(pid===‘ap’&&mapObj) setTimeout(()=>mapObj.invalidateSize(),80);
-if(pid===‘ip’) setTimeout(initImport,50);
-if(pid===‘pp2’) setTimeout(()=>window.loadPortfolio(),50);
-};
+window.sw=(pid,btn)=>{document.querySelectorAll(’.tab’).forEach(t=>t.classList.remove(‘active’));btn.classList.add(‘active’);[‘ap’,‘pp’,‘fp’,‘bp’].forEach(id=>document.getElementById(id).classList.remove(‘active’));document.getElementById(pid).classList.add(‘active’);if(pid===‘ap’&&mapObj)setTimeout(()=>mapObj.invalidateSize(),80);};
 window.setProv=setProv;window.setMun=setMun;window.setBar=setBar;window.setSub=setSub;
 
 function rSI(){
@@ -819,54 +801,6 @@ function rBR(){const c=cB(S,B),v=vB(c.rn,c.coc,S.fin),bk=c.rb>=9?‘pos’:c.rb<
 rSI();rSR();rPresupuesto();rFI();rFR();rBI();rBR();
 </script>
 
-<script>
-// Registrar Service Worker para PWA
-// PWA Install prompt
-let deferredPrompt = null;
-window.addEventListener('beforeinstallprompt', e => {
-  e.preventDefault();
-  deferredPrompt = e;
-  const btn = document.getElementById('pwa-install-btn');
-  if(btn) btn.style.display = '';
-});
-window.addEventListener('appinstalled', () => {
-  const btn = document.getElementById('pwa-install-btn');
-  if(btn) btn.style.display = 'none';
-  deferredPrompt = null;
-});
-window.installPWA = async function(){
-  if(!deferredPrompt){ 
-    alert('Para instalar en iPhone:\n1. Pulsa el botón compartir (□↑) en Safari\n2. Selecciona "Añadir a pantalla de inicio"');
-    return;
-  }
-  deferredPrompt.prompt();
-  const result = await deferredPrompt.userChoice;
-  deferredPrompt = null;
-  const btn = document.getElementById('pwa-install-btn');
-  if(btn) btn.style.display = 'none';
-};
-
-if('serviceWorker' in navigator){
-  window.addEventListener('load', ()=>{
-    navigator.serviceWorker.register('sw.js').then(reg=>{
-      console.log('SW registrado:', reg.scope);
-      // Notificar si hay actualización disponible
-      reg.addEventListener('updatefound', ()=>{
-        const newWorker = reg.installing;
-        newWorker.addEventListener('statechange', ()=>{
-          if(newWorker.state==='installed' && navigator.serviceWorker.controller){
-            if(confirm('Hay una nueva versión disponible. ¿Actualizar?')){
-              newWorker.postMessage('skipWaiting');
-              window.location.reload();
-            }
-          }
-        });
-      });
-    }).catch(err=>console.log('SW error:', err));
-  });
-}
-</script>
-
 </body>
 </html>
 <!-- PATCH: importar anuncio + base de datos -->
@@ -906,11 +840,11 @@ if(show) show.style.display=’’;
 // ─── INICIALIZAR PESTAÑA IMPORTAR ────────────────────────────────────
 function initImport(){
 const el = document.getElementById(‘ip-content’);
-if(!el) return;
-if(el.dataset.init === ‘1’) return; // Already initialized
+if(!el || el.dataset.init) return;
 el.dataset.init = ‘1’;
 const cfg = loadConfig();
 el.innerHTML = importarHTML();
+// Restaurar valores
 const setV = (id,v)=>{ const e=document.getElementById(id); if(e&&v) e.value=v; };
 setV(‘ai-provider’, cfg.provider||‘openai’);
 setV(‘openai-key’, cfg.openaiKey);
@@ -920,11 +854,15 @@ setV(‘proxy-url’, cfg.proxyUrl);
 setV(‘drive-client-id’, cfg.driveClientId);
 if(cfg.driveClientId) driveClientId = cfg.driveClientId;
 toggleProviderFields();
-// Restore drive connection status if token exists
-if(driveToken) updateDriveUI(true);
 }
 
-// sw patching moved to unified sw function below
+// Patch sw to init import when tab is clicked
+const _origSw = window.sw;
+window.sw = function(pid, btn){
+_origSw(pid, btn);
+if(pid === ‘ip’) initImport();
+if(pid === ‘pp2’) loadPortfolio();
+};
 
 // ─── HTML IMPORTAR ───────────────────────────────────────────────────
 function importarHTML(){
@@ -1235,12 +1173,14 @@ window._lastImport=window._lastImport||{};
 window.guardarComoCase();
 };
 // Also refresh portfolio when tab is opened
-// sw unified below
+const _swForPortfolio=window.sw;
+window.sw=function(pid,btn){_swForPortfolio(pid,btn);if(pid===‘pp2’)setTimeout(window.loadPortfolio,100);};
 
 window.loadPortfolio=function(){
-const el=document.getElementById(‘pp2-content’);
-if(!el){console.log(‘pp2-content not found’);return;}
+const el=document.getElementById(‘pp2-content’);if(!el)return;
+// Show local data immediately (fast)
 renderPortfolio(el);
+// Then merge with Drive in background
 if(driveToken){
 driveListFiles().then(files=>{
 const pfFile=files.find(f=>f.name===DRIVE_PORTFOLIO_FILE);
