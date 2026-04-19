@@ -882,9 +882,23 @@ function rFR(){const c=cF(S,F),v=vF(c.rc,c.mn),sk=c.rc>=20?‘pos’:c.rc<0?‘n
 function rBI(){const hasP=window._presupuestoTotal>0;document.getElementById(‘bi’).innerHTML=(hasP?`<div class="green-note">Reforma desde presupuesto por partidas: <b>${ef(window._presupuestoTotal)}</b></div>`:’’)+sec(‘Reforma’,(!hasP?ir(‘Reforma total’,B.ref,‘€’,“ub(‘ref’,+this.value)”):’’)+ir(‘Contingencia’,B.ct,’%’,“ub(‘ct’,+this.value)”),‘bR’)+sec(‘Alquiler’,ir(‘Renta mensual’,B.rnt,‘€/mes’,“ub(‘rnt’,+this.value)”)+ir(‘Vacancia estimada’,B.vac,’%’,“ub(‘vac’,+this.value)”),‘bAlq’)+sec(‘Gastos anuales’,ir(‘IBI’,B.ibi,‘€/año’,“ub(‘ibi’,+this.value)”)+ir(‘Comunidad’,B.com,‘€/año’,“ub(‘com’,+this.value)”)+ir(‘Seguro hogar’,B.seg,‘€/año’,“ub(‘seg’,+this.value)”)+tgrow(‘Seguro de impago’,B.imp,“tb2(‘imp’)”,‘4,5% renta anual’)+ir(‘Mantenimiento’,B.mnt,’% precio’,“ub(‘mnt’,+this.value)”)+ir(‘Gestoría’,B.ges,’% renta’,“ub(‘ges’,+this.value)”),‘bGts’);}
 function rBR(){const c=cB(S,B),v=vB(c.rn,c.coc,S.fin),bk=c.rb>=9?‘pos’:c.rb<5?‘neg’:‘warn’,nk=c.rn>=6?‘pos’:c.rn<0?‘neg’:‘warn’,ck=c.coc>=7?‘pos’:c.coc<0?‘neg’:‘warn’;document.getElementById(‘br’).innerHTML=`<div class="verdict ${v.c}"><div class="vt"><div class="vic">${v.i}</div><div><div class="vlb">Veredicto</div><div class="vvl">${v.l}</div></div></div><div class="vrs">${v.w}</div></div>`+`<div class="kpis">${kp('Rent. bruta',ep(c.rb),'',bk)}${kp('Rent. neta',ep(c.rn),'',nk)}${S.fin?kp('Cash on cash',ep(c.coc),'',ck):kp('Beneficio neto',ef(c.bn),'por año',c.bn>0?'pos':'neg')}${S.fin?kp('Cash flow',ef(c.cf/12)+'/mes','tras hipoteca',c.cf>0?'pos':'neg'):kp('Payback',isFinite(c.pb)?c.pb.toFixed(1)+' años':'—','')}</div>`+sec(‘Inversión total’,dr(‘Precio de compra’,ef(S.pc))+dr(‘ITP’,ef(c.it))+dr(‘Notaría + Registro’,ef(c.nr))+dr(‘Due diligence’,ef(S.dd))+dr(‘Reforma’,ef(c.ref))+dr(‘Contingencia’,ef(c.co))+dr(‘Coste total’,ef(c.tot),‘hl’)+(S.fin?dr(‘Capital propio’,ef(c.cap),‘hl’):’’),‘brI’)+sec(‘Cuenta de explotación anual’,dr(‘Renta bruta anual’,ef(c.ra))+dr(‘Vacancia’,‘− ‘+ef(c.ve))+dr(‘Ingresos efectivos’,ef(c.ie),‘hl’)+’<div class="gap"></div>’+dr(‘IBI’,’− ’+ef(B.ibi))+dr(‘Comunidad’,‘− ‘+ef(B.com))+dr(‘Seguro hogar’,‘− ‘+ef(B.seg))+(B.imp?dr(‘Seguro impago (4,5%)’,‘− ‘+ef(c.si)):’’)+dr(‘Mantenimiento’,‘− ‘+ef(c.mt))+(c.gs>0?dr(‘Gestoría’,‘− ‘+ef(c.gs)):’’)+’<div class="gap"></div>’+dr(‘Beneficio operativo neto’,ef(c.bn),c.bn>0?‘pos’:‘neg’)+(S.fin?dr(‘Cuota hipoteca anual’,‘− ‘+ef(c.ca))+dr(‘Cash flow tras hipoteca’,ef(c.cf),c.cf>0?‘pos’:‘neg’):’’)+’<div class="gap"></div>’+dr(‘Rentabilidad bruta’,ep(c.rb),bk)+dr(‘Rentabilidad neta’,ep(c.rn),nk)+(S.fin?dr(‘Cash on cash’,ep(c.coc),ck):’’),‘brE’)+`<div class="refbox">Renta necesaria para yield neta del 7%: <b>${ef(c.r7)}/mes</b><br>Benchmark mínimo Valencia: 9–11% bruta · Media España 2024: 7,2% bruta<br>Seguro impago: 4,5% renta anual · Cobertura hasta 12 mensualidades</div>`;}
 
+// Show errors on page for debugging
+window.onerror = function(msg, src, line, col, err){
+const d = document.createElement(‘div’);
+d.style.cssText = ‘position:fixed;top:0;left:0;right:0;background:#dc2626;color:#fff;padding:12px;font-size:12px;z-index:9999;font-family:monospace’;
+d.textContent = ’JS Error: ’ + msg + ’ (line ’ + line + ‘)’;
+document.body.appendChild(d);
+return false;
+};
 try{
 rSI();rSR();rPresupuesto();rFI();rFR();rBI();rBR();
-}catch(e){ console.error(‘Init error:’, e); }
+}catch(e){
+console.error(‘Init error:’, e);
+const d = document.createElement(‘div’);
+d.style.cssText = ‘background:#dc2626;color:#fff;padding:12px;font-size:12px;font-family:monospace;margin:8px’;
+d.textContent = ’Init error: ’ + e.message + ’ at ’ + e.stack;
+document.body.appendChild(d);
+}
 </script>
 
 <script>
@@ -1644,25 +1658,7 @@ if(_origSavePortfolioGH) _origSavePortfolioGH(c);
 if(ghToken) setTimeout(window.githubPush, 1000);
 };
 
-// Restore GitHub token from config on init
-(function(){
-const cfg = loadConfig();
-if(cfg.ghToken){
-ghToken = cfg.ghToken;
-// Restore UI state when import tab opens
-const origInit = window.initImport;
-window.initImport = function(){
-if(origInit) origInit();
-setTimeout(()=>{
-const el = document.getElementById(‘gh-token’);
-if(el && ghToken){ el.value=ghToken; }
-const actions = document.getElementById(‘gh-actions’);
-if(actions && ghToken) actions.style.display=’’;
-if(ghToken){ setGhStatus(‘✓ Conectado a GitHub’,’#16a34a’); githubPull(); }
-}, 200);
-};
-}
-})();
+// GitHub token restored in startupInit
 
 window.SEL=window.SEL||{prov:’’,mun:’’,bar:’’,sub:’’};
 
@@ -2159,18 +2155,52 @@ window.setSub=(v)=>{if(_origSetSub)_origSetSub(v);autoSave();};
 
 // ─── RESTAURAR AL CARGAR ──────────────────────────────────────────────
 // Usar setTimeout para que el DOM esté listo
-setTimeout(()=>{
-try{ autoRestore(); }
-catch(e){ console.log(‘Restore error:’, e); }
-// Pre-render Importar and Portfolio tabs
-try{ initImport(); }
-catch(e){ console.log(‘initImport error:’, e); }
+// Restore state and render all tabs at startup
+function startupInit(){
+// 1. Restore saved state
+try{ autoRestore(); } catch(e){ console.log(‘autoRestore err:’,e); }
+
+// 2. Render Importar tab (simple, no async)
+try{
+const ipEl = document.getElementById(‘ip-content’);
+if(ipEl && !ipEl.dataset.init){
+ipEl.dataset.init=‘1’;
+const cfg = loadConfig();
+ipEl.innerHTML = importarHTML();
+// Restore config values
+const setV=(id,v)=>{const e=document.getElementById(id);if(e&&v)e.value=v;};
+setV(‘ai-provider’,cfg.provider||‘openai’);
+setV(‘openai-key’,cfg.openaiKey);
+setV(‘goog-key’,cfg.googKey);
+setV(‘anth-key’,cfg.anthKey);
+setV(‘proxy-url’,cfg.proxyUrl);
+setV(‘drive-client-id’,cfg.driveClientId);
+setV(‘gh-token’,cfg.ghToken);
+if(cfg.driveClientId) driveClientId=cfg.driveClientId;
+if(cfg.ghToken) ghToken=cfg.ghToken;
+try{ toggleProviderFields(); }catch(e){}
+// Restore GitHub UI state (no async calls)
+if(ghToken){
+const a=document.getElementById(‘gh-actions’);
+if(a) a.style.display=’’;
+setGhStatus(‘✓ GitHub configurado (pulsa ↓ para sincronizar)’,’#16a34a’);
+}
+}
+} catch(e){ console.log(‘initImport err:’,e); }
+
+// 3. Render Portfolio tab
 try{
 const pp2el = document.getElementById(‘pp2-content’);
 if(pp2el) renderPortfolio(pp2el);
+} catch(e){ console.log(‘renderPortfolio err:’,e); }
 }
-catch(e){ console.log(‘Portfolio error:’, e); }
-}, 100);
+
+// Run after DOM is ready and scripts are loaded
+if(document.readyState===‘loading’){
+document.addEventListener(‘DOMContentLoaded’, ()=>setTimeout(startupInit,50));
+} else {
+setTimeout(startupInit, 50);
+}
 
 </script>
 </body>
