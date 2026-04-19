@@ -885,11 +885,17 @@ function rBR(){const c=cB(S,B),v=vB(c.rn,c.coc,S.fin),bk=c.rb>=9?‘pos’:c.rb<
 // Show errors on page for debugging
 window.onerror = function(msg, src, line, col, err){
 const d = document.createElement(‘div’);
-d.style.cssText = ‘position:fixed;top:0;left:0;right:0;background:#dc2626;color:#fff;padding:12px;font-size:12px;z-index:9999;font-family:monospace’;
-d.textContent = ’JS Error: ’ + msg + ’ (line ’ + line + ‘)’;
+d.style.cssText = ‘position:fixed;top:0;left:0;right:0;background:#dc2626;color:#fff;padding:12px;font-size:11px;z-index:9999;font-family:monospace;white-space:pre-wrap’;
+d.textContent = ‘ERR: ’ + msg + ‘\nSRC: ’ + (src||’?’) + ‘\nL’ + line + ‘:C’ + col + ‘\n’ + (err&&err.stack?err.stack.substring(0,200):’’);
 document.body.appendChild(d);
 return false;
 };
+window.addEventListener(‘unhandledrejection’, function(e){
+const d = document.createElement(‘div’);
+d.style.cssText = ‘position:fixed;top:80px;left:0;right:0;background:#d97706;color:#fff;padding:12px;font-size:11px;z-index:9999;font-family:monospace;white-space:pre-wrap’;
+d.textContent = ’PROMISE REJECTED: ’ + (e.reason && e.reason.message ? e.reason.message : String(e.reason));
+document.body.appendChild(d);
+});
 try{
 rSI();rSR();rPresupuesto();rFI();rFR();rBI();rBR();
 }catch(e){
@@ -949,7 +955,8 @@ if('serviceWorker' in navigator){
 }
 <!-- PATCH: importar anuncio + base de datos -->
 <script>
-
+// DIAGNOSTIC: mark third block start
+try{ document.title = document.title + ' [S3-START]'; }catch(e){}
 
 // ═══════════════════════════════════════════════════════════════
 // § 12 · CONFIGURACIÓN IA — Proveedores y API keys
@@ -2195,12 +2202,18 @@ if(pp2el) renderPortfolio(pp2el);
 } catch(e){ console.log(‘renderPortfolio err:’,e); }
 }
 
+// DIAGNOSTIC: mark third block end
+try{ document.title = document.title + ’ [S3-END]’; }catch(e){}
+
 // Run after DOM is ready and scripts are loaded
 if(document.readyState===‘loading’){
 document.addEventListener(‘DOMContentLoaded’, ()=>setTimeout(startupInit,50));
 } else {
 setTimeout(startupInit, 50);
 }
+
+// DIAGNOSTIC: mark initial call scheduled
+try{ document.title = document.title + ’ [SCHEDULED]’; }catch(e){}
 
 </script>
 </body>
