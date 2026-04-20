@@ -935,7 +935,7 @@ function saveConfig(c){ localStorage.setItem(CFG_KEY, JSON.stringify(c)); }
 
 window.saveApiConfig = function(){
   const cfg = {
-    provider:      document.getElementById('ai-provider')?.value || 'openai',
+    provider:      document.getElementById('ai-provider')?.value || 'groq',
     openaiKey:     document.getElementById('openai-key')?.value?.trim() || '',
     googKey:       document.getElementById('goog-key')?.value?.trim() || '',
     anthKey:       document.getElementById('anth-key')?.value?.trim() || '',
@@ -952,10 +952,10 @@ window.saveApiConfig = function(){
 
 window.toggleProviderFields = function(){
   const p = document.getElementById('ai-provider')?.value;
-  ['row-openai','row-goog','row-anth'].forEach(id=>{
+  ['row-groq','row-openai','row-goog','row-anth'].forEach(function(id){
     const el=document.getElementById(id); if(el) el.style.display='none';
   });
-  const map={openai:'row-openai',google:'row-goog',anthropic:'row-anth'};
+  const map={groq:'row-groq',openai:'row-openai',google:'row-goog',anthropic:'row-anth'};
   const show=document.getElementById(map[p]);
   if(show) show.style.display='';
 };
@@ -1001,14 +1001,25 @@ function importarHTML(){
           <div class="ilbl">Proveedor de IA</div>
           <div class="iwrap">
             <select id="ai-provider" onchange="toggleProviderFields()">
+              <option value="groq">Groq — GRATIS · Llama 3.1 · Sin tarjeta</option>
               <option value="openai">OpenAI (ChatGPT)</option>
-              <option value="google">Google Gemini — GRATIS hasta 1.500/día</option>
+              <option value="google">Google Gemini</option>
               <option value="anthropic">Anthropic Claude</option>
             </select>
           </div>
         </div>
 
-        <div id="row-openai">
+        <div id="row-groq">
+          <div class="irow">
+            <div class="ilbl">Groq API Key <span style="color:#16a34a;font-weight:500">— GRATIS, sin tarjeta</span></div>
+            <div class="iwrap"><input type="password" id="groq-key" placeholder="gsk_..." style="font-family:'Courier New',monospace;font-size:12px"></div>
+          </div>
+          <div style="font-size:10px;color:#bbb;margin:-4px 0 8px;line-height:1.5">
+            Crea tu key gratis en <a href="https://console.groq.com/keys" target="_blank" style="color:#ba7517">console.groq.com/keys</a> · 14.400 peticiones/día · Modelo: <b>llama-3.1-8b-instant</b>
+          </div>
+        </div>
+
+        <div id="row-openai" style="display:none">
           <div class="irow">
             <div class="ilbl">OpenAI API Key</div>
             <div class="iwrap"><input type="password" id="openai-key" placeholder="sk-proj-..." style="font-family:'Courier New',monospace;font-size:12px"></div>
@@ -1265,6 +1276,21 @@ notas_inversor: 1-2 frases clave para un inversor (riesgos, oportunidades, alert
 ANUNCIO:
 `;
 
+async function callGroq(txt,key){
+  const r=await fetch('https://api.groq.com/openai/v1/chat/completions',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},
+    body:JSON.stringify({
+      model:'llama-3.1-8b-instant',
+      messages:[{role:'user',content:PROMPT_BASE+txt.substring(0,5000)}],
+      max_tokens:900,
+      temperature:0.1
+    })
+  });
+  if(!r.ok){const e=await r.json();throw new Error(e.error?.message||'Error Groq '+r.status);}
+  return (await r.json()).choices?.[0]?.message?.content||'';
+}
+
 async function callOpenAI(txt,key){
   const r=await fetch('https://api.openai.com/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},body:JSON.stringify({model:'gpt-4o-mini',messages:[{role:'user',content:PROMPT_BASE+txt.substring(0,5000)}],max_tokens:900})});
   if(!r.ok){const e=await r.json();throw new Error(e.error?.message||'Error OpenAI '+r.status);}
@@ -1287,9 +1313,9 @@ window.analizarAnuncio = async function(){
   const txt=document.getElementById('listing-txt')?.value?.trim();
   if(!txt){alert('Pega primero el texto del anuncio');return;}
   const cfg=loadConfig();
-  let provider=cfg.provider||'openai';
+  let provider=cfg.provider||'groq';
   // Auto-seleccionar proveedor si el actual no tiene key
-  const keyMap={openai:cfg.openaiKey,google:cfg.googKey,anthropic:cfg.anthKey};
+  const keyMap={groq:cfg.groqKey,openai:cfg.openaiKey,google:cfg.googKey,anthropic:cfg.anthKey};
   if(!keyMap[provider]){
     // Buscar el primero que tenga key
     const available=Object.entries(keyMap).find(([,v])=>v);
@@ -1305,7 +1331,7 @@ window.analizarAnuncio = async function(){
   }
   const btn=document.getElementById('analyze-btn'),st=document.getElementById('analyze-status');
   btn.textContent='Analizando...';btn.disabled=true;
-  st.textContent='Enviando a '+(provider==='openai'?'ChatGPT':provider==='google'?'Gemini':'Claude')+'...';
+  st.textContent='Enviando a '+(provider==='groq'?'Groq (gratis)':provider==='openai'?'ChatGPT':provider==='google'?'Gemini':'Claude')+'...';
   st.style.color='#aaa';
   try{
     let raw='';
@@ -1316,7 +1342,7 @@ window.analizarAnuncio = async function(){
     if(!m)throw new Error('La IA no devolvió JSON válido. Revisa la API key.');
     const parsed=JSON.parse(m[0]);
     mostrarResultadoImport(parsed);
-    const pName=provider==='openai'?'GPT-4o mini':provider==='google'?'Gemini 1.5 Flash':'Claude Sonnet';
+    const pName=provider==='groq'?'Groq Llama 3.1 (gratis)':provider==='openai'?'GPT-4o mini':provider==='google'?'Gemini Flash':'Claude Sonnet';
     st.textContent='✓ Análisis completado con '+pName;st.style.color='#16a34a';
   }catch(e){st.textContent='Error: '+e.message;st.style.color='#dc2626';}
   btn.textContent='Analizar con IA';btn.disabled=false;
@@ -2263,7 +2289,8 @@ window.addEventListener('load', function(){
       var cfg = loadConfig();
       ipEl.innerHTML = importarHTML();
       var setV = function(id,v){ var e=document.getElementById(id); if(e&&v) e.value=v; };
-      setV('ai-provider', cfg.provider||'openai');
+      setV('ai-provider', cfg.provider||'groq');
+      setV('groq-key', cfg.groqKey||'');
       setV('openai-key', cfg.openaiKey||'');
       setV('goog-key', cfg.googKey||'');
       setV('anth-key', cfg.anthKey||'');
