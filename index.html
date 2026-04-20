@@ -1109,17 +1109,18 @@ function importarHTML(){
       <div class="sec-b open" id="sec-import">
         <div style="font-size:11px;color:#888;line-height:1.6;margin-bottom:10px;border:1px solid #e5e5e0;border-radius:6px;padding:10px 12px;background:#fafaf8">
           <b style="color:#555">Cómo importar:</b><br>
-          1. Ve al anuncio en Idealista, Fotocasa, pisos.com, etc.<br>
-          2. Selecciona todo el texto de la página (Ctrl+A) y cópialo (Ctrl+C).<br>
-          3. Pégalo abajo y pulsa <b>Analizar</b>. La IA extrae todos los campos automáticamente.
+          <b style="color:#ba7517">Opción A — URL directa (gratis, recomendado):</b><br>
+          Pega el enlace del anuncio y pulsa <b>Leer página →</b>. Funciona con Idealista, Fotocasa, pisos.com.<br><br>
+          <b style="color:#555">Opción B — Texto manual:</b><br>
+          Selecciona todo en el anuncio (Ctrl+A → Ctrl+C), pégalo abajo y pulsa <b>Analizar con IA</b>.
         </div>
 
-        <div class="ilbl" style="margin-bottom:4px">URL del anuncio <span style="color:#aaa">(opcional — funciona para portales sin bloqueo)</span></div>
+        <div class="ilbl" style="margin-bottom:4px">URL del anuncio <span style="color:#ba7517">— gratis, sin configuración extra</span></div>
         <div style="display:flex;gap:8px;margin-bottom:10px">
           <div class="iwrap" style="flex:1">
-            <input type="url" id="url-inp" placeholder="https://www.fotocasa.es/es/comprar/..." style="font-size:12px">
+            <input type="url" id="url-inp" placeholder="https://www.idealista.com/inmueble/... o fotocasa, pisos.com..." style="font-size:12px">
           </div>
-          <button onclick="fetchUrl()" id="url-btn" style="padding:7px 14px;border:1px solid #e5e5e0;border-radius:6px;background:#fff;font-size:12px;cursor:pointer;font-family:inherit;font-weight:500;white-space:nowrap">Obtener →</button>
+          <button onclick="fetchUrl()" id="url-btn" style="padding:7px 14px;border:1px solid #e5e5e0;border-radius:6px;background:#fff;font-size:12px;cursor:pointer;font-family:inherit;font-weight:500;white-space:nowrap">Leer página →</button>
         </div>
 
         <div class="ilbl" style="margin-bottom:4px">Texto del anuncio</div>
@@ -1145,38 +1146,103 @@ window.toggleSec2 = function(id){
 
 // ─── FETCH URL ───────────────────────────────────────────────────────
 window.fetchUrl = async function(){
-  const url=document.getElementById('url-inp')?.value?.trim();
-  if(!url){alert('Introduce una URL');return;}
-  const cfg=loadConfig();
-  const btn=document.getElementById('url-btn'),st=document.getElementById('analyze-status');
-  btn.textContent='Obteniendo...';btn.disabled=true;
-  st.textContent='';st.style.color='#aaa';
+  const url = document.getElementById('url-inp')?.value?.trim();
+  if(!url){ alert('Introduce una URL'); return; }
+  const cfg = loadConfig();
+  const btn = document.getElementById('url-btn');
+  const st  = document.getElementById('analyze-status');
+  btn.textContent = 'Leyendo...'; btn.disabled = true;
+  st.textContent = ''; st.style.color = '#aaa';
+
+  // ── MÉTODO 1: Jina AI Reader — GRATIS, sin API key ───────────────
+  st.textContent = 'Leyendo con Jina Reader (gratis)...';
   try{
-    let text='';
-    if(cfg.proxyUrl){
-      st.textContent='Usando tu servidor proxy...';
-      const r=await fetch(cfg.proxyUrl+'?url='+encodeURIComponent(url),{signal:AbortSignal.timeout(12000)});
-      if(r.ok){const d=await r.json();text=(d.content||d.text||'').substring(0,8000);}
-    }
-    if(!text){
-      st.textContent='Intentando acceso directo...';
-      const r2=await fetch('https://api.allorigins.win/get?url='+encodeURIComponent(url),{signal:AbortSignal.timeout(8000)});
-      const d2=await r2.json();
-      if(d2.contents&&d2.contents.length>300){
-        text=d2.contents.replace(/<script[^>]*>[\s\S]*?<\/script>/gi,'').replace(/<style[^>]*>[\s\S]*?<\/style>/gi,'').replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').substring(0,8000);
+    const jinaUrl = 'https://r.jina.ai/' + url;
+    const c1 = new AbortController(); setTimeout(()=>c1.abort(), 15000);
+    const r = await fetch(jinaUrl, {
+      headers:{ 'Accept': 'text/plain', 'X-Return-Format': 'text' },
+      signal: c1.signal
+    });
+    if(r.ok){
+      const text = (await r.text()).substring(0, 8000).trim();
+      if(text.length > 200){
+        document.getElementById('listing-txt').value = text;
+        st.textContent = '✓ Página leída. Pulsa Analizar con IA.';
+        st.style.color = '#16a34a';
+        btn.textContent = 'Leer página →'; btn.disabled = false;
+        return;
       }
     }
-    if(text&&text.length>100){
-      document.getElementById('listing-txt').value=text;
-      st.textContent='✓ Contenido obtenido. Pulsa Analizar.';st.style.color='#16a34a';
-    }else{
-      st.textContent='Portal bloqueado. Pega el texto manualmente.';st.style.color='#d97706';
-    }
-  }catch(e){st.textContent='Error: '+e.message;st.style.color='#d97706';}
-  btn.textContent='Obtener →';btn.disabled=false;
-};
+  }catch(e){ console.log('Jina error:', e.message); }
 
-// ─── PROMPTS Y LLAMADAS A IA ──────────────────────────────────────────
+  // ── MÉTODO 2: allorigins.win ──────────────────────────────────────
+  st.textContent = 'Probando proxy alternativo...';
+  try{
+    const c2 = new AbortController(); setTimeout(()=>c2.abort(), 10000);
+    const r2 = await fetch('https://api.allorigins.win/get?url='+encodeURIComponent(url), {signal:c2.signal});
+    if(r2.ok){
+      const d = await r2.json();
+      const text = (d.contents||'')
+        .replace(/<script[\s\S]*?<\/script>/gi,'')
+        .replace(/<style[\s\S]*?<\/style>/gi,'')
+        .replace(/<[^>]+>/g,' ')
+        .replace(/\s+/g,' ')
+        .substring(0,8000).trim();
+      if(text.length > 200){
+        document.getElementById('listing-txt').value = text;
+        st.textContent = '✓ Contenido obtenido. Pulsa Analizar con IA.';
+        st.style.color = '#16a34a';
+        btn.textContent = 'Leer página →'; btn.disabled = false;
+        return;
+      }
+    }
+  }catch(e){ console.log('allorigins error:', e.message); }
+
+  // ── MÉTODO 3: corsproxy.io ────────────────────────────────────────
+  try{
+    const c3 = new AbortController(); setTimeout(()=>c3.abort(), 10000);
+    const r3 = await fetch('https://corsproxy.io/?'+encodeURIComponent(url), {signal:c3.signal});
+    if(r3.ok){
+      const text = (await r3.text())
+        .replace(/<script[\s\S]*?<\/script>/gi,'')
+        .replace(/<style[\s\S]*?<\/style>/gi,'')
+        .replace(/<[^>]+>/g,' ')
+        .replace(/\s+/g,' ')
+        .substring(0,8000).trim();
+      if(text.length > 200){
+        document.getElementById('listing-txt').value = text;
+        st.textContent = '✓ Contenido obtenido. Pulsa Analizar con IA.';
+        st.style.color = '#16a34a';
+        btn.textContent = 'Leer página →'; btn.disabled = false;
+        return;
+      }
+    }
+  }catch(e){ console.log('corsproxy error:', e.message); }
+
+  // ── MÉTODO 4: Proxy propio ────────────────────────────────────────
+  if(cfg.proxyUrl){
+    try{
+      const c4 = new AbortController(); setTimeout(()=>c4.abort(), 12000);
+      const r4 = await fetch(cfg.proxyUrl+'?url='+encodeURIComponent(url), {signal:c4.signal});
+      if(r4.ok){
+        const d = await r4.json();
+        const text = (d.content||d.text||'').substring(0,8000);
+        if(text.length > 100){
+          document.getElementById('listing-txt').value = text;
+          st.textContent = '✓ Contenido obtenido via proxy. Pulsa Analizar con IA.';
+          st.style.color = '#16a34a';
+          btn.textContent = 'Leer página →'; btn.disabled = false;
+          return;
+        }
+      }
+    }catch(e){ console.log('Custom proxy error:', e.message); }
+  }
+
+  // ── FALLBACK ──────────────────────────────────────────────────────
+  st.textContent = 'No se pudo leer la URL. Copia y pega el texto del anuncio manualmente.';
+  st.style.color = '#d97706';
+  btn.textContent = 'Leer página →'; btn.disabled = false;
+};// ─── PROMPTS Y LLAMADAS A IA ──────────────────────────────────────────
 const PROMPT_BASE=`Eres experto en inversión inmobiliaria española. Extrae los datos del anuncio y devuelve SOLO JSON válido, sin texto adicional ni backticks. Si un dato no aparece usa null.
 
 JSON requerido:
