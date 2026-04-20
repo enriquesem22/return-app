@@ -930,7 +930,16 @@ if('serviceWorker' in navigator){
 // § 9 · CONFIG IA  —  OpenAI · Gemini · Claude
 // ═══════════════════════════════════════════════════════
 const CFG_KEY = 'return_config_v1';
-function loadConfig(){ try{ return JSON.parse(localStorage.getItem(CFG_KEY)||'{}'); }catch(e){ return {}; } }
+function loadConfig(){
+  try{
+    const cfg = JSON.parse(localStorage.getItem(CFG_KEY)||'{}');
+    // Si el proveedor guardado no tiene key, resetear a groq
+    const keyMap = {groq:cfg.groqKey,openai:cfg.openaiKey,google:cfg.googKey,anthropic:cfg.anthKey};
+    if(cfg.provider && !keyMap[cfg.provider]) cfg.provider = 'groq';
+    if(!cfg.provider) cfg.provider = 'groq';
+    return cfg;
+  }catch(e){ return {provider:'groq'}; }
+}
 function saveConfig(c){ localStorage.setItem(CFG_KEY, JSON.stringify(c)); }
 
 window.saveApiConfig = function(){
