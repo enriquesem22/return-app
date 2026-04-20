@@ -945,6 +945,7 @@ function saveConfig(c){ localStorage.setItem(CFG_KEY, JSON.stringify(c)); }
 window.saveApiConfig = function(){
   const cfg = {
     provider:      document.getElementById('ai-provider')?.value || 'groq',
+    groqKey:       (document.getElementById('groq-key')?.value||'').trim(),
     openaiKey:     document.getElementById('openai-key')?.value?.trim() || '',
     googKey:       document.getElementById('goog-key')?.value?.trim() || '',
     anthKey:       document.getElementById('anth-key')?.value?.trim() || '',
