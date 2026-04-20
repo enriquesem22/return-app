@@ -864,7 +864,7 @@ function rSR(){
   document.getElementById('sr').innerHTML=
     `<div id="mapa"></div>`+
     `<div class="sum-card"><div class="sum-title">Resumen de costes de entrada</div>${dr('Precio de compra',ef(S.pc))}${dr('ITP',ef(c.it))}${dr('Notaría + Registro',ef(c.nr))}${dr('Due diligence',ef(S.dd))}${S.hon>0?dr('Honorarios comprador',ef(c.hn)):''}<div class="gap"></div>${dr('Total gastos de adquisición',ef(c.ga),'hl')}${dr('Coste de entrada total',ef(S.pc+c.ga),'hl')}${S.fin?`<div class="gap"></div>${dr('Principal hipotecario',ef(c.pr))}${dr('Cuota mensual estimada',ef(c.cm)+'/mes')}${dr('Capital propio (sin reforma)',ef(S.pc*(1-S.ltv/100)),'warn')}`:''}
-    </div>${window.S._direccion?`<div class="note-card" style="margin-bottom:8px;border-color:#ba7517;color:#555"><b>Dirección:</b> ${window.S._direccion}${window.S._cp?" · CP "+window.S._cp:""}</div>`:""}<div class="note-card">La reforma se define en la pestaña Presupuesto. Los precios de mercado y el mapa se actualizan con la ubicación seleccionada.</div>`;
+    </div>${window._direccion?`<div class="note-card" style="margin-bottom:8px;border-color:#ba7517;color:#555"><b>Dirección:</b> ${window.S._direccion}${window.S._cp?" · CP "+window.S._cp:""}</div>`:""}${(window._lastImport&&window._lastImport.foto_urls&&window._lastImport.foto_urls.length>0)?`<div class="sec" style="margin-bottom:8px"><div class="sec-h" onclick="ts('fotosActivo')"><span class="sec-ht">📷 Fotos del inmueble</span><span class="arr" id="a-fotosActivo">▼</span></div><div class="sec-b" id="fotosActivo"><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:5px">${window._lastImport.foto_urls.slice(0,6).map(u=>"<a href='"+u+"' target='_blank' style='display:block;aspect-ratio:4/3;overflow:hidden;border-radius:5px;border:1px solid #e5e5e0'><img src='"+u+"' style='width:100%;height:100%;object-fit:cover' onerror=\"this.parentElement.style.display=\'none\'\" loading='lazy'></a>").join("")}</div></div></div>`:""}<div class="note-card">La reforma se define en la pestaña Presupuesto. Los precios de mercado y el mapa se actualizan con la ubicación seleccionada.</div>`;
   setTimeout(()=>{initMap();doMapUpdate();},100);
 }
 
@@ -979,25 +979,32 @@ window.toggleProviderFields = function(){
 function initImport(){
   const el = document.getElementById('ip-content');
   if(!el) return;
-  if(el.dataset.init === '1') return; // Already initialized
-  el.dataset.init = '1';
+  // Renderizar solo la primera vez
+  if(!el.dataset.init){
+    el.dataset.init = '1';
+    el.innerHTML = importarHTML();
+  }
+  // Siempre restaurar configuración guardada
   const cfg = loadConfig();
-  el.innerHTML = importarHTML();
-  const setV = (id,v)=>{ const e=document.getElementById(id); if(e&&v) e.value=v; };
-  setV('ai-provider', cfg.provider||'openai');
-  setV('openai-key', cfg.openaiKey);
-  setV('goog-key', cfg.googKey);
-  setV('anth-key', cfg.anthKey);
-  setV('proxy-url', cfg.proxyUrl);
-  setV('drive-client-id', cfg.driveClientId);
-  setV('gh-token', cfg.ghToken);
+  const setV = (id,v)=>{ const e=document.getElementById(id); if(e!==null&&v) e.value=v; };
+  setV('ai-provider', cfg.provider||'groq');
+  setV('groq-key', cfg.groqKey||'');
+  setV('openai-key', cfg.openaiKey||'');
+  setV('goog-key', cfg.googKey||'');
+  setV('anth-key', cfg.anthKey||'');
+  setV('proxy-url', cfg.proxyUrl||'');
+  setV('drive-client-id', cfg.driveClientId||'');
+  setV('gh-token', cfg.ghToken||'');
   if(cfg.driveClientId) driveClientId = cfg.driveClientId;
-  if(cfg.ghToken){ ghToken=cfg.ghToken; setTimeout(()=>{ const a=document.getElementById('gh-actions'); if(a)a.style.display=''; setGhStatus('✓ Conectado a GitHub','#16a34a'); githubPull(); },300); }
-  toggleProviderFields();
-  // Restore drive connection status if token exists
+  if(cfg.ghToken){
+    ghToken = cfg.ghToken;
+    const a = document.getElementById('gh-actions');
+    if(a) a.style.display = '';
+    setGhStatus('✓ GitHub configurado (↓ para sincronizar)','#16a34a');
+  }
+  try{ toggleProviderFields(); }catch(e){}
   if(driveToken) updateDriveUI(true);
 }
-
 // sw patching moved to unified sw function below
 
 // ─── HTML IMPORTAR ───────────────────────────────────────────────────
@@ -1338,7 +1345,7 @@ window.analizarAnuncio = async function(){
     const available=Object.entries(keyMap).find(([,v])=>v);
     if(available) provider=available[0];
   }
-  const key=provider==='openai'?cfg.openaiKey:provider==='google'?cfg.googKey:cfg.anthKey;
+  const key=provider==='groq'?cfg.groqKey:provider==='openai'?cfg.openaiKey:provider==='google'?cfg.googKey:cfg.anthKey;
   if(!key){
     // Scroll up to config section and highlight it
     const cfgEl = document.getElementById('sec-cfg');
