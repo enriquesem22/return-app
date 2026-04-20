@@ -152,7 +152,7 @@ input[type=number]::-webkit-inner-spin-button{opacity:.4}
 </head>
 <body>
 <div class="app">
-<div class="hdr"><span class="hdr-t">Return</span><span class="hdr-s">Analizador de inversión inmobiliaria</span><span style="font-size:10px;color:#ccc;margin-left:8px">v2.3</span>
+<div class="hdr"><span class="hdr-t">Return</span><span class="hdr-s">Analizador de inversión inmobiliaria</span><span style="font-size:11px;color:#ba7517;margin-left:8px;font-weight:500">v2.4</span>
 <button id="pwa-install-btn" onclick="installPWA()" style="display:none;margin-left:auto;padding:5px 12px;border:1px solid #ba7517;border-radius:6px;background:#fff;font-size:11px;cursor:pointer;font-family:inherit;color:#ba7517;font-weight:500">+ Añadir a inicio</button></div>
 <div class="tabs">
   <button class="tab active" onclick="sw('ap',this)">Activo</button>
@@ -174,6 +174,18 @@ input[type=number]::-webkit-inner-spin-button{opacity:.4}
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script>
+window.onerror=function(m,s,l,c,e){
+  var d=document.createElement('div');
+  d.style.cssText='position:fixed;top:0;left:0;right:0;background:#dc2626;color:#fff;padding:10px;font-size:11px;z-index:9999;font-family:monospace;white-space:pre-wrap';
+  d.textContent='ERR: '+m+'\nLine:'+l+' Col:'+c+'\n'+(e&&e.stack?e.stack.slice(0,200):'');
+  document.body&&document.body.appendChild(d);
+};
+window.addEventListener('unhandledrejection',function(e){
+  var d=document.createElement('div');
+  d.style.cssText='position:fixed;top:60px;left:0;right:0;background:#d97706;color:#fff;padding:10px;font-size:11px;z-index:9999;font-family:monospace';
+  d.textContent='PROMISE: '+(e.reason&&e.reason.message?e.reason.message:String(e.reason));
+  document.body&&document.body.appendChild(d);
+});
 // ╔═══════════════════════════════════════════════════════╗
 // ║         RETURN — Analizador de Inversión Inmobiliaria  ║
 // ╠═══════════════════════════════════════════════════════╣
@@ -1108,7 +1120,13 @@ function rFR(){const c=cF(S,F),v=vF(c.rc,c.mn),sk=c.rc>=20?‘pos’:c.rc<0?‘n
 function rBI(){const hasP=window._presupuestoTotal>0;document.getElementById(‘bi’).innerHTML=(hasP?`<div class="green-note">Reforma desde presupuesto por partidas: <b>${ef(window._presupuestoTotal)}</b></div>`:’’)+sec(‘Reforma’,(!hasP?ir(‘Reforma total’,B.ref,‘€’,“ub(‘ref’,+this.value)”):’’)+ir(‘Contingencia’,B.ct,’%’,“ub(‘ct’,+this.value)”),‘bR’)+sec(‘Alquiler’,ir(‘Renta mensual’,B.rnt,‘€/mes’,“ub(‘rnt’,+this.value)”)+ir(‘Vacancia estimada’,B.vac,’%’,“ub(‘vac’,+this.value)”),‘bAlq’)+sec(‘Gastos anuales’,ir(‘IBI’,B.ibi,‘€/año’,“ub(‘ibi’,+this.value)”)+ir(‘Comunidad’,B.com,‘€/año’,“ub(‘com’,+this.value)”)+ir(‘Seguro hogar’,B.seg,‘€/año’,“ub(‘seg’,+this.value)”)+tgrow(‘Seguro de impago’,B.imp,“tb2(‘imp’)”,‘4,5% renta anual’)+ir(‘Mantenimiento’,B.mnt,’% precio’,“ub(‘mnt’,+this.value)”)+ir(‘Gestoría’,B.ges,’% renta’,“ub(‘ges’,+this.value)”),‘bGts’);}
 function rBR(){const c=cB(S,B),v=vB(c.rn,c.coc,S.fin),bk=c.rb>=9?‘pos’:c.rb<5?‘neg’:‘warn’,nk=c.rn>=6?‘pos’:c.rn<0?‘neg’:‘warn’,ck=c.coc>=7?‘pos’:c.coc<0?‘neg’:‘warn’;document.getElementById(‘br’).innerHTML=`<div class="verdict ${v.c}"><div class="vt"><div class="vic">${v.i}</div><div><div class="vlb">Veredicto</div><div class="vvl">${v.l}</div></div></div><div class="vrs">${v.w}</div></div>`+`<div class="kpis">${kp('Rent. bruta',ep(c.rb),'',bk)}${kp('Rent. neta',ep(c.rn),'',nk)}${S.fin?kp('Cash on cash',ep(c.coc),'',ck):kp('Beneficio neto',ef(c.bn),'por año',c.bn>0?'pos':'neg')}${S.fin?kp('Cash flow',ef(c.cf/12)+'/mes','tras hipoteca',c.cf>0?'pos':'neg'):kp('Payback',isFinite(c.pb)?c.pb.toFixed(1)+' años':'—','')}</div>`+sec(‘Inversión total’,dr(‘Precio de compra’,ef(S.pc))+dr(‘ITP’,ef(c.it))+dr(‘Notaría + Registro’,ef(c.nr))+dr(‘Due diligence’,ef(S.dd))+dr(‘Reforma’,ef(c.ref))+dr(‘Contingencia’,ef(c.co))+dr(‘Coste total’,ef(c.tot),‘hl’)+(S.fin?dr(‘Capital propio’,ef(c.cap),‘hl’):’’),‘brI’)+sec(‘Cuenta de explotación anual’,dr(‘Renta bruta anual’,ef(c.ra))+dr(‘Vacancia’,‘− ‘+ef(c.ve))+dr(‘Ingresos efectivos’,ef(c.ie),‘hl’)+’<div class="gap"></div>’+dr(‘IBI’,’− ’+ef(B.ibi))+dr(‘Comunidad’,‘− ‘+ef(B.com))+dr(‘Seguro hogar’,‘− ‘+ef(B.seg))+(B.imp?dr(‘Seguro impago (4,5%)’,‘− ‘+ef(c.si)):’’)+dr(‘Mantenimiento’,‘− ‘+ef(c.mt))+(c.gs>0?dr(‘Gestoría’,‘− ‘+ef(c.gs)):’’)+’<div class="gap"></div>’+dr(‘Beneficio operativo neto’,ef(c.bn),c.bn>0?‘pos’:‘neg’)+(S.fin?dr(‘Cuota hipoteca anual’,‘− ‘+ef(c.ca))+dr(‘Cash flow tras hipoteca’,ef(c.cf),c.cf>0?‘pos’:‘neg’):’’)+’<div class="gap"></div>’+dr(‘Rentabilidad bruta’,ep(c.rb),bk)+dr(‘Rentabilidad neta’,ep(c.rn),nk)+(S.fin?dr(‘Cash on cash’,ep(c.coc),ck):’’),‘brE’)+`<div class="refbox">Renta necesaria para yield neta del 7%: <b>${ef(c.r7)}/mes</b><br>Benchmark mínimo Valencia: 9–11% bruta · Media España 2024: 7,2% bruta<br>Seguro impago: 4,5% renta anual · Cobertura hasta 12 mensualidades</div>`;}
 
-rSI();rSR();rPresupuesto();rFI();rFR();rBI();rBR();
+try{rSI();}catch(e){console.error(‘rSI:’,e);}
+try{rSR();}catch(e){console.error(‘rSR:’,e);}
+try{rPresupuesto();}catch(e){console.error(‘rPresupuesto:’,e);}
+try{rFI();}catch(e){console.error(‘rFI:’,e);}
+try{rFR();}catch(e){console.error(‘rFR:’,e);}
+try{rBI();}catch(e){console.error(‘rBI:’,e);}
+try{rBR();}catch(e){console.error(‘rBR:’,e);}
 </script>
 
 <script>
