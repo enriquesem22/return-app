@@ -1164,7 +1164,17 @@ window.fetchUrl = async function(){
       signal: c1.signal
     });
     if(r.ok){
-      const text = (await r.text()).substring(0, 8000).trim();
+      let raw = await r.text();
+      // Limpiar basura típica de portales inmobiliarios
+      // Quitar bloques de idiomas repetidos
+      raw = raw.replace(/(Español Català English Français[\s\S]{0,300}){2,}/g, '');
+      // Quitar líneas de navegación irrelevantes
+      raw = raw.replace(/Saltar al contenido principal.*?\n/g, '');
+      raw = raw.replace(/Guardar favorito.*?\n/gi, '');
+      raw = raw.replace(/Compartir.*?\n/gi, '');
+      // Limpiar espacios múltiples
+      raw = raw.replace(/\n{3,}/g, '\n\n').trim();
+      const text = raw.substring(0, 6000).trim();
       if(text.length > 200){
         document.getElementById('listing-txt').value = text;
         st.textContent = '✓ Página leída. Pulsa Analizar con IA.';
@@ -1277,9 +1287,22 @@ window.analizarAnuncio = async function(){
   const txt=document.getElementById('listing-txt')?.value?.trim();
   if(!txt){alert('Pega primero el texto del anuncio');return;}
   const cfg=loadConfig();
-  const provider=cfg.provider||'openai';
+  let provider=cfg.provider||'openai';
+  // Auto-seleccionar proveedor si el actual no tiene key
+  const keyMap={openai:cfg.openaiKey,google:cfg.googKey,anthropic:cfg.anthKey};
+  if(!keyMap[provider]){
+    // Buscar el primero que tenga key
+    const available=Object.entries(keyMap).find(([,v])=>v);
+    if(available) provider=available[0];
+  }
   const key=provider==='openai'?cfg.openaiKey:provider==='google'?cfg.googKey:cfg.anthKey;
-  if(!key){alert('Configura primero tu API key en la sección de Configuración IA');return;}
+  if(!key){
+    // Scroll up to config section and highlight it
+    const cfgEl = document.getElementById('sec-cfg');
+    if(cfgEl){ cfgEl.classList.add('open'); cfgEl.style.border='2px solid #dc2626'; setTimeout(()=>cfgEl.style.border='',3000); }
+    alert('Necesitas guardar una API key.\n\nVe a la sección "Configuración IA" arriba, introduce tu clave y pulsa "Guardar configuración".');
+    return;
+  }
   const btn=document.getElementById('analyze-btn'),st=document.getElementById('analyze-status');
   btn.textContent='Analizando...';btn.disabled=true;
   st.textContent='Enviando a '+(provider==='openai'?'ChatGPT':provider==='google'?'Gemini':'Claude')+'...';
