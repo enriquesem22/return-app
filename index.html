@@ -862,7 +862,7 @@ function rSR(){
   document.getElementById('sr').innerHTML=
     `<div id="mapa"></div>`+
     `<div class="sum-card"><div class="sum-title">Resumen de costes de entrada</div>${dr('Precio de compra',ef(S.pc))}${dr('ITP',ef(c.it))}${dr('Notaría + Registro',ef(c.nr))}${dr('Due diligence',ef(S.dd))}${S.hon>0?dr('Honorarios comprador',ef(c.hn)):''}<div class="gap"></div>${dr('Total gastos de adquisición',ef(c.ga),'hl')}${dr('Coste de entrada total',ef(S.pc+c.ga),'hl')}${S.fin?`<div class="gap"></div>${dr('Principal hipotecario',ef(c.pr))}${dr('Cuota mensual estimada',ef(c.cm)+'/mes')}${dr('Capital propio (sin reforma)',ef(S.pc*(1-S.ltv/100)),'warn')}`:''}
-    </div><div class="note-card">La reforma se define en la pestaña Presupuesto. Los precios de mercado y el mapa se actualizan con la ubicación seleccionada.</div>`;
+    </div>${window.S._direccion?`<div class="note-card" style="margin-bottom:8px;border-color:#ba7517;color:#555"><b>Dirección:</b> ${window.S._direccion}${window.S._cp?" · CP "+window.S._cp:""}</div>`:""}<div class="note-card">La reforma se define en la pestaña Presupuesto. Los precios de mercado y el mapa se actualizan con la ubicación seleccionada.</div>`;
   setTimeout(()=>{initMap();doMapUpdate();},100);
 }
 
@@ -1197,8 +1197,12 @@ window.fetchUrl = async function(){
       raw = raw.replace(/\n{3,}/g, '\n\n').trim();
       const text = raw.substring(0, 6000).trim();
       if(text.length > 200){
+        // Extraer URLs de imágenes del texto de Jina
+        const imgMatches = raw.match(/https?:\/\/[^\s"')]+\.(?:jpg|jpeg|png|webp)[^\s"')]{0,100}/gi)||[];
+        const uniqueImgs = [...new Set(imgMatches)].slice(0,6);
+        window._jinaImageUrls = uniqueImgs;
         document.getElementById('listing-txt').value = text;
-        st.textContent = '✓ Página leída. Pulsa Analizar con IA.';
+        st.textContent = '✓ Página leída'+(uniqueImgs.length?' · '+uniqueImgs.length+' fotos detectadas':'')+'. Pulsa Analizar con IA.';
         st.style.color = '#16a34a';
         btn.textContent = 'Leer página →'; btn.disabled = false;
         return;
@@ -1277,11 +1281,12 @@ window.fetchUrl = async function(){
 const PROMPT_BASE=`Eres experto en inversión inmobiliaria española. Extrae los datos del anuncio y devuelve SOLO JSON válido, sin texto adicional ni backticks. Si un dato no aparece usa null.
 
 JSON requerido:
-{"precio":null,"superficie":null,"superficie_util":null,"habitaciones":null,"banos":null,"planta":null,"ascensor":null,"estado":null,"ano_construccion":null,"municipio":null,"barrio":null,"provincia":null,"gastos_comunidad":null,"ibi":null,"honorarios_agencia_pct":null,"garaje":null,"trastero":null,"orientacion":null,"certificado_energetico":null,"descripcion_breve":null,"plataforma":null,"notas_inversor":null}
+{"precio":null,"superficie":null,"superficie_util":null,"habitaciones":null,"banos":null,"planta":null,"ascensor":null,"estado":null,"ano_construccion":null,"direccion":null,"municipio":null,"barrio":null,"provincia":null,"cp":null,"gastos_comunidad":null,"ibi":null,"honorarios_agencia_pct":null,"garaje":null,"trastero":null,"orientacion":null,"certificado_energetico":null,"descripcion_breve":null,"plataforma":null,"notas_inversor":null,"foto_urls":null}
 
 Valores posibles para estado: "buen estado"|"para reformar"|"obra nueva"|null
 Valores para plataforma: "idealista"|"fotocasa"|"pisos.com"|"habitaclia"|"otro"
 notas_inversor: 1-2 frases clave para un inversor (riesgos, oportunidades, alertas).
+foto_urls: array con las URLs de las fotos del inmueble que aparezcan en el texto (máximo 6). Si no hay URLs de imágenes, null.
 
 ANUNCIO:
 `;
@@ -1388,6 +1393,7 @@ function mostrarResultadoImport(d){
         ${filas.map(([l,v],i)=>`<div class="dr" style="${i%2?'background:#fafaf8':''}"><span class="dl">${l}</span><span class="dv">${v}</span></div>`).join('')}
       </div>
       ${d.notas_inversor?`<div style="font-size:11px;color:#92400e;margin-top:10px;padding:9px 12px;background:#fffbeb;border:1px solid #fcd34d;border-radius:6px;line-height:1.6"><b>Nota inversor:</b> ${d.notas_inversor}</div>`:''}
+      ${d.foto_urls&&d.foto_urls.length>0?`<div style="margin-top:12px"><div style="font-size:11px;font-weight:500;color:#555;margin-bottom:6px">📷 Fotos del inmueble</div><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:5px">${d.foto_urls.slice(0,6).map(u=>`<a href="${u}" target="_blank" style="display:block;aspect-ratio:4/3;overflow:hidden;border-radius:6px;border:1px solid #e5e5e0"><img src="${u}" style="width:100%;height:100%;object-fit:cover" onerror="this.parentElement.style.display='none'" loading="lazy"></a>`).join('')}</div></div>`:''}
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px">
         <button onclick="aplicarActivo()" style="padding:8px;border:1px solid #1a1a1a;border-radius:6px;background:#1a1a1a;color:#fff;font-size:11px;cursor:pointer;font-family:inherit;font-weight:500">Aplicar a Activo</button>
         <button onclick="aplicarYIrFlip()" style="padding:8px;border:1px solid #e5e5e0;border-radius:6px;background:#fff;font-size:11px;cursor:pointer;font-family:inherit;color:#555;font-weight:500">Ir a Flip →</button>
@@ -1404,7 +1410,31 @@ window.aplicarActivo=function(){
   if(d.gastos_comunidad)window.B.com=Math.round(d.gastos_comunidad*12);
   if(d.ibi)window.B.ibi=d.ibi;
   if(d.honorarios_agencia_pct)window.S.hon=d.honorarios_agencia_pct;
+  // Guardar dirección
+  if(d.direccion) window.S._direccion=d.direccion;
+  if(d.cp) window.S._cp=d.cp;
+  // Aplicar ubicación en cascada
+  if(d.provincia&&window.GEO&&window.GEO[d.provincia]){
+    window.SEL.prov=d.provincia;
+    window.SEL.mun='';window.SEL.bar='';window.SEL.sub='';
+    const muns=window.GEO[d.provincia].municipios||{};
+    if(d.municipio){
+      const munKey=Object.keys(muns).find(k=>k.toLowerCase()===d.municipio.toLowerCase())||
+                   Object.keys(muns).find(k=>k.toLowerCase().includes(d.municipio.toLowerCase()));
+      if(munKey){
+        window.SEL.mun=munKey;
+        const bars=(muns[munKey]&&muns[munKey].barrios)||{};
+        if(d.barrio){
+          const barKey=Object.keys(bars).find(k=>k.toLowerCase()===d.barrio.toLowerCase())||
+                       Object.keys(bars).find(k=>k.toLowerCase().includes(d.barrio.toLowerCase()));
+          if(barKey) window.SEL.bar=barKey;
+        }
+      }
+    }
+  }
   window.rSI();window.rSR();window.rFI();window.rFR();window.rBI();window.rBR();
+  if(window.rebuildSelects) window.rebuildSelects();
+  if(window.doMapUpdate) setTimeout(window.doMapUpdate,300);
   window.sw('ap',document.querySelectorAll('.tab')[0]);
 };
 window.aplicarYIrFlip=function(){window.aplicarActivo();setTimeout(()=>window.sw('fp',document.querySelectorAll('.tab')[2]),150);};
