@@ -1,5 +1,519 @@
 [
   {
+    "id": 1776682807688,
+    "name": "333",
+    "date": "2026-04-20",
+    "loc": {
+      "prov": "",
+      "mun": "",
+      "bar": "",
+      "sub": ""
+    },
+    "fotos": [],
+    "S": {
+      "pc": 276000,
+      "itp": 7,
+      "not": 1.5,
+      "dd": 350,
+      "hon": 0,
+      "fin": true,
+      "ltv": 70,
+      "ti": -6.5,
+      "hip": 25
+    },
+    "F": {
+      "sup": 104,
+      "rm2": 350,
+      "ct": 15,
+      "ind": 2000,
+      "pl": 8,
+      "pv": 125000,
+      "gv": 5
+    },
+    "B": {
+      "ref": 8000,
+      "ct": 15,
+      "rnt": 520,
+      "vac": 5,
+      "ibi": 300,
+      "com": 600,
+      "seg": 180,
+      "imp": true,
+      "mnt": 1,
+      "ges": 0
+    },
+    "presupuesto": 15780,
+    "CATS": [
+      {
+        "n": "Vaciado y demoliciÃÂÃÂ³n",
+        "open": true,
+        "items": [
+          {
+            "d": "Levantado de pavimento existente",
+            "u": "mÃÂÃÂ²",
+            "q": 65,
+            "p": 10,
+            "on": false,
+            "ref": "8ÃÂ¢ÃÂÃÂ14 ÃÂ¢ÃÂÃÂ¬/mÃÂÃÂ²"
+          },
+          {
+            "d": "Derribo tabiques (si aplica)",
+            "u": "mÃÂÃÂ²",
+            "q": 15,
+            "p": 20,
+            "on": false,
+            "ref": "15ÃÂ¢ÃÂÃÂ28 ÃÂ¢ÃÂÃÂ¬/mÃÂÃÂ²"
+          },
+          {
+            "d": "GestiÃÂÃÂ³n de escombros y contenedor",
+            "u": "ud",
+            "q": 1,
+            "p": 450,
+            "on": false,
+            "ref": "350ÃÂ¢ÃÂÃÂ600 ÃÂ¢ÃÂÃÂ¬"
+          },
+          {
+            "d": "Retirada muebles y enseres",
+            "u": "ud",
+            "q": 1,
+            "p": 200,
+            "on": false,
+            "ref": "150ÃÂ¢ÃÂÃÂ400 ÃÂ¢ÃÂÃÂ¬"
+          }
+        ]
+      },
+      {
+        "n": "InstalaciÃÂÃÂ³n elÃÂÃÂ©ctrica",
+        "open": true,
+        "items": [
+          {
+            "d": "InstalaciÃÂÃÂ³n elÃÂÃÂ©ctrica completa (~65mÃÂÃÂ²)",
+            "u": "ud",
+            "q": 1,
+            "p": 3200,
+            "on": true,
+            "ref": "2.800ÃÂ¢ÃÂÃÂ4.500 ÃÂ¢ÃÂÃÂ¬"
+          },
+          {
+            "d": "Cuadro elÃÂÃÂ©ctrico y protecciones",
+            "u": "ud",
+            "q": 1,
+            "p": 350,
+            "on": true,
+            "ref": "300ÃÂ¢ÃÂÃÂ500 ÃÂ¢ÃÂÃÂ¬"
+          },
+          {
+            "d": "Puntos de luz adicionales",
+            "u": "ud",
+            "q": 4,
+            "p": 80,
+            "on": false,
+            "ref": "60ÃÂ¢ÃÂÃÂ120 ÃÂ¢ÃÂÃÂ¬/ud"
+          },
+          {
+            "d": "BoletÃÂÃÂ­n elÃÂÃÂ©ctrico",
+            "u": "ud",
+            "q": 1,
+            "p": 150,
+            "on": true,
+            "ref": "120ÃÂ¢ÃÂÃÂ200 ÃÂ¢ÃÂÃÂ¬"
+          }
+        ]
+      },
+      {
+        "n": "FontanerÃÂÃÂ­a y saneamiento",
+        "open": true,
+        "items": [
+          {
+            "d": "RenovaciÃÂÃÂ³n fontanerÃÂÃÂ­a completa",
+            "u": "ud",
+            "q": 1,
+            "p": 2500,
+            "on": false,
+            "ref": "2.000ÃÂ¢ÃÂÃÂ3.500 ÃÂ¢ÃÂÃÂ¬"
+          },
+          {
+            "d": "SustituciÃÂÃÂ³n bajante",
+            "u": "ud",
+            "q": 1,
+            "p": 550,
+            "on": false,
+            "ref": "350ÃÂ¢ÃÂÃÂ900 ÃÂ¢ÃÂÃÂ¬"
+          },
+          {
+            "d": "BaÃÂÃÂ±era por plato de ducha",
+            "u": "ud",
+            "q": 1,
+            "p": 550,
+            "on": false,
+            "ref": "400ÃÂ¢ÃÂÃÂ800 ÃÂ¢ÃÂÃÂ¬"
+          }
+        ]
+      },
+      {
+        "n": "Suelos",
+        "open": true,
+        "items": [
+          {
+            "d": "PorcelÃÂÃÂ¡nico o gres (mat.+inst.)",
+            "u": "mÃÂÃÂ²",
+            "q": 65,
+            "p": 38,
+            "on": false,
+            "ref": "28ÃÂ¢ÃÂÃÂ55 ÃÂ¢ÃÂÃÂ¬/mÃÂÃÂ²"
+          },
+          {
+            "d": "RodapiÃÂÃÂ©",
+            "u": "ml",
+            "q": 55,
+            "p": 8,
+            "on": false,
+            "ref": "6ÃÂ¢ÃÂÃÂ12 ÃÂ¢ÃÂÃÂ¬/ml"
+          },
+          {
+            "d": "Pulido terrazo existente",
+            "u": "mÃÂÃÂ²",
+            "q": 65,
+            "p": 15,
+            "on": false,
+            "ref": "12ÃÂ¢ÃÂÃÂ20 ÃÂ¢ÃÂÃÂ¬/mÃÂÃÂ²"
+          },
+          {
+            "d": "Parquet laminado (alternativa)",
+            "u": "mÃÂÃÂ²",
+            "q": 65,
+            "p": 25,
+            "on": false,
+            "ref": "18ÃÂ¢ÃÂÃÂ35 ÃÂ¢ÃÂÃÂ¬/mÃÂÃÂ²"
+          }
+        ]
+      },
+      {
+        "n": "Paredes y techos",
+        "open": true,
+        "items": [
+          {
+            "d": "Picado de gotelÃÂÃÂ© + alisado",
+            "u": "mÃÂÃÂ²",
+            "q": 180,
+            "p": 9,
+            "on": true,
+            "ref": "7ÃÂ¢ÃÂÃÂ13 ÃÂ¢ÃÂÃÂ¬/mÃÂÃÂ²"
+          },
+          {
+            "d": "ReparaciÃÂÃÂ³n humedades puntuales",
+            "u": "ud",
+            "q": 1,
+            "p": 250,
+            "on": false,
+            "ref": "150ÃÂ¢ÃÂÃÂ500 ÃÂ¢ÃÂÃÂ¬"
+          },
+          {
+            "d": "Falso techo pladur",
+            "u": "mÃÂÃÂ²",
+            "q": 30,
+            "p": 32,
+            "on": false,
+            "ref": "25ÃÂ¢ÃÂÃÂ45 ÃÂ¢ÃÂÃÂ¬/mÃÂÃÂ²"
+          }
+        ]
+      },
+      {
+        "n": "BaÃÂÃÂ±o/s",
+        "open": true,
+        "items": [
+          {
+            "d": "Reforma integral baÃÂÃÂ±o (alicatado+sanitarios)",
+            "u": "ud",
+            "q": 1,
+            "p": 3800,
+            "on": true,
+            "ref": "3.000ÃÂ¢ÃÂÃÂ5.500 ÃÂ¢ÃÂÃÂ¬"
+          },
+          {
+            "d": "BaÃÂÃÂ±o adicional (si hay 2)",
+            "u": "ud",
+            "q": 0,
+            "p": 3200,
+            "on": false,
+            "ref": "2.500ÃÂ¢ÃÂÃÂ4.500 ÃÂ¢ÃÂÃÂ¬"
+          },
+          {
+            "d": "Mampara de ducha",
+            "u": "ud",
+            "q": 1,
+            "p": 400,
+            "on": true,
+            "ref": "280ÃÂ¢ÃÂÃÂ650 ÃÂ¢ÃÂÃÂ¬"
+          },
+          {
+            "d": "Mueble de baÃÂÃÂ±o con lavabo",
+            "u": "ud",
+            "q": 1,
+            "p": 350,
+            "on": true,
+            "ref": "250ÃÂ¢ÃÂÃÂ600 ÃÂ¢ÃÂÃÂ¬"
+          }
+        ]
+      },
+      {
+        "n": "Cocina",
+        "open": true,
+        "items": [
+          {
+            "d": "Muebles cocina (~3m lineales)",
+            "u": "ud",
+            "q": 1,
+            "p": 2200,
+            "on": true,
+            "ref": "1.500ÃÂ¢ÃÂÃÂ3.500 ÃÂ¢ÃÂÃÂ¬"
+          },
+          {
+            "d": "Encimera (silestone o compacto)",
+            "u": "ud",
+            "q": 1,
+            "p": 450,
+            "on": false,
+            "ref": "300ÃÂ¢ÃÂÃÂ800 ÃÂ¢ÃÂÃÂ¬"
+          },
+          {
+            "d": "Fregadero + grifo monomando",
+            "u": "ud",
+            "q": 1,
+            "p": 220,
+            "on": false,
+            "ref": "150ÃÂ¢ÃÂÃÂ350 ÃÂ¢ÃÂÃÂ¬"
+          },
+          {
+            "d": "ElectrodomÃÂÃÂ©sticos (horno+placa+campana)",
+            "u": "ud",
+            "q": 1,
+            "p": 900,
+            "on": false,
+            "ref": "600ÃÂ¢ÃÂÃÂ1.500 ÃÂ¢ÃÂÃÂ¬"
+          },
+          {
+            "d": "Alicatado frente cocina",
+            "u": "mÃÂÃÂ²",
+            "q": 8,
+            "p": 35,
+            "on": false,
+            "ref": "25ÃÂ¢ÃÂÃÂ50 ÃÂ¢ÃÂÃÂ¬/mÃÂÃÂ²"
+          },
+          {
+            "d": "FrigorÃÂÃÂ­fico (BTR)",
+            "u": "ud",
+            "q": 1,
+            "p": 500,
+            "on": false,
+            "ref": "350ÃÂ¢ÃÂÃÂ900 ÃÂ¢ÃÂÃÂ¬"
+          }
+        ]
+      },
+      {
+        "n": "CarpinterÃÂÃÂ­a interior",
+        "open": true,
+        "items": [
+          {
+            "d": "Puertas de paso lacadas (mat.+inst.)",
+            "u": "ud",
+            "q": 5,
+            "p": 320,
+            "on": false,
+            "ref": "250ÃÂ¢ÃÂÃÂ420 ÃÂ¢ÃÂÃÂ¬/ud"
+          },
+          {
+            "d": "Puerta de entrada (blindada)",
+            "u": "ud",
+            "q": 1,
+            "p": 1100,
+            "on": false,
+            "ref": "800ÃÂ¢ÃÂÃÂ1.600 ÃÂ¢ÃÂÃÂ¬"
+          },
+          {
+            "d": "Armario empotrado (~60cm/mÃÂÃÂ³dulo)",
+            "u": "ud",
+            "q": 4,
+            "p": 480,
+            "on": false,
+            "ref": "350ÃÂ¢ÃÂÃÂ700 ÃÂ¢ÃÂÃÂ¬/ud"
+          }
+        ]
+      },
+      {
+        "n": "Ventanas y exterior",
+        "open": false,
+        "items": [
+          {
+            "d": "Ventana PVC doble acristalamiento",
+            "u": "ud",
+            "q": 6,
+            "p": 480,
+            "on": false,
+            "ref": "320ÃÂ¢ÃÂÃÂ650 ÃÂ¢ÃÂÃÂ¬/ud"
+          },
+          {
+            "d": "Persiana (sustituciÃÂÃÂ³n motorizada)",
+            "u": "ud",
+            "q": 4,
+            "p": 220,
+            "on": false,
+            "ref": "150ÃÂ¢ÃÂÃÂ320 ÃÂ¢ÃÂÃÂ¬/ud"
+          }
+        ]
+      },
+      {
+        "n": "ClimatizaciÃÂÃÂ³n",
+        "open": false,
+        "items": [
+          {
+            "d": "Split 1ÃÂÃÂ1 inverter instalado",
+            "u": "ud",
+            "q": 2,
+            "p": 950,
+            "on": false,
+            "ref": "750ÃÂ¢ÃÂÃÂ1.300 ÃÂ¢ÃÂÃÂ¬/ud"
+          },
+          {
+            "d": "PreinstalaciÃÂÃÂ³n (sin unidad)",
+            "u": "ud",
+            "q": 2,
+            "p": 200,
+            "on": false,
+            "ref": "150ÃÂ¢ÃÂÃÂ280 ÃÂ¢ÃÂÃÂ¬/ud"
+          }
+        ]
+      },
+      {
+        "n": "Acabados finales",
+        "open": true,
+        "items": [
+          {
+            "d": "Pintura interior completa (2 manos)",
+            "u": "mÃÂÃÂ²",
+            "q": 200,
+            "p": 7,
+            "on": true,
+            "ref": "5ÃÂ¢ÃÂÃÂ10 ÃÂ¢ÃÂÃÂ¬/mÃÂÃÂ²"
+          },
+          {
+            "d": "Limpieza de obra final",
+            "u": "ud",
+            "q": 1,
+            "p": 280,
+            "on": true,
+            "ref": "200ÃÂ¢ÃÂÃÂ400 ÃÂ¢ÃÂÃÂ¬"
+          },
+          {
+            "d": "PequeÃÂÃÂ±os remates y ajustes",
+            "u": "ud",
+            "q": 1,
+            "p": 300,
+            "on": true,
+            "ref": "200ÃÂ¢ÃÂÃÂ500 ÃÂ¢ÃÂÃÂ¬"
+          }
+        ]
+      },
+      {
+        "n": "GestiÃÂÃÂ³n y licencias",
+        "open": false,
+        "items": [
+          {
+            "d": "Aparejador / arquitecto tÃÂÃÂ©cnico",
+            "u": "ud",
+            "q": 1,
+            "p": 1200,
+            "on": true,
+            "ref": "800ÃÂ¢ÃÂÃÂ2.000 ÃÂ¢ÃÂÃÂ¬"
+          },
+          {
+            "d": "Licencia de obras menor",
+            "u": "ud",
+            "q": 1,
+            "p": 350,
+            "on": true,
+            "ref": "200ÃÂ¢ÃÂÃÂ600 ÃÂ¢ÃÂÃÂ¬"
+          },
+          {
+            "d": "Certificado energÃÂÃÂ©tico",
+            "u": "ud",
+            "q": 1,
+            "p": 180,
+            "on": true,
+            "ref": "150ÃÂ¢ÃÂÃÂ250 ÃÂ¢ÃÂÃÂ¬"
+          }
+        ]
+      },
+      {
+        "n": "Home staging (flip)",
+        "open": false,
+        "items": [
+          {
+            "d": "Home staging bÃÂÃÂ¡sico",
+            "u": "ud",
+            "q": 1,
+            "p": 1200,
+            "on": false,
+            "ref": "800ÃÂ¢ÃÂÃÂ2.500 ÃÂ¢ÃÂÃÂ¬"
+          },
+          {
+            "d": "FotografÃÂÃÂ­a profesional",
+            "u": "ud",
+            "q": 1,
+            "p": 200,
+            "on": false,
+            "ref": "150ÃÂ¢ÃÂÃÂ350 ÃÂ¢ÃÂÃÂ¬"
+          },
+          {
+            "d": "Tour virtual 3D",
+            "u": "ud",
+            "q": 1,
+            "p": 350,
+            "on": false,
+            "ref": "250ÃÂ¢ÃÂÃÂ600 ÃÂ¢ÃÂÃÂ¬"
+          }
+        ]
+      }
+    ],
+    "importData": {
+      "precio": 276000,
+      "superficie": 104,
+      "habitaciones": 3,
+      "banos": null,
+      "planta": 3,
+      "ascensor": true,
+      "estado": "obra nueva",
+      "ano_construccion": null,
+      "municipio": "Camas",
+      "barrio": null,
+      "provincia": null,
+      "gastos_comunidad": null,
+      "ibi": null,
+      "honorarios_agencia_pct": null,
+      "garaje": true,
+      "descripcion_breve": null,
+      "notas_inversor": null
+    },
+    "resultado": {
+      "flip": {
+        "rc": -162.89,
+        "mn": -192835,
+        "ra": -100,
+        "tot": 311585,
+        "cr": 15780
+      },
+      "btr": {
+        "rn": 0.57,
+        "rb": 1.96,
+        "coc": 1.45,
+        "bn": 1807,
+        "cf": 1807,
+        "tot": 317957
+      }
+    },
+    "notas": ""
+  },
+  {
     "id": 1776678016306,
     "name": "Casa en Camas",
     "date": "2026-04-20",
