@@ -151,7 +151,7 @@ input[type=number]::-webkit-inner-spin-button{opacity:.4}
 </head>
 <body>
 <div class="app">
-<div class="hdr"><span class="hdr-t">Return</span><span class="hdr-s">Analizador de inversión inmobiliaria</span><span style="font-size:10px;color:#ccc;margin-left:8px">v1.5</span>
+<div class="hdr"><span class="hdr-t">Return</span><span class="hdr-s">Analizador de inversión inmobiliaria</span><span style="font-size:10px;color:#ccc;margin-left:8px">v1.6</span>
 <button id="pwa-install-btn" onclick="installPWA()" style="display:none;margin-left:auto;padding:5px 12px;border:1px solid #ba7517;border-radius:6px;background:#fff;font-size:11px;cursor:pointer;font-family:inherit;color:#ba7517;font-weight:500">+ Añadir a inicio</button></div>
 <div class="tabs">
   <button class="tab active" onclick="sw('ap',this)">Activo</button>
@@ -1190,7 +1190,7 @@ window.fetchUrl = async function(){
     const jinaUrl = 'https://r.jina.ai/' + url;
     const c1 = new AbortController(); setTimeout(()=>c1.abort(), 15000);
     const r = await fetch(jinaUrl, {
-      headers:{ 'Accept': 'text/plain', 'X-Return-Format': 'text' },
+      headers:{ 'Accept': 'text/plain', 'X-Return-Format': 'markdown', 'X-With-Images-Summary': 'true' },
       signal: c1.signal
     });
     if(r.ok){
@@ -1207,11 +1207,12 @@ window.fetchUrl = async function(){
       const text = raw.substring(0, 6000).trim();
       if(text.length > 200){
         // Extraer URLs de imágenes del texto de Jina
-        const imgMatches = raw.match(/https?:\/\/[^\s"')]+\.(?:jpg|jpeg|png|webp)[^\s"')]{0,100}/gi)||[];
-        const uniqueImgs = [...new Set(imgMatches)].slice(0,6);
-        window._jinaImageUrls = uniqueImgs;
-        document.getElementById('listing-txt').value = text;
-        st.textContent = '✓ Página leída'+(uniqueImgs.length?' · '+uniqueImgs.length+' fotos detectadas':'')+'. Pulsa Analizar con IA.';
+        const mdImgs=[...raw.matchAll(/!\[[^\]]*\]\(([^)\s]+)\)/g)].map(m=>m[1]);
+        const dirImgs=(raw.match(/https?:\/\/[^\s"')\]]+\.(?:jpg|jpeg|png|webp)[^\s]{0,60}/gi)||[]);
+        const allImgs=[...new Set([...mdImgs,...dirImgs])].filter(u=>!u.includes('logo')&&!u.includes('icon')).slice(0,6);
+        window._jinaImageUrls=allImgs;
+        raw=raw.replace(/!\[[^\]]*\]\([^)]+\)/g,'');entById('listing-txt').value = text;
+        st.textContent = '✓ Página leída'+(allImgs.length?' · '+allImgs.length+' foto(s) detectada(s)':'')+'. Pulsa Analizar con IA.';
         st.style.color = '#16a34a';
         btn.textContent = 'Leer página →'; btn.disabled = false;
         return;
@@ -1483,36 +1484,42 @@ function mostrarResultadoImport(d){
 
 window.aplicarActivo=function(){
   const d=window._lastImport;if(!d)return;
-  if(d.precio)window.S.pc=d.precio;
-  if(d.superficie)window.F.sup=d.superficie;
-  if(d.gastos_comunidad)window.B.com=Math.round(d.gastos_comunidad*12);
-  if(d.ibi)window.B.ibi=d.ibi;
-  if(d.honorarios_agencia_pct)window.S.hon=d.honorarios_agencia_pct;
-  // Guardar dirección
+  // Datos financieros
+  if(d.precio) window.S.pc=d.precio;
+  if(d.superficie) window.F.sup=d.superficie;
+  if(d.gastos_comunidad) window.B.com=Math.round(d.gastos_comunidad*12);
+  if(d.ibi) window.B.ibi=d.ibi;
+  if(d.honorarios_agencia_pct) window.S.hon=d.honorarios_agencia_pct;
+  // Dirección y CP
   if(d.direccion) window.S._direccion=d.direccion;
   if(d.cp) window.S._cp=d.cp;
-  // Aplicar ubicación en cascada
-  if(d.provincia&&window.GEO&&window.GEO[d.provincia]){
-    window.SEL.prov=d.provincia;
+  
+  // Ubicación en cascada con búsqueda flexible
+  const geo=window.GEO||{};
+  // Buscar provincia (exacta o parcial)
+  const provKey=Object.keys(geo).find(k=>k.toLowerCase()===( d.provincia||'').toLowerCase())||
+                Object.keys(geo).find(k=>k.toLowerCase().includes((d.provincia||'').toLowerCase()));
+  if(provKey){
+    window.SEL.prov=provKey;
     window.SEL.mun='';window.SEL.bar='';window.SEL.sub='';
-    const muns=window.GEO[d.provincia].municipios||{};
-    if(d.municipio){
-      const munKey=Object.keys(muns).find(k=>k.toLowerCase()===d.municipio.toLowerCase())||
-                   Object.keys(muns).find(k=>k.toLowerCase().includes(d.municipio.toLowerCase()));
-      if(munKey){
-        window.SEL.mun=munKey;
-        const bars=(muns[munKey]&&muns[munKey].barrios)||{};
-        if(d.barrio){
-          const barKey=Object.keys(bars).find(k=>k.toLowerCase()===d.barrio.toLowerCase())||
-                       Object.keys(bars).find(k=>k.toLowerCase().includes(d.barrio.toLowerCase()));
-          if(barKey) window.SEL.bar=barKey;
-        }
-      }
+    const muns=geo[provKey].municipios||{};
+    // Buscar municipio
+    const munKey=Object.keys(muns).find(k=>k.toLowerCase()===(d.municipio||'').toLowerCase())||
+                 Object.keys(muns).find(k=>k.toLowerCase().includes((d.municipio||'').toLowerCase()))||
+                 Object.keys(muns).find(k=>(d.municipio||'').toLowerCase().includes(k.toLowerCase()));
+    if(munKey){
+      window.SEL.mun=munKey;
+      const bars=muns[munKey].barrios||{};
+      // Buscar barrio
+      const barKey=Object.keys(bars).find(k=>k.toLowerCase()===(d.barrio||'').toLowerCase())||
+                   Object.keys(bars).find(k=>k.toLowerCase().includes((d.barrio||'').toLowerCase()));
+      if(barKey) window.SEL.bar=barKey;
     }
   }
+  
   window.rSI();window.rSR();window.rFI();window.rFR();window.rBI();window.rBR();
-  if(window.rebuildSelects) window.rebuildSelects();
-  if(window.doMapUpdate) setTimeout(window.doMapUpdate,300);
+  if(window.rebuildSelects) setTimeout(window.rebuildSelects,50);
+  if(window.doMapUpdate) setTimeout(window.doMapUpdate,200);
   window.sw('ap',document.querySelectorAll('.tab')[0]);
 };
 window.aplicarYIrFlip=function(){window.aplicarActivo();setTimeout(()=>window.sw('fp',document.querySelectorAll('.tab')[2]),150);};
@@ -1841,18 +1848,25 @@ function renderPortfolio(el){
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'\u00a9 OSM',maxZoom:19}).addTo(pMap);
     var bounds=[];
     cases.forEach(function(c){
-      // Try direct coords first, then GEO lookup
-      var coords = c.loc && c.loc._coords || null;
+      // Buscar coordenadas con múltiples fuentes
+      var coords = (c.loc && c.loc._coords) || null;
       if(!coords){
-        var geo=window.GEO;
-        var prov = c.loc && (c.loc.prov || c.loc._provincia);
-        var mun  = c.loc && (c.loc.mun  || c.loc._municipio);
-        var bar  = c.loc && (c.loc.bar  || c.loc._barrio);
-        if(geo && prov && geo[prov]){
-          var pd=geo[prov];
-          if(mun && pd.municipios && pd.municipios[mun]){
-            var md=pd.municipios[mun];
-            coords = bar&&md.barrios&&md.barrios[bar] ? md.barrios[bar].coords : md.coords;
+        var geo=window.GEO||{};
+        var prov = c.loc&&(c.loc.prov||c.loc._provincia) || (c.importData&&c.importData.provincia);
+        var mun  = c.loc&&(c.loc.mun ||c.loc._municipio) || (c.importData&&c.importData.municipio);
+        var bar  = c.loc&&(c.loc.bar ||c.loc._barrio)    || (c.importData&&c.importData.barrio);
+        // Búsqueda flexible de provincia
+        var provKey = prov && (geo[prov] ? prov : Object.keys(geo).find(k=>k.toLowerCase().includes((prov||'').toLowerCase())));
+        if(provKey && geo[provKey]){
+          var pd=geo[provKey];
+          // Búsqueda flexible de municipio
+          var muns=pd.municipios||{};
+          var munKey=mun&&(muns[mun]?mun:Object.keys(muns).find(k=>k.toLowerCase().includes((mun||'').toLowerCase())));
+          if(munKey && muns[munKey]){
+            var md=muns[munKey];
+            var bars=md.barrios||{};
+            var barKey=bar&&(bars[bar]?bar:Object.keys(bars).find(k=>k.toLowerCase().includes((bar||'').toLowerCase())));
+            coords = barKey&&bars[barKey] ? bars[barKey].coords : md.coords;
           } else coords=pd.coords;
         }
       }
