@@ -151,7 +151,7 @@ input[type=number]::-webkit-inner-spin-button{opacity:.4}
 </head>
 <body>
 <div class="app">
-<div class="hdr"><span class="hdr-t">Return</span><span class="hdr-s">Analizador de inversión inmobiliaria</span><span style="font-size:10px;color:#ccc;margin-left:8px">v1.7</span>
+<div class="hdr"><span class="hdr-t">Return</span><span class="hdr-s">Analizador de inversión inmobiliaria</span><span style="font-size:10px;color:#ccc;margin-left:8px">v1.9</span>
 <button id="pwa-install-btn" onclick="installPWA()" style="display:none;margin-left:auto;padding:5px 12px;border:1px solid #ba7517;border-radius:6px;background:#fff;font-size:11px;cursor:pointer;font-family:inherit;color:#ba7517;font-weight:500">+ Añadir a inicio</button></div>
 <div class="tabs">
   <button class="tab active" onclick="sw('ap',this)">Activo</button>
@@ -208,7 +208,9 @@ window._presupuestoTotal=null;
 // ═══════════════════════════════════════════════════════
 // § 3 · MAPA Y UBICACIÓN  —  Leaflet + GEO database
 // ═══════════════════════════════════════════════════════
-let SEL={prov:'',mun:'',bar:'',sub:''};
+// SEL: objeto de ubicación compartido entre todos los bloques de script
+window.SEL = window.SEL || {prov:'',mun:'',bar:'',sub:''};
+let SEL = window.SEL;
 
 // ─── BASE DE DATOS GEO + PRECIOS ─────────────────────────────────────
 // poly: array de [lat,lng] — contorno aproximado del área
@@ -659,10 +661,10 @@ function getMuns(){const {p}=getD();return p?Object.keys(p.municipios):[];}
 function getBars(){const {m}=getD();return m?.barrios?Object.keys(m.barrios):[];}
 function getSubs(){const {b}=getD();return b?.subbarrios?Object.keys(b.subbarrios):[];}
 
-function setProv(v){SEL={prov:v,mun:'',bar:'',sub:''};rebuildSelects();doMapUpdate();}
-function setMun(v){SEL={...SEL,mun:v,bar:'',sub:''};rebuildSelects();doMapUpdate();}
-function setBar(v){SEL={...SEL,bar:v,sub:''};rebuildSelects();doMapUpdate();}
-function setSub(v){SEL={...SEL,sub:v};rebuildSelects();doMapUpdate();}
+function setProv(v){SEL={prov:v,mun:'',bar:'',sub:''};window.SEL=SEL;rebuildSelects();doMapUpdate();}
+function setMun(v){SEL={...SEL,mun:v,bar:'',sub:''};window.SEL=SEL;rebuildSelects();doMapUpdate();}
+function setBar(v){SEL={...SEL,bar:v,sub:''};window.SEL=SEL;rebuildSelects();doMapUpdate();}
+function setSub(v){SEL={...SEL,sub:v};window.SEL=SEL;rebuildSelects();doMapUpdate();}
 
 function doMapUpdate(){
   const {p,m,b,s}=getD();
@@ -1632,8 +1634,12 @@ window.guardarComoCase=async function(){
     }
   }
 
-  // Actualizar SEL
-  if(provKey){ window.SEL.prov=provKey; window.SEL.mun=munKey||''; window.SEL.bar=barKey||''; window.SEL.sub=''; }
+  // Actualizar SEL usando las funciones que modifican el objeto LOCAL correcto
+  if(provKey){
+    window.setProv(provKey);                    // actualiza SEL local + rebuild selects
+    if(munKey)  window.setMun(munKey);          // actualiza SEL.mun + rebuild
+    if(barKey)  window.setBar(barKey);          // actualiza SEL.bar + rebuild
+  }
 
   // Obtener coords para el mapa
   let coords = null;
@@ -1673,15 +1679,17 @@ window.guardarComoCase=async function(){
   try{ const r=cB(_S,_B); resB={rn:+(r.rn||0).toFixed(2),rb:+(r.rb||0).toFixed(2),coc:+(r.coc||0).toFixed(2),bn:Math.round(r.bn||0),cf:Math.round(r.cf||0),tot:Math.round(r.tot||0)}; }catch(e){}
 
   // ── CONSTRUIR CASO ──────────────────────────────────────────────
+  // Leer SEL actualizado (después de setProv/setMun/setBar)
+  const selNow = window.SEL || {};
   const caso = {
     id:    Date.now(),
     name,
     date:  new Date().toISOString().slice(0,10),
     loc: {
-      prov: provKey || window.SEL.prov || '',
-      mun:  munKey  || window.SEL.mun  || '',
-      bar:  barKey  || window.SEL.bar  || '',
-      sub:  window.SEL.sub || '',
+      prov: selNow.prov || provKey || '',
+      mun:  selNow.mun  || munKey  || '',
+      bar:  selNow.bar  || barKey  || '',
+      sub:  selNow.sub  || '',
       _provincia: d.provincia || '',
       _municipio: d.municipio || '',
       _barrio:    d.barrio    || '',
@@ -2092,7 +2100,7 @@ window.savePortfolio = function(c){
   }
 })();
 
-window.SEL=window.SEL||{prov:'',mun:'',bar:'',sub:''};
+// SEL ya inicializado en bloque principal
 
 // ─── GOOGLE DRIVE SYNC ───────────────────────────────────────────────
 // ═══════════════════════════════════════════════════════
