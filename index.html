@@ -151,7 +151,7 @@ input[type=number]::-webkit-inner-spin-button{opacity:.4}
 </head>
 <body>
 <div class="app">
-<div class="hdr"><span class="hdr-t">Return</span><span class="hdr-s">Analizador de inversión inmobiliaria</span>
+<div class="hdr"><span class="hdr-t">Return</span><span class="hdr-s">Analizador de inversión inmobiliaria</span><span style="font-size:10px;color:#ccc;margin-left:8px">v1.4</span>
 <button id="pwa-install-btn" onclick="installPWA()" style="display:none;margin-left:auto;padding:5px 12px;border:1px solid #ba7517;border-radius:6px;background:#fff;font-size:11px;cursor:pointer;font-family:inherit;color:#ba7517;font-weight:500">+ Añadir a inicio</button></div>
 <div class="tabs">
   <button class="tab active" onclick="sw('ap',this)">Activo</button>
@@ -1334,44 +1334,112 @@ async function callClaude(txt,key){
 }
 
 window.analizarAnuncio = async function(){
-  const txt=document.getElementById('listing-txt')?.value?.trim();
-  if(!txt){alert('Pega primero el texto del anuncio');return;}
-  const cfg=loadConfig();
-  let provider=cfg.provider||'groq';
-  // Auto-seleccionar proveedor si el actual no tiene key
-  const keyMap={groq:cfg.groqKey,openai:cfg.openaiKey,google:cfg.googKey,anthropic:cfg.anthKey};
-  if(!keyMap[provider]){
-    // Buscar el primero que tenga key
-    const available=Object.entries(keyMap).find(([,v])=>v);
-    if(available) provider=available[0];
+  const txt = document.getElementById('listing-txt')?.value?.trim();
+  if(!txt){ alert('Pega primero el texto del anuncio'); return; }
+  
+  // Leer config directamente de localStorage para evitar cualquier problema de caché
+  let cfg = {};
+  try{ cfg = JSON.parse(localStorage.getItem('return_config_v1')||'{}'); }catch(e){}
+  
+  // Determinar proveedor y key
+  const providerSel = document.getElementById('ai-provider')?.value || cfg.provider || 'groq';
+  const keys = {
+    groq: cfg.groqKey || '',
+    openai: cfg.openaiKey || '',
+    google: cfg.googKey || '',
+    anthropic: cfg.anthKey || ''
+  };
+  
+  // Usar el proveedor del selector si tiene key, sino buscar el primero con key
+  let provider = providerSel;
+  if(!keys[provider]){
+    provider = Object.keys(keys).find(p=>keys[p]) || 'groq';
   }
-  const key=provider==='groq'?cfg.groqKey:provider==='openai'?cfg.openaiKey:provider==='google'?cfg.googKey:cfg.anthKey;
+  const key = keys[provider];
+  
   if(!key){
-    // Scroll up to config section and highlight it
-    const cfgEl = document.getElementById('sec-cfg');
-    if(cfgEl){ cfgEl.classList.add('open'); cfgEl.style.border='2px solid #dc2626'; setTimeout(()=>cfgEl.style.border='',3000); }
-    alert('Necesitas guardar una API key.\n\nVe a la sección "Configuración IA" arriba, introduce tu clave y pulsa "Guardar configuración".');
+    alert('No hay API key configurada.\n\nVe a Configuración IA → introduce tu key de Groq → Guardar configuración.');
     return;
   }
-  const btn=document.getElementById('analyze-btn'),st=document.getElementById('analyze-status');
-  btn.textContent='Analizando...';btn.disabled=true;
-  st.textContent='Enviando a '+(provider==='groq'?'Groq (gratis)':provider==='openai'?'ChatGPT':provider==='google'?'Gemini':'Claude')+'...';
-  st.style.color='#aaa';
-  try{
-    let raw='';
-    if(provider==='openai') raw=await callOpenAI(txt,key);
-    else if(provider==='google') raw=await callGemini(txt,key);
-    else raw=await callClaude(txt,key);
-    const m=raw.match(/\{[\s\S]*\}/);
-    if(!m)throw new Error('La IA no devolvió JSON válido. Revisa la API key.');
-    const parsed=JSON.parse(m[0]);
-    mostrarResultadoImport(parsed);
-    const pName=provider==='groq'?'Groq Llama 3.1 (gratis)':provider==='openai'?'GPT-4o mini':provider==='google'?'Gemini Flash':'Claude Sonnet';
-    st.textContent='✓ Análisis completado con '+pName;st.style.color='#16a34a';
-  }catch(e){st.textContent='Error: '+e.message;st.style.color='#dc2626';}
-  btn.textContent='Analizar con IA';btn.disabled=false;
-};
+  
+  const btn = document.getElementById('analyze-btn');
+  const st = document.getElementById('analyze-status');
+  btn.textContent = 'Analizando...'; btn.disabled = true;
+  st.textContent = 'Enviando a ' + {groq:'Groq (gratis)',openai:'ChatGPT',google:'Gemini',anthropic:'Claude'}[provider] + '...';
+  st.style.color = '#aaa';
+  
+  const PROMPT = `Eres experto en inversión inmobiliaria española. Extrae los datos y devuelve SOLO JSON válido sin texto adicional ni backticks markdown.
 
+JSON requerido (usa null si no aparece):
+{"precio":null,"superficie":null,"superficie_util":null,"habitaciones":null,"banos":null,"planta":null,"ascensor":null,"estado":null,"ano_construccion":null,"direccion":null,"cp":null,"municipio":null,"barrio":null,"provincia":null,"gastos_comunidad":null,"ibi":null,"honorarios_agencia_pct":null,"garaje":null,"trastero":null,"orientacion":null,"certificado_energetico":null,"descripcion_breve":null,"plataforma":null,"notas_inversor":null,"foto_urls":null}
+
+Reglas:
+- estado: "buen estado" | "para reformar" | "obra nueva" | null
+- plataforma: "idealista" | "fotocasa" | "pisos.com" | "habitaclia" | "otro"
+- direccion: calle y número exacto (ej: "Calle Mayor 12, 3B")
+- cp: código postal 5 dígitos si aparece
+- notas_inversor: 1-2 frases clave para inversor (riesgos, oportunidades)
+- foto_urls: array de URLs de imágenes que aparezcan en el texto, máximo 6, o null
+- ascensor: true | false | null
+
+ANUNCIO:
+` + txt.substring(0, 5000);
+
+  try{
+    let raw = '';
+    if(provider === 'groq'){
+      const r = await fetch('https://api.groq.com/openai/v1/chat/completions',{
+        method:'POST',
+        headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},
+        body:JSON.stringify({model:'llama-3.1-8b-instant',messages:[{role:'user',content:PROMPT}],max_tokens:1000,temperature:0.1})
+      });
+      if(!r.ok){const e=await r.json();throw new Error(e.error?.message||'Error Groq '+r.status);}
+      raw = (await r.json()).choices?.[0]?.message?.content || '';
+    } else if(provider === 'openai'){
+      const r = await fetch('https://api.openai.com/v1/chat/completions',{
+        method:'POST',
+        headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},
+        body:JSON.stringify({model:'gpt-4o-mini',messages:[{role:'user',content:PROMPT}],max_tokens:1000})
+      });
+      if(!r.ok){const e=await r.json();throw new Error(e.error?.message||'Error OpenAI '+r.status);}
+      raw = (await r.json()).choices?.[0]?.message?.content || '';
+    } else if(provider === 'google'){
+      const r = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key='+key,{
+        method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({contents:[{parts:[{text:PROMPT}]}]})
+      });
+      if(!r.ok){const e=await r.json();throw new Error(e.error?.message||'Error Gemini '+r.status);}
+      raw = (await r.json()).candidates?.[0]?.content?.parts?.[0]?.text || '';
+    } else {
+      const r = await fetch('https://api.anthropic.com/v1/messages',{
+        method:'POST',
+        headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+        body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:1000,messages:[{role:'user',content:PROMPT}]})
+      });
+      if(!r.ok){const e=await r.json();throw new Error(e.error?.message||'Error Claude '+r.status);}
+      raw = (await r.json()).content?.[0]?.text || '';
+    }
+    
+    // Extraer JSON de la respuesta
+    const m = raw.match(/\{[\s\S]*\}/);
+    if(!m) throw new Error('La IA no devolvió JSON. Respuesta: ' + raw.substring(0,100));
+    const parsed = JSON.parse(m[0]);
+    
+    // Añadir fotos detectadas por Jina si la IA no encontró ninguna
+    if((!parsed.foto_urls||!parsed.foto_urls.length) && window._jinaImageUrls?.length){
+      parsed.foto_urls = window._jinaImageUrls;
+    }
+    
+    mostrarResultadoImport(parsed);
+    st.textContent = '✓ Analizado con ' + {groq:'Groq',openai:'ChatGPT',google:'Gemini',anthropic:'Claude'}[provider];
+    st.style.color = '#16a34a';
+  }catch(e){
+    st.textContent = 'Error: ' + e.message;
+    st.style.color = '#dc2626';
+    console.error('analizarAnuncio error:', e);
+  }
+  btn.textContent = 'Analizar con IA'; btn.disabled = false;
+};
 function mostrarResultadoImport(d){
   const r=document.getElementById('import-result');if(!r)return;
   window._lastImport=d;
@@ -1627,6 +1695,9 @@ function renderPortfolio(el){
       <button onclick="saveCurrentCase()" style="padding:8px 16px;border:1px solid #1a1a1a;border-radius:8px;background:#1a1a1a;color:#fff;font-size:12px;cursor:pointer;font-family:inherit;font-weight:500">+ Guardar análisis actual</button>
     </div>
 
+    <!-- MAPA PORTFOLIO -->
+    ${N>0?`<div style="border:1px solid #e5e5e0;border-radius:10px;overflow:hidden;margin-bottom:18px"><div style="background:#f4f4f0;padding:9px 12px;font-size:12px;font-weight:500;color:#555">&#x1f5fa; Mapa del portfolio</div><div id="portfolio-map" style="height:260px"></div></div>`:''}
+
     <!-- STATS -->
     ${N>0?`<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px">
       <div style="background:#f4f4f0;border-radius:10px;padding:14px">
@@ -1728,6 +1799,40 @@ function renderPortfolio(el){
 
     <input type="file" id="import-file-input" accept=".json" style="display:none" onchange="handleImportFile(this)">
   </div>`;
+  // Init portfolio map
+  if(N>0) setTimeout(function(){
+    var mapEl=document.getElementById('portfolio-map');
+    if(!mapEl||!window.L)return;
+    if(window._portfolioMap){window._portfolioMap.remove();window._portfolioMap=null;}
+    var pMap=L.map('portfolio-map',{zoomControl:true,scrollWheelZoom:false}).setView([40,-3.7],6);
+    window._portfolioMap=pMap;
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'\u00a9 OSM',maxZoom:19}).addTo(pMap);
+    var bounds=[];
+    cases.forEach(function(c){
+      if(!c.loc||!c.loc.prov)return;
+      var coords=null;
+      var geo=window.GEO;
+      if(geo&&geo[c.loc.prov]){
+        var pd=geo[c.loc.prov];
+        if(c.loc.mun&&pd.municipios&&pd.municipios[c.loc.mun]){
+          var md=pd.municipios[c.loc.mun];
+          coords=c.loc.bar&&md.barrios&&md.barrios[c.loc.bar]?md.barrios[c.loc.bar].coords:md.coords;
+        }else coords=pd.coords;
+      }
+      if(!coords)return;
+      bounds.push(coords);
+      var rc=c.resultado&&c.resultado.flip&&c.resultado.flip.rc||0;
+      var rn=c.resultado&&c.resultado.btr&&c.resultado.btr.rn||0;
+      var col=rc>=20||rn>=7?'#16a34a':rc>=10||rn>=5?'#d97706':'#dc2626';
+      var lbl=c.name.length>16?c.name.slice(0,15)+'\u2026':c.name;
+      var icon=L.divIcon({className:'',html:'<div style="background:'+col+';color:#fff;font-size:10px;font-weight:600;padding:3px 7px;border-radius:5px;white-space:nowrap;box-shadow:0 2px 5px rgba(0,0,0,.3);border:2px solid #fff">'+lbl+'</div>',iconAnchor:[0,20]});
+      var popup='<b>'+c.name+'</b><br>'+c.date+(c.S&&c.S.pc?'<br>'+new Intl.NumberFormat('es-ES').format(c.S.pc)+' \u20ac':'')+(rc?'<br>ROI: '+rc.toFixed(1)+'%':'')+(rn?'<br>Yield: '+rn.toFixed(1)+'%':'')+(c.S&&c.S._direccion?'<br>'+c.S._direccion:'');
+      L.marker(coords,{icon}).addTo(pMap).bindPopup(popup);
+    });
+    if(bounds.length===1)pMap.setView(bounds[0],14);
+    else if(bounds.length>1)try{pMap.fitBounds(bounds,{padding:[30,30]});}catch(e){}
+    setTimeout(function(){pMap.invalidateSize();},200);
+  },300);
 }
 
 window.loadCase=function(i){
@@ -2201,7 +2306,13 @@ function autoRestore(){
     if(st.B)Object.assign(window.B,st.B);
     if(st.SEL)Object.assign(window.SEL,st.SEL);
     if(st.presupuesto)window._presupuestoTotal=st.presupuesto;
-    if(st.CATS&&st.CATS.length)window.CATS=st.CATS;
+    // Validar CATS: si hay caracteres corruptos, descartar y usar los por defecto
+    if(st.CATS&&st.CATS.length){
+      const testStr=JSON.stringify(st.CATS);
+      const hasGarbage=/Ã|Â°|Â±|Å|Ã©|Ã³|Ã¡|Ã­|Ãº/.test(testStr);
+      if(!hasGarbage) window.CATS=st.CATS;
+      else { console.log('CATS encoding corrupted - using defaults'); localStorage.removeItem(STATE_KEY); }
+    }
     // Rebuild UI after restore
     if(window.rSI)window.rSI();
     if(window.rSR)window.rSR();
