@@ -148,8 +148,6 @@ input[type=number]::-webkit-inner-spin-button{opacity:.4}
 .green-note{border:1px solid #86efac;background:#f0fdf4;border-radius:6px;padding:9px 12px;font-size:11px;color:#15803d;line-height:1.5;margin-bottom:8px}
 .green-note b{font-weight:500}
 </style>
-  <script src="https://apis.google.com/js/api.js"></script>
-  <script src="https://accounts.google.com/gsi/client"></script>
 </head>
 <body>
 <div class="app">
@@ -172,9 +170,34 @@ input[type=number]::-webkit-inner-spin-button{opacity:.4}
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script>
+// ╔═══════════════════════════════════════════════════════╗
+// ║         RETURN — Analizador de Inversión Inmobiliaria  ║
+// ╠═══════════════════════════════════════════════════════╣
+// ║  § 1  Utilidades y formateo                           ║
+// ║  § 2  Estado global (S, F, B)                         ║
+// ║  § 3  Mapa y ubicación (Leaflet + GEO database)       ║
+// ║  § 4  Presupuesto por partidas                        ║
+// ║  § 5  Cálculos financieros (cS, cF, cB)               ║
+// ║  § 6  Constructores de UI                             ║
+// ║  § 7  Eventos globales (us, uf, ub, sw, ts)           ║
+// ║  § 8  Rendering (rSI, rSR, rFI, rFR, rBI, rBR)        ║
+// ║  § 9  Config IA (OpenAI · Gemini · Claude)             ║
+// ║  § 10 Importar anuncio con IA                         ║
+// ║  § 11 Portfolio de casos                              ║
+// ║  § 12 GitHub Storage                                  ║
+// ║  § 13 Google Drive                                    ║
+// ║  § 14 Auto-save · Auto-restore · Criterios búsqueda   ║
+// ╚═══════════════════════════════════════════════════════╝
+
+// ═══════════════════════════════════════════════════════
+// § 1 · UTILIDADES Y FORMATEO
+// ═══════════════════════════════════════════════════════
 const ef=n=>isFinite(n)?new Intl.NumberFormat('es-ES',{maximumFractionDigits:0}).format(Math.round(n))+'\u202f\u20ac':'—';
 const ep=(n,d=1)=>isFinite(n)&&!isNaN(n)?n.toFixed(d)+'%':'—';
 const OS={};
+// ═══════════════════════════════════════════════════════
+// § 2 · ESTADO GLOBAL  —  S (Activo) · F (Flip) · B (BTR)
+// ═══════════════════════════════════════════════════════
 window.S={pc:75000,itp:7,not:1.5,dd:350,hon:0,fin:false,ltv:70,ti:4.5,hip:20};
 window.F={sup:65,rm2:350,ct:15,ind:2000,pl:8,pv:120000,gv:5};
 window.B={ref:8000,ct:15,rnt:550,vac:5,ibi:300,com:600,seg:180,imp:true,mnt:1,ges:0};
@@ -182,6 +205,9 @@ let S=window.S, F=window.F, B=window.B;
 window._presupuestoTotal=null;
 
 // ─── ESTADO SELECCIÓN ────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════
+// § 3 · MAPA Y UBICACIÓN  —  Leaflet + GEO database
+// ═══════════════════════════════════════════════════════
 let SEL={prov:'',mun:'',bar:'',sub:''};
 
 // ─── BASE DE DATOS GEO + PRECIOS ─────────────────────────────────────
@@ -712,6 +738,9 @@ window.applyRent=(r)=>{B.rnt=r;rBI();rBR();sw('bp',document.querySelectorAll('.t
 
 // ─── PRESUPUESTO ─────────────────────────────────────────────────────
 const COL={'Vaciado y demolición':'#e57373','Instalación eléctrica':'#ffd54f','Fontanería y saneamiento':'#4fc3f7','Suelos':'#ce93d8','Paredes y techos':'#80cbc4','Baño/s':'#81d4fa','Cocina':'#ffb74d','Carpintería interior':'#a1887f','Ventanas y exterior':'#90a4ae','Climatización':'#81c784','Acabados finales':'#f4a460','Gestión y licencias':'#b0bec5','Home staging (flip)':'#f48fb1'};
+// ═══════════════════════════════════════════════════════
+// § 4 · PRESUPUESTO POR PARTIDAS
+// ═══════════════════════════════════════════════════════
 window.CATS=[
   {n:'Vaciado y demolición',open:true,items:[{d:'Levantado de pavimento existente',u:'m²',q:65,p:10,on:true,ref:'8–14 €/m²'},{d:'Derribo tabiques (si aplica)',u:'m²',q:15,p:20,on:false,ref:'15–28 €/m²'},{d:'Gestión de escombros y contenedor',u:'ud',q:1,p:450,on:true,ref:'350–600 €'},{d:'Retirada muebles y enseres',u:'ud',q:1,p:200,on:false,ref:'150–400 €'}]},
   {n:'Instalación eléctrica',open:true,items:[{d:'Instalación eléctrica completa (~65m²)',u:'ud',q:1,p:3200,on:true,ref:'2.800–4.500 €'},{d:'Cuadro eléctrico y protecciones',u:'ud',q:1,p:350,on:true,ref:'300–500 €'},{d:'Puntos de luz adicionales',u:'ud',q:4,p:80,on:false,ref:'60–120 €/ud'},{d:'Boletín eléctrico',u:'ud',q:1,p:150,on:true,ref:'120–200 €'}]},
@@ -753,6 +782,9 @@ function addCat(){const name=prompt('Nombre de la nueva categoría:');if(!name)r
 function clearAll(){if(!confirm('¿Desactivar todas las partidas?'))return;CATS.forEach(c=>c.items.forEach(i=>i.on=false));rPresupuesto();}
 
 // ─── CÁLCULOS ──────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════
+// § 5 · CÁLCULOS FINANCIEROS  —  cS · cF · cB
+// ═══════════════════════════════════════════════════════
 function cS(s){const it=s.pc*s.itp/100,nr=s.pc*s.not/100,hn=s.pc*s.hon/100,ga=it+nr+s.dd+hn,pr=s.fin?s.pc*s.ltv/100:0,r=s.ti/100/12,n=s.hip*12,cm=pr>0&&r>0?pr*r*Math.pow(1+r,n)/(Math.pow(1+r,n)-1):0;return{it,nr,hn,ga,pr,cm};}
 function cF(s,f){const b=cS(s),cr=window._presupuestoTotal||f.sup*f.rm2,co=cr*f.ct/100,io=s.fin?b.pr*s.ti/100*f.pl/12:0,tot=s.pc+b.ga+cr+co+f.ind+io,cap=Math.max(s.fin?s.pc*(1-s.ltv/100)+b.ga+cr+co+f.ind+io:tot,1),gve=f.pv*f.gv/100,ing=f.pv-gve,mb=f.pv-tot,mn=ing-tot,rt=mn/tot*100,rc=mn/cap*100,ra=f.pl>0?(Math.pow(Math.max(1+rc/100,.0001),12/f.pl)-1)*100:NaN,sens=[-10,-5,0,5,10].map(pp=>{const pve=f.pv*(1+pp/100);return[-15,0,15].map(rp=>{const crf=cr*(1+rp/100),cf2=crf*f.ct/100,t2=s.pc+b.ga+crf+cf2+f.ind+io,mn2=pve*(1-f.gv/100)-t2,c2=Math.max(s.fin?s.pc*(1-s.ltv/100)+b.ga+crf+cf2+f.ind+io:t2,1);return mn2/c2*100;});});return{...b,cr,co,io,tot,cap,gve,ing,mb,mn,rt,rc,ra,sens};}
 function cB(s,b2){const b=cS(s),ref=window._presupuestoTotal||b2.ref,co=ref*b2.ct/100,tot=s.pc+b.ga+ref+co,cap=Math.max(tot-b.pr,1),ca=b.cm*12,ra=b2.rnt*12,ve=ra*b2.vac/100,ie=ra-ve,si=b2.imp?ra*.045:0,mt=s.pc*b2.mnt/100,gs=ra*b2.ges/100,gt=b2.ibi+b2.com+b2.seg+si+mt+gs,bn=ie-gt,rb=ra/Math.max(tot,1)*100,rn=bn/Math.max(tot,1)*100,cf=bn-ca,coc=s.fin?cf/cap*100:rn,pb=bn>0?tot/bn:Infinity,gf=b2.ibi+b2.com+b2.seg+mt,dn=1-b2.vac/100-(b2.imp?.045:0)-b2.ges/100,r7=dn>.05?(tot*.07+gf)/dn/12:0;return{...b,co,ref,tot,cap,ca,ra,ve,ie,si,mt,gs,gt,bn,rb,rn,cf,coc,pb,r7};}
@@ -764,6 +796,9 @@ window.cB = cB;
 function vF(rc,mn){if(!isFinite(rc)||mn<=0)return{c:'dis',i:'✕',l:'Descartar',w:'Sin margen neto positivo.'};if(rc>=25)return{c:'buy',i:'✓',l:'Comprar',w:`ROI sobre capital del ${ep(rc)} en ${F.pl} meses. Margen sólido.`};if(rc>=15)return{c:'neg',i:'~',l:'Negociar',w:`ROI del ${ep(rc)} ajustado. Negociar precio o reducir reforma.`};return{c:'dis',i:'✕',l:'Descartar',w:`ROI del ${ep(rc)} insuficiente. No compensa riesgo ni iliquidez.`};}
 function vB(rn,coc,fin){const m=fin?coc:rn,lb=fin?'cash on cash':'rentabilidad neta';if(!isFinite(m)||m<=0)return{c:'dis',i:'✕',l:'Descartar',w:'Rentabilidad negativa.'};if(m>=7)return{c:'buy',i:'✓',l:'Comprar',w:`${ep(m)} de ${lb}. Yield sólido.`};if(m>=5)return{c:'neg',i:'~',l:'Negociar',w:`${ep(m)} de ${lb}. Correcto pero con margen. Negociar precio.`};if(m>=3.5)return{c:'neg',i:'~',l:'Negociar',w:`${ep(m)} de ${lb}. Ajustado. Solo válido con fuerte revalorización.`};return{c:'dis',i:'✕',l:'Descartar',w:`${ep(m)} de ${lb}. Por debajo del umbral mínimo.`};}
 
+// ═══════════════════════════════════════════════════════
+// § 6 · CONSTRUCTORES DE UI  —  Helpers HTML
+// ═══════════════════════════════════════════════════════
 function ir(lb,vl,un,fn){return`<div class="irow irow-num"><div class="ilbl">${lb}</div><div class="iwrap"><input type="number" value="${vl}" step="any" oninput="${fn}"><div class="iunit">${un}</div></div></div>`;}
 function tgrow(lb,vl,fn,sb){return`<div class="trow"><div><div class="tlbl">${lb}</div>${sb?`<div class="tsub">${sb}</div>`:''}</div><div class="tog${vl?' on':''}" onclick="${fn}"><div class="togk"></div></div></div>`;}
 function sec(tt,bd,id,df=true){if(OS[id]===undefined)OS[id]=df;const o=OS[id];return`<div class="sec"><div class="sec-h" onclick="ts('${id}')"><span class="sec-ht">${tt}</span><span class="arr${o?' open':''}" id="a-${id}">▼</span></div><div class="sec-b${o?' open':''}" id="${id}">${bd}</div></div>`;}
@@ -771,6 +806,9 @@ function kp(lb,vl,sb,cl){return`<div class="kpi"><div class="kl">${lb}</div><div
 function dr(lb,vl,cl){return`<div class="dr"><span class="dl">${lb}</span><span class="dv${cl?' '+cl:''}">${vl}</span></div>`;}
 function sc2(v){return v>=20?'sp':v>=10?'sw':v>=0?'':'sn';}
 
+// ═══════════════════════════════════════════════════════
+// § 7 · EVENTOS GLOBALES  —  us · uf · ub · sw · ts
+// ═══════════════════════════════════════════════════════
 window.us=(k,v)=>{S[k]=v;rSR();rFR();rBR();};
 window.uf=(k,v)=>{F[k]=v;if(k==='sup')rPreciosMercado();rFI();rFR();};
 window.ub=(k,v)=>{B[k]=v;rBR();};
@@ -789,6 +827,9 @@ window.sw=function(pid,btn){
 };
 window.setProv=setProv;window.setMun=setMun;window.setBar=setBar;window.setSub=setSub;
 
+// ═══════════════════════════════════════════════════════
+// § 8 · RENDERING  —  rSI · rSR · rFI · rFR · rBI · rBR
+// ═══════════════════════════════════════════════════════
 function rSI(){
   const provs=Object.keys(GEO).sort();
   const muns=getMuns(),bars=getBars(),subs=getSubs();
@@ -885,6 +926,9 @@ if('serviceWorker' in navigator){
 <script>
 
 // ─── CONFIG localStorage ─────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════
+// § 9 · CONFIG IA  —  OpenAI · Gemini · Claude
+// ═══════════════════════════════════════════════════════
 const CFG_KEY = 'return_config_v1';
 function loadConfig(){ try{ return JSON.parse(localStorage.getItem(CFG_KEY)||'{}'); }catch(e){ return {}; } }
 function saveConfig(c){ localStorage.setItem(CFG_KEY, JSON.stringify(c)); }
@@ -917,6 +961,9 @@ window.toggleProviderFields = function(){
 };
 
 // ─── INICIALIZAR PESTAÑA IMPORTAR ────────────────────────────────────
+// ═══════════════════════════════════════════════════════
+// § 10 · IMPORTAR ANUNCIO  —  UI + llamadas a IA
+// ═══════════════════════════════════════════════════════
 function initImport(){
   const el = document.getElementById('ip-content');
   if(!el) return;
@@ -1243,6 +1290,9 @@ window.clearImport=function(){
 };
 
 // ─── PORTFOLIO ────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════
+// § 11 · PORTFOLIO  —  casos de inversión
+// ═══════════════════════════════════════════════════════
 const DB_KEY='return_portfolio_v1';
 function getPortfolio(){try{return JSON.parse(localStorage.getItem(DB_KEY)||'[]');}catch(e){return[];}}
 function savePortfolio(c){localStorage.setItem(DB_KEY,JSON.stringify(c));}
@@ -1473,6 +1523,9 @@ window.importPortfolioFile=function(){document.getElementById('import-file-input
 window.handleImportFile=function(input){const f=input.files[0];if(!f)return;const reader=new FileReader();reader.onload=function(e){try{const imp=JSON.parse(e.target.result);if(!Array.isArray(imp))throw new Error('Formato incorrecto');savePortfolio([...imp,...getPortfolio()]);window.loadPortfolio();alert('✓ '+imp.length+' caso(s) importados');}catch(err){alert('Error: '+err.message);}};reader.readAsText(f);};
 
 // ─── GITHUB STORAGE ──────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════
+// § 12 · GITHUB STORAGE  —  sincronización
+// ═══════════════════════════════════════════════════════
 const GH_REPO = 'enriquesem22/return-app';
 const GH_FILE = 'portfolio.json';
 const GH_STATE_FILE = 'state.json';
@@ -1599,6 +1652,9 @@ window.savePortfolio = function(c){
 window.SEL=window.SEL||{prov:'',mun:'',bar:'',sub:''};
 
 // ─── GOOGLE DRIVE SYNC ───────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════
+// § 13 · GOOGLE DRIVE  —  sincronización
+// ═══════════════════════════════════════════════════════
 const DRIVE_FOLDER_ID = null;
 const DRIVE_PORTFOLIO_FILE = 'return_portfolio.json';
 const DRIVE_STATE_FILE     = 'return_state.json';
@@ -1636,6 +1692,23 @@ window.connectDrive = async function(){
   cfg.driveClientId = driveClientId;
   saveConfig(cfg);
   setDriveStatus('Conectando...','#d97706');
+  // Cargar Google APIs si no están disponibles
+  if(!window.google || !window.gapi){
+    try{
+      await new Promise(function(res,rej){
+        var s1=document.createElement('script');
+        s1.src='https://apis.google.com/js/api.js';
+        s1.onload=function(){
+          var s2=document.createElement('script');
+          s2.src='https://accounts.google.com/gsi/client';
+          s2.onload=res; s2.onerror=rej;
+          document.head.appendChild(s2);
+        };
+        s1.onerror=rej;
+        document.head.appendChild(s1);
+      });
+    }catch(e){ setDriveStatus('Error cargando Google APIs: '+e.message,'#dc2626'); return; }
+  }
   try{
     driveTokenClient = google.accounts.oauth2.initTokenClient({
       client_id: driveClientId,
@@ -1857,6 +1930,9 @@ window.savePortfolio = savePortfolio;
 
 
 // ─── AUTO-SAVE / AUTO-RESTORE ─────────────────────────────────────────
+// ═══════════════════════════════════════════════════════
+// § 14 · AUTO-SAVE · AUTO-RESTORE · CRITERIOS DE BÚSQUEDA
+// ═══════════════════════════════════════════════════════
 const STATE_KEY='return_state_v1';
 
 function autoSave(){
@@ -2086,8 +2162,42 @@ window.setBar=(v)=>{if(_origSetBar)_origSetBar(v);autoSave();};
 window.setSub=(v)=>{if(_origSetSub)_origSetSub(v);autoSave();};
 
 // ─── RESTAURAR AL CARGAR ──────────────────────────────────────────────
-// Usar setTimeout para que el DOM esté listo
-setTimeout(autoRestore, 50);
+window.addEventListener('load', function(){
+  // 1. Restaurar estado guardado
+  try{ autoRestore(); }catch(e){ console.error('autoRestore:',e); }
+
+  // 2. Renderizar pestaña Importar
+  try{
+    var ipEl = document.getElementById('ip-content');
+    if(ipEl && !ipEl.dataset.ready && typeof importarHTML === 'function'){
+      ipEl.dataset.ready = '1';
+      var cfg = loadConfig();
+      ipEl.innerHTML = importarHTML();
+      var setV = function(id,v){ var e=document.getElementById(id); if(e&&v) e.value=v; };
+      setV('ai-provider', cfg.provider||'openai');
+      setV('openai-key', cfg.openaiKey||'');
+      setV('goog-key', cfg.googKey||'');
+      setV('anth-key', cfg.anthKey||'');
+      setV('proxy-url', cfg.proxyUrl||'');
+      setV('drive-client-id', cfg.driveClientId||'');
+      setV('gh-token', cfg.ghToken||'');
+      if(cfg.driveClientId) driveClientId = cfg.driveClientId;
+      if(cfg.ghToken){
+        ghToken = cfg.ghToken;
+        var ga = document.getElementById('gh-actions');
+        if(ga) ga.style.display = '';
+        setGhStatus('✓ GitHub configurado (↓ para sincronizar)','#16a34a');
+      }
+      try{ toggleProviderFields(); }catch(e){}
+    }
+  }catch(e){ console.error('init importar:',e); }
+
+  // 3. Renderizar Portfolio
+  try{
+    var pp2El = document.getElementById('pp2-content');
+    if(pp2El && typeof renderPortfolio === 'function') renderPortfolio(pp2El);
+  }catch(e){ console.error('init portfolio:',e); }
+});
 
 </script>
 </body>
