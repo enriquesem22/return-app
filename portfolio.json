@@ -1,54 +1,78 @@
 [
   {
-    "id": 1777053378579,
-    "name": "Calle Manises",
+    "id": 1777054099452,
+    "name": "Calle Hermano Pablo",
     "date": "2026-04-24",
     "loc": {
       "prov": "Sevilla",
-      "mun": "San Juan de Aznalfarache",
-      "bar": "Barrio Bajo",
+      "mun": "Sevilla",
+      "bar": "",
       "sub": "",
-      "_provincia": "",
-      "_municipio": "",
-      "_barrio": "",
-      "_coords": null
+      "_provincia": "Sevilla",
+      "_municipio": "Sevilla",
+      "_barrio": "Villegas - Los Príncipes",
+      "_coords": [
+        37.389,
+        -5.984
+      ]
     },
-    "fotos": [],
+    "fotos": [
+      {
+        "url": "https://example.com/foto1.jpg",
+        "b64": null
+      },
+      {
+        "url": "https://example.com/foto2.jpg",
+        "b64": null
+      },
+      {
+        "url": "https://example.com/foto3.jpg",
+        "b64": null
+      },
+      {
+        "url": "https://example.com/foto4.jpg",
+        "b64": null
+      },
+      {
+        "url": "https://example.com/foto5.jpg",
+        "b64": null
+      }
+    ],
     "S": {
-      "pc": 70000,
+      "pc": 62000,
       "itp": 7,
       "not": 1.5,
       "dd": 350,
       "hon": 0,
       "fin": true,
       "ltv": 70,
-      "ti": 4.5,
-      "hip": 30,
-      "_direccion": "Calle Manises",
-      "_transporte": true
+      "ti": -6.5,
+      "hip": 25,
+      "_direccion": "Calle Hermano Pablo",
+      "_cp": "41008"
     },
     "F": {
-      "sup": 56,
+      "sup": 67,
       "rm2": 350,
       "ct": 15,
       "ind": 2000,
       "pl": 8,
-      "pv": 83824,
+      "pv": 130000,
       "gv": 5
     },
     "B": {
       "ref": 8000,
-      "ct": 10,
-      "rnt": 527,
+      "ct": 15,
+      "rnt": 757,
       "vac": 5,
       "ibi": 300,
-      "com": 360,
+      "com": 74280,
       "seg": 180,
       "imp": true,
       "mnt": 1,
       "ges": 0
     },
-    "presupuesto": 650,
+    "presupuesto": 0,
     "CATS": [
       {
         "n": "Vaciado y demolición",
@@ -59,7 +83,7 @@
             "u": "m²",
             "q": 65,
             "p": 10,
-            "on": true,
+            "on": false,
             "ref": "8–14 €/m²"
           },
           {
@@ -477,6 +501,544 @@
             "p": 350,
             "on": false,
             "ref": "250–600 €"
+          }
+        ]
+      }
+    ],
+    "importData": {
+      "precio": 62000,
+      "superficie": 67,
+      "superficie_util": 67,
+      "habitaciones": 3,
+      "banos": 1,
+      "planta": null,
+      "ascensor": false,
+      "estado": "buen estado",
+      "ano_construccion": 1966,
+      "direccion": "Calle Hermano Pablo",
+      "cp": null,
+      "municipio": "Sevilla",
+      "barrio": "Villegas - Los Príncipes",
+      "provincia": "Sevilla",
+      "gastos_comunidad": 6190,
+      "ibi": null,
+      "honorarios_agencia_pct": null,
+      "garaje": null,
+      "trastero": null,
+      "orientacion": null,
+      "certificado_energetico": {
+        "consumo": 163,
+        "etiqueta": null
+      },
+      "descripcion_breve": null,
+      "plataforma": "solvia",
+      "notas_inversor": null,
+      "foto_urls": [
+        "https://example.com/foto1.jpg",
+        "https://example.com/foto2.jpg",
+        "https://example.com/foto3.jpg",
+        "https://example.com/foto4.jpg",
+        "https://example.com/foto5.jpg",
+        "https://example.com/foto6.jpg"
+      ]
+    },
+    "resultado": {
+      "flip": {
+        "rc": 56.12,
+        "mn": 28793,
+        "ra": 95.07,
+        "tot": 94707,
+        "cr": 23450
+      },
+      "btr": {
+        "rn": -87.42,
+        "rb": 11.83,
+        "coc": -200.95,
+        "bn": -67159,
+        "cf": -67159,
+        "tot": 76820
+      }
+    },
+    "notas": ""
+  },
+  {
+    "id": 1777053378579,
+    "name": "Calle Manises",
+    "date": "2026-04-24",
+    "loc": {
+      "prov": "Sevilla",
+      "mun": "San Juan de Aznalfarache",
+      "bar": "Barrio Bajo",
+      "sub": "",
+      "_provincia": "",
+      "_municipio": "",
+      "_barrio": "",
+      "_coords": null
+    },
+    "fotos": [],
+    "S": {
+      "pc": 70000,
+      "itp": 7,
+      "not": 1.5,
+      "dd": 350,
+      "hon": 0,
+      "fin": true,
+      "ltv": 70,
+      "ti": 4.5,
+      "hip": 30,
+      "_direccion": "Calle Manises",
+      "_transporte": true
+    },
+    "F": {
+      "sup": 56,
+      "rm2": 350,
+      "ct": 15,
+      "ind": 2000,
+      "pl": 8,
+      "pv": 83824,
+      "gv": 5
+    },
+    "B": {
+      "ref": 8000,
+      "ct": 10,
+      "rnt": 527,
+      "vac": 5,
+      "ibi": 300,
+      "com": 360,
+      "seg": 180,
+      "imp": true,
+      "mnt": 1,
+      "ges": 0
+    },
+    "presupuesto": 650,
+    "CATS": [
+      {
+        "n": "Vaciado y demoliciÃ³n",
+        "open": true,
+        "items": [
+          {
+            "d": "Levantado de pavimento existente",
+            "u": "mÂ²",
+            "q": 65,
+            "p": 10,
+            "on": true,
+            "ref": "8â14 â¬/mÂ²"
+          },
+          {
+            "d": "Derribo tabiques (si aplica)",
+            "u": "mÂ²",
+            "q": 15,
+            "p": 20,
+            "on": false,
+            "ref": "15â28 â¬/mÂ²"
+          },
+          {
+            "d": "GestiÃ³n de escombros y contenedor",
+            "u": "ud",
+            "q": 1,
+            "p": 450,
+            "on": false,
+            "ref": "350â600 â¬"
+          },
+          {
+            "d": "Retirada muebles y enseres",
+            "u": "ud",
+            "q": 1,
+            "p": 200,
+            "on": false,
+            "ref": "150â400 â¬"
+          }
+        ]
+      },
+      {
+        "n": "InstalaciÃ³n elÃ©ctrica",
+        "open": true,
+        "items": [
+          {
+            "d": "InstalaciÃ³n elÃ©ctrica completa (~65mÂ²)",
+            "u": "ud",
+            "q": 1,
+            "p": 3200,
+            "on": false,
+            "ref": "2.800â4.500 â¬"
+          },
+          {
+            "d": "Cuadro elÃ©ctrico y protecciones",
+            "u": "ud",
+            "q": 1,
+            "p": 350,
+            "on": false,
+            "ref": "300â500 â¬"
+          },
+          {
+            "d": "Puntos de luz adicionales",
+            "u": "ud",
+            "q": 4,
+            "p": 80,
+            "on": false,
+            "ref": "60â120 â¬/ud"
+          },
+          {
+            "d": "BoletÃ­n elÃ©ctrico",
+            "u": "ud",
+            "q": 1,
+            "p": 150,
+            "on": false,
+            "ref": "120â200 â¬"
+          }
+        ]
+      },
+      {
+        "n": "FontanerÃ­a y saneamiento",
+        "open": true,
+        "items": [
+          {
+            "d": "RenovaciÃ³n fontanerÃ­a completa",
+            "u": "ud",
+            "q": 1,
+            "p": 2500,
+            "on": false,
+            "ref": "2.000â3.500 â¬"
+          },
+          {
+            "d": "SustituciÃ³n bajante",
+            "u": "ud",
+            "q": 1,
+            "p": 550,
+            "on": false,
+            "ref": "350â900 â¬"
+          },
+          {
+            "d": "BaÃ±era por plato de ducha",
+            "u": "ud",
+            "q": 1,
+            "p": 550,
+            "on": false,
+            "ref": "400â800 â¬"
+          }
+        ]
+      },
+      {
+        "n": "Suelos",
+        "open": true,
+        "items": [
+          {
+            "d": "PorcelÃ¡nico o gres (mat.+inst.)",
+            "u": "mÂ²",
+            "q": 65,
+            "p": 38,
+            "on": false,
+            "ref": "28â55 â¬/mÂ²"
+          },
+          {
+            "d": "RodapiÃ©",
+            "u": "ml",
+            "q": 55,
+            "p": 8,
+            "on": false,
+            "ref": "6â12 â¬/ml"
+          },
+          {
+            "d": "Pulido terrazo existente",
+            "u": "mÂ²",
+            "q": 65,
+            "p": 15,
+            "on": false,
+            "ref": "12â20 â¬/mÂ²"
+          },
+          {
+            "d": "Parquet laminado (alternativa)",
+            "u": "mÂ²",
+            "q": 65,
+            "p": 25,
+            "on": false,
+            "ref": "18â35 â¬/mÂ²"
+          }
+        ]
+      },
+      {
+        "n": "Paredes y techos",
+        "open": true,
+        "items": [
+          {
+            "d": "Picado de gotelÃ© + alisado",
+            "u": "mÂ²",
+            "q": 180,
+            "p": 9,
+            "on": false,
+            "ref": "7â13 â¬/mÂ²"
+          },
+          {
+            "d": "ReparaciÃ³n humedades puntuales",
+            "u": "ud",
+            "q": 1,
+            "p": 250,
+            "on": false,
+            "ref": "150â500 â¬"
+          },
+          {
+            "d": "Falso techo pladur",
+            "u": "mÂ²",
+            "q": 30,
+            "p": 32,
+            "on": false,
+            "ref": "25â45 â¬/mÂ²"
+          }
+        ]
+      },
+      {
+        "n": "BaÃ±o/s",
+        "open": true,
+        "items": [
+          {
+            "d": "Reforma integral baÃ±o (alicatado+sanitarios)",
+            "u": "ud",
+            "q": 1,
+            "p": 3800,
+            "on": false,
+            "ref": "3.000â5.500 â¬"
+          },
+          {
+            "d": "BaÃ±o adicional (si hay 2)",
+            "u": "ud",
+            "q": 0,
+            "p": 3200,
+            "on": false,
+            "ref": "2.500â4.500 â¬"
+          },
+          {
+            "d": "Mampara de ducha",
+            "u": "ud",
+            "q": 1,
+            "p": 400,
+            "on": false,
+            "ref": "280â650 â¬"
+          },
+          {
+            "d": "Mueble de baÃ±o con lavabo",
+            "u": "ud",
+            "q": 1,
+            "p": 350,
+            "on": false,
+            "ref": "250â600 â¬"
+          }
+        ]
+      },
+      {
+        "n": "Cocina",
+        "open": true,
+        "items": [
+          {
+            "d": "Muebles cocina (~3m lineales)",
+            "u": "ud",
+            "q": 1,
+            "p": 2200,
+            "on": false,
+            "ref": "1.500â3.500 â¬"
+          },
+          {
+            "d": "Encimera (silestone o compacto)",
+            "u": "ud",
+            "q": 1,
+            "p": 450,
+            "on": false,
+            "ref": "300â800 â¬"
+          },
+          {
+            "d": "Fregadero + grifo monomando",
+            "u": "ud",
+            "q": 1,
+            "p": 220,
+            "on": false,
+            "ref": "150â350 â¬"
+          },
+          {
+            "d": "ElectrodomÃ©sticos (horno+placa+campana)",
+            "u": "ud",
+            "q": 1,
+            "p": 900,
+            "on": false,
+            "ref": "600â1.500 â¬"
+          },
+          {
+            "d": "Alicatado frente cocina",
+            "u": "mÂ²",
+            "q": 8,
+            "p": 35,
+            "on": false,
+            "ref": "25â50 â¬/mÂ²"
+          },
+          {
+            "d": "FrigorÃ­fico (BTR)",
+            "u": "ud",
+            "q": 1,
+            "p": 500,
+            "on": false,
+            "ref": "350â900 â¬"
+          }
+        ]
+      },
+      {
+        "n": "CarpinterÃ­a interior",
+        "open": false,
+        "items": [
+          {
+            "d": "Puertas de paso lacadas (mat.+inst.)",
+            "u": "ud",
+            "q": 5,
+            "p": 320,
+            "on": false,
+            "ref": "250â420 â¬/ud"
+          },
+          {
+            "d": "Puerta de entrada (blindada)",
+            "u": "ud",
+            "q": 1,
+            "p": 1100,
+            "on": false,
+            "ref": "800â1.600 â¬"
+          },
+          {
+            "d": "Armario empotrado (~60cm/mÃ³dulo)",
+            "u": "ud",
+            "q": 4,
+            "p": 480,
+            "on": false,
+            "ref": "350â700 â¬/ud"
+          }
+        ]
+      },
+      {
+        "n": "Ventanas y exterior",
+        "open": false,
+        "items": [
+          {
+            "d": "Ventana PVC doble acristalamiento",
+            "u": "ud",
+            "q": 6,
+            "p": 480,
+            "on": false,
+            "ref": "320â650 â¬/ud"
+          },
+          {
+            "d": "Persiana (sustituciÃ³n motorizada)",
+            "u": "ud",
+            "q": 4,
+            "p": 220,
+            "on": false,
+            "ref": "150â320 â¬/ud"
+          }
+        ]
+      },
+      {
+        "n": "ClimatizaciÃ³n",
+        "open": false,
+        "items": [
+          {
+            "d": "Split 1Ã1 inverter instalado",
+            "u": "ud",
+            "q": 2,
+            "p": 950,
+            "on": false,
+            "ref": "750â1.300 â¬/ud"
+          },
+          {
+            "d": "PreinstalaciÃ³n (sin unidad)",
+            "u": "ud",
+            "q": 2,
+            "p": 200,
+            "on": false,
+            "ref": "150â280 â¬/ud"
+          }
+        ]
+      },
+      {
+        "n": "Acabados finales",
+        "open": true,
+        "items": [
+          {
+            "d": "Pintura interior completa (2 manos)",
+            "u": "mÂ²",
+            "q": 200,
+            "p": 7,
+            "on": false,
+            "ref": "5â10 â¬/mÂ²"
+          },
+          {
+            "d": "Limpieza de obra final",
+            "u": "ud",
+            "q": 1,
+            "p": 280,
+            "on": false,
+            "ref": "200â400 â¬"
+          },
+          {
+            "d": "PequeÃ±os remates y ajustes",
+            "u": "ud",
+            "q": 1,
+            "p": 300,
+            "on": false,
+            "ref": "200â500 â¬"
+          }
+        ]
+      },
+      {
+        "n": "GestiÃ³n y licencias",
+        "open": false,
+        "items": [
+          {
+            "d": "Aparejador / arquitecto tÃ©cnico",
+            "u": "ud",
+            "q": 1,
+            "p": 1200,
+            "on": false,
+            "ref": "800â2.000 â¬"
+          },
+          {
+            "d": "Licencia de obras menor",
+            "u": "ud",
+            "q": 1,
+            "p": 350,
+            "on": false,
+            "ref": "200â600 â¬"
+          },
+          {
+            "d": "Certificado energÃ©tico",
+            "u": "ud",
+            "q": 1,
+            "p": 180,
+            "on": false,
+            "ref": "150â250 â¬"
+          }
+        ]
+      },
+      {
+        "n": "Home staging (flip)",
+        "open": false,
+        "items": [
+          {
+            "d": "Home staging bÃ¡sico",
+            "u": "ud",
+            "q": 1,
+            "p": 1200,
+            "on": false,
+            "ref": "800â2.500 â¬"
+          },
+          {
+            "d": "FotografÃ­a profesional",
+            "u": "ud",
+            "q": 1,
+            "p": 200,
+            "on": false,
+            "ref": "150â350 â¬"
+          },
+          {
+            "d": "Tour virtual 3D",
+            "u": "ud",
+            "q": 1,
+            "p": 350,
+            "on": false,
+            "ref": "250â600 â¬"
           }
         ]
       }
@@ -553,32 +1115,32 @@
     "presupuesto": 27390,
     "CATS": [
       {
-        "n": "Vaciado y demolición",
+        "n": "Vaciado y demoliciÃ³n",
         "open": true,
         "items": [
           {
             "d": "Levantado de pavimento existente",
-            "u": "m²",
+            "u": "mÂ²",
             "q": 65,
             "p": 10,
             "on": true,
-            "ref": "8–14 €/m²"
+            "ref": "8â14 â¬/mÂ²"
           },
           {
             "d": "Derribo tabiques (si aplica)",
-            "u": "m²",
+            "u": "mÂ²",
             "q": 15,
             "p": 20,
             "on": false,
-            "ref": "15–28 €/m²"
+            "ref": "15â28 â¬/mÂ²"
           },
           {
-            "d": "Gestión de escombros y contenedor",
+            "d": "GestiÃ³n de escombros y contenedor",
             "u": "ud",
             "q": 1,
             "p": 450,
             "on": true,
-            "ref": "350–600 €"
+            "ref": "350â600 â¬"
           },
           {
             "d": "Retirada muebles y enseres",
@@ -586,29 +1148,29 @@
             "q": 1,
             "p": 200,
             "on": false,
-            "ref": "150–400 €"
+            "ref": "150â400 â¬"
           }
         ]
       },
       {
-        "n": "Instalación eléctrica",
+        "n": "InstalaciÃ³n elÃ©ctrica",
         "open": true,
         "items": [
           {
-            "d": "Instalación eléctrica completa (~65m²)",
+            "d": "InstalaciÃ³n elÃ©ctrica completa (~65mÂ²)",
             "u": "ud",
             "q": 1,
             "p": 3200,
             "on": true,
-            "ref": "2.800–4.500 €"
+            "ref": "2.800â4.500 â¬"
           },
           {
-            "d": "Cuadro eléctrico y protecciones",
+            "d": "Cuadro elÃ©ctrico y protecciones",
             "u": "ud",
             "q": 1,
             "p": 350,
             "on": true,
-            "ref": "300–500 €"
+            "ref": "300â500 â¬"
           },
           {
             "d": "Puntos de luz adicionales",
@@ -616,45 +1178,45 @@
             "q": 4,
             "p": 80,
             "on": false,
-            "ref": "60–120 €/ud"
+            "ref": "60â120 â¬/ud"
           },
           {
-            "d": "Boletín eléctrico",
+            "d": "BoletÃ­n elÃ©ctrico",
             "u": "ud",
             "q": 1,
             "p": 150,
             "on": true,
-            "ref": "120–200 €"
+            "ref": "120â200 â¬"
           }
         ]
       },
       {
-        "n": "Fontanería y saneamiento",
+        "n": "FontanerÃ­a y saneamiento",
         "open": true,
         "items": [
           {
-            "d": "Renovación fontanería completa",
+            "d": "RenovaciÃ³n fontanerÃ­a completa",
             "u": "ud",
             "q": 1,
             "p": 2500,
             "on": true,
-            "ref": "2.000–3.500 €"
+            "ref": "2.000â3.500 â¬"
           },
           {
-            "d": "Sustitución bajante",
+            "d": "SustituciÃ³n bajante",
             "u": "ud",
             "q": 1,
             "p": 550,
             "on": false,
-            "ref": "350–900 €"
+            "ref": "350â900 â¬"
           },
           {
-            "d": "Bañera por plato de ducha",
+            "d": "BaÃ±era por plato de ducha",
             "u": "ud",
             "q": 1,
             "p": 550,
             "on": true,
-            "ref": "400–800 €"
+            "ref": "400â800 â¬"
           }
         ]
       },
@@ -663,36 +1225,36 @@
         "open": true,
         "items": [
           {
-            "d": "Porcelánico o gres (mat.+inst.)",
-            "u": "m²",
+            "d": "PorcelÃ¡nico o gres (mat.+inst.)",
+            "u": "mÂ²",
             "q": 65,
             "p": 38,
             "on": true,
-            "ref": "28–55 €/m²"
+            "ref": "28â55 â¬/mÂ²"
           },
           {
-            "d": "Rodapié",
+            "d": "RodapiÃ©",
             "u": "ml",
             "q": 55,
             "p": 8,
             "on": true,
-            "ref": "6–12 €/ml"
+            "ref": "6â12 â¬/ml"
           },
           {
             "d": "Pulido terrazo existente",
-            "u": "m²",
+            "u": "mÂ²",
             "q": 65,
             "p": 15,
             "on": false,
-            "ref": "12–20 €/m²"
+            "ref": "12â20 â¬/mÂ²"
           },
           {
             "d": "Parquet laminado (alternativa)",
-            "u": "m²",
+            "u": "mÂ²",
             "q": 65,
             "p": 25,
             "on": false,
-            "ref": "18–35 €/m²"
+            "ref": "18â35 â¬/mÂ²"
           }
         ]
       },
@@ -701,50 +1263,50 @@
         "open": true,
         "items": [
           {
-            "d": "Picado de gotelé + alisado",
-            "u": "m²",
+            "d": "Picado de gotelÃ© + alisado",
+            "u": "mÂ²",
             "q": 180,
             "p": 9,
             "on": true,
-            "ref": "7–13 €/m²"
+            "ref": "7â13 â¬/mÂ²"
           },
           {
-            "d": "Reparación humedades puntuales",
+            "d": "ReparaciÃ³n humedades puntuales",
             "u": "ud",
             "q": 1,
             "p": 250,
             "on": false,
-            "ref": "150–500 €"
+            "ref": "150â500 â¬"
           },
           {
             "d": "Falso techo pladur",
-            "u": "m²",
+            "u": "mÂ²",
             "q": 30,
             "p": 32,
             "on": false,
-            "ref": "25–45 €/m²"
+            "ref": "25â45 â¬/mÂ²"
           }
         ]
       },
       {
-        "n": "Baño/s",
+        "n": "BaÃ±o/s",
         "open": true,
         "items": [
           {
-            "d": "Reforma integral baño (alicatado+sanitarios)",
+            "d": "Reforma integral baÃ±o (alicatado+sanitarios)",
             "u": "ud",
             "q": 1,
             "p": 3800,
             "on": true,
-            "ref": "3.000–5.500 €"
+            "ref": "3.000â5.500 â¬"
           },
           {
-            "d": "Baño adicional (si hay 2)",
+            "d": "BaÃ±o adicional (si hay 2)",
             "u": "ud",
             "q": 0,
             "p": 3200,
             "on": false,
-            "ref": "2.500–4.500 €"
+            "ref": "2.500â4.500 â¬"
           },
           {
             "d": "Mampara de ducha",
@@ -752,15 +1314,15 @@
             "q": 1,
             "p": 400,
             "on": true,
-            "ref": "280–650 €"
+            "ref": "280â650 â¬"
           },
           {
-            "d": "Mueble de baño con lavabo",
+            "d": "Mueble de baÃ±o con lavabo",
             "u": "ud",
             "q": 1,
             "p": 350,
             "on": true,
-            "ref": "250–600 €"
+            "ref": "250â600 â¬"
           }
         ]
       },
@@ -774,7 +1336,7 @@
             "q": 1,
             "p": 2200,
             "on": true,
-            "ref": "1.500–3.500 €"
+            "ref": "1.500â3.500 â¬"
           },
           {
             "d": "Encimera (silestone o compacto)",
@@ -782,7 +1344,7 @@
             "q": 1,
             "p": 450,
             "on": true,
-            "ref": "300–800 €"
+            "ref": "300â800 â¬"
           },
           {
             "d": "Fregadero + grifo monomando",
@@ -790,36 +1352,36 @@
             "q": 1,
             "p": 220,
             "on": true,
-            "ref": "150–350 €"
+            "ref": "150â350 â¬"
           },
           {
-            "d": "Electrodomésticos (horno+placa+campana)",
+            "d": "ElectrodomÃ©sticos (horno+placa+campana)",
             "u": "ud",
             "q": 1,
             "p": 900,
             "on": true,
-            "ref": "600–1.500 €"
+            "ref": "600â1.500 â¬"
           },
           {
             "d": "Alicatado frente cocina",
-            "u": "m²",
+            "u": "mÂ²",
             "q": 8,
             "p": 35,
             "on": true,
-            "ref": "25–50 €/m²"
+            "ref": "25â50 â¬/mÂ²"
           },
           {
-            "d": "Frigorífico (BTR)",
+            "d": "FrigorÃ­fico (BTR)",
             "u": "ud",
             "q": 1,
             "p": 500,
             "on": false,
-            "ref": "350–900 €"
+            "ref": "350â900 â¬"
           }
         ]
       },
       {
-        "n": "Carpintería interior",
+        "n": "CarpinterÃ­a interior",
         "open": false,
         "items": [
           {
@@ -828,7 +1390,7 @@
             "q": 5,
             "p": 320,
             "on": true,
-            "ref": "250–420 €/ud"
+            "ref": "250â420 â¬/ud"
           },
           {
             "d": "Puerta de entrada (blindada)",
@@ -836,15 +1398,15 @@
             "q": 1,
             "p": 1100,
             "on": true,
-            "ref": "800–1.600 €"
+            "ref": "800â1.600 â¬"
           },
           {
-            "d": "Armario empotrado (~60cm/módulo)",
+            "d": "Armario empotrado (~60cm/mÃ³dulo)",
             "u": "ud",
             "q": 4,
             "p": 480,
             "on": false,
-            "ref": "350–700 €/ud"
+            "ref": "350â700 â¬/ud"
           }
         ]
       },
@@ -858,37 +1420,37 @@
             "q": 6,
             "p": 480,
             "on": false,
-            "ref": "320–650 €/ud"
+            "ref": "320â650 â¬/ud"
           },
           {
-            "d": "Persiana (sustitución motorizada)",
+            "d": "Persiana (sustituciÃ³n motorizada)",
             "u": "ud",
             "q": 4,
             "p": 220,
             "on": false,
-            "ref": "150–320 €/ud"
+            "ref": "150â320 â¬/ud"
           }
         ]
       },
       {
-        "n": "Climatización",
+        "n": "ClimatizaciÃ³n",
         "open": false,
         "items": [
           {
-            "d": "Split 1×1 inverter instalado",
+            "d": "Split 1Ã1 inverter instalado",
             "u": "ud",
             "q": 2,
             "p": 950,
             "on": false,
-            "ref": "750–1.300 €/ud"
+            "ref": "750â1.300 â¬/ud"
           },
           {
-            "d": "Preinstalación (sin unidad)",
+            "d": "PreinstalaciÃ³n (sin unidad)",
             "u": "ud",
             "q": 2,
             "p": 200,
             "on": false,
-            "ref": "150–280 €/ud"
+            "ref": "150â280 â¬/ud"
           }
         ]
       },
@@ -898,11 +1460,11 @@
         "items": [
           {
             "d": "Pintura interior completa (2 manos)",
-            "u": "m²",
+            "u": "mÂ²",
             "q": 200,
             "p": 7,
             "on": true,
-            "ref": "5–10 €/m²"
+            "ref": "5â10 â¬/mÂ²"
           },
           {
             "d": "Limpieza de obra final",
@@ -910,29 +1472,29 @@
             "q": 1,
             "p": 280,
             "on": true,
-            "ref": "200–400 €"
+            "ref": "200â400 â¬"
           },
           {
-            "d": "Pequeños remates y ajustes",
+            "d": "PequeÃ±os remates y ajustes",
             "u": "ud",
             "q": 1,
             "p": 300,
             "on": true,
-            "ref": "200–500 €"
+            "ref": "200â500 â¬"
           }
         ]
       },
       {
-        "n": "Gestión y licencias",
+        "n": "GestiÃ³n y licencias",
         "open": false,
         "items": [
           {
-            "d": "Aparejador / arquitecto técnico",
+            "d": "Aparejador / arquitecto tÃ©cnico",
             "u": "ud",
             "q": 1,
             "p": 1200,
             "on": true,
-            "ref": "800–2.000 €"
+            "ref": "800â2.000 â¬"
           },
           {
             "d": "Licencia de obras menor",
@@ -940,15 +1502,15 @@
             "q": 1,
             "p": 350,
             "on": true,
-            "ref": "200–600 €"
+            "ref": "200â600 â¬"
           },
           {
-            "d": "Certificado energético",
+            "d": "Certificado energÃ©tico",
             "u": "ud",
             "q": 1,
             "p": 180,
             "on": true,
-            "ref": "150–250 €"
+            "ref": "150â250 â¬"
           }
         ]
       },
@@ -957,20 +1519,20 @@
         "open": false,
         "items": [
           {
-            "d": "Home staging básico",
+            "d": "Home staging bÃ¡sico",
             "u": "ud",
             "q": 1,
             "p": 1200,
             "on": false,
-            "ref": "800–2.500 €"
+            "ref": "800â2.500 â¬"
           },
           {
-            "d": "Fotografía profesional",
+            "d": "FotografÃ­a profesional",
             "u": "ud",
             "q": 1,
             "p": 200,
             "on": false,
-            "ref": "150–350 €"
+            "ref": "150â350 â¬"
           },
           {
             "d": "Tour virtual 3D",
@@ -978,7 +1540,7 @@
             "q": 1,
             "p": 350,
             "on": false,
-            "ref": "250–600 €"
+            "ref": "250â600 â¬"
           }
         ]
       }
@@ -1007,7 +1569,7 @@
       "certificado_energetico": null,
       "descripcion_breve": null,
       "plataforma": null,
-      "notas_inversor": "Oportunidad perfecta tanto para vivir como para invertir, gracias a su excelente comunicación con Sevilla capital y su entorno cómodo y funcional.",
+      "notas_inversor": "Oportunidad perfecta tanto para vivir como para invertir, gracias a su excelente comunicaciÃ³n con Sevilla capital y su entorno cÃ³modo y funcional.",
       "foto_urls": null
     },
     "resultado": {
@@ -2133,32 +2695,32 @@
     "presupuesto": 27390,
     "CATS": [
       {
-        "n": "Vaciado y demoliciÃÂ³n",
+        "n": "Vaciado y demolición",
         "open": true,
         "items": [
           {
             "d": "Levantado de pavimento existente",
-            "u": "mÃÂ²",
+            "u": "m²",
             "q": 65,
             "p": 10,
             "on": true,
-            "ref": "8Ã¢ÂÂ14 Ã¢ÂÂ¬/mÃÂ²"
+            "ref": "8–14 €/m²"
           },
           {
             "d": "Derribo tabiques (si aplica)",
-            "u": "mÃÂ²",
+            "u": "m²",
             "q": 15,
             "p": 20,
             "on": false,
-            "ref": "15Ã¢ÂÂ28 Ã¢ÂÂ¬/mÃÂ²"
+            "ref": "15–28 €/m²"
           },
           {
-            "d": "GestiÃÂ³n de escombros y contenedor",
+            "d": "Gestión de escombros y contenedor",
             "u": "ud",
             "q": 1,
             "p": 450,
             "on": true,
-            "ref": "350Ã¢ÂÂ600 Ã¢ÂÂ¬"
+            "ref": "350–600 €"
           },
           {
             "d": "Retirada muebles y enseres",
@@ -2166,29 +2728,29 @@
             "q": 1,
             "p": 200,
             "on": false,
-            "ref": "150Ã¢ÂÂ400 Ã¢ÂÂ¬"
+            "ref": "150–400 €"
           }
         ]
       },
       {
-        "n": "InstalaciÃÂ³n elÃÂ©ctrica",
+        "n": "Instalación eléctrica",
         "open": true,
         "items": [
           {
-            "d": "InstalaciÃÂ³n elÃÂ©ctrica completa (~65mÃÂ²)",
+            "d": "Instalación eléctrica completa (~65m²)",
             "u": "ud",
             "q": 1,
             "p": 3200,
             "on": true,
-            "ref": "2.800Ã¢ÂÂ4.500 Ã¢ÂÂ¬"
+            "ref": "2.800–4.500 €"
           },
           {
-            "d": "Cuadro elÃÂ©ctrico y protecciones",
+            "d": "Cuadro eléctrico y protecciones",
             "u": "ud",
             "q": 1,
             "p": 350,
             "on": true,
-            "ref": "300Ã¢ÂÂ500 Ã¢ÂÂ¬"
+            "ref": "300–500 €"
           },
           {
             "d": "Puntos de luz adicionales",
@@ -2196,45 +2758,45 @@
             "q": 4,
             "p": 80,
             "on": false,
-            "ref": "60Ã¢ÂÂ120 Ã¢ÂÂ¬/ud"
+            "ref": "60–120 €/ud"
           },
           {
-            "d": "BoletÃÂ­n elÃÂ©ctrico",
+            "d": "Boletín eléctrico",
             "u": "ud",
             "q": 1,
             "p": 150,
             "on": true,
-            "ref": "120Ã¢ÂÂ200 Ã¢ÂÂ¬"
+            "ref": "120–200 €"
           }
         ]
       },
       {
-        "n": "FontanerÃÂ­a y saneamiento",
+        "n": "Fontanería y saneamiento",
         "open": true,
         "items": [
           {
-            "d": "RenovaciÃÂ³n fontanerÃÂ­a completa",
+            "d": "Renovación fontanería completa",
             "u": "ud",
             "q": 1,
             "p": 2500,
             "on": true,
-            "ref": "2.000Ã¢ÂÂ3.500 Ã¢ÂÂ¬"
+            "ref": "2.000–3.500 €"
           },
           {
-            "d": "SustituciÃÂ³n bajante",
+            "d": "Sustitución bajante",
             "u": "ud",
             "q": 1,
             "p": 550,
             "on": false,
-            "ref": "350Ã¢ÂÂ900 Ã¢ÂÂ¬"
+            "ref": "350–900 €"
           },
           {
-            "d": "BaÃÂ±era por plato de ducha",
+            "d": "Bañera por plato de ducha",
             "u": "ud",
             "q": 1,
             "p": 550,
             "on": true,
-            "ref": "400Ã¢ÂÂ800 Ã¢ÂÂ¬"
+            "ref": "400–800 €"
           }
         ]
       },
@@ -2243,36 +2805,36 @@
         "open": true,
         "items": [
           {
-            "d": "PorcelÃÂ¡nico o gres (mat.+inst.)",
-            "u": "mÃÂ²",
+            "d": "Porcelánico o gres (mat.+inst.)",
+            "u": "m²",
             "q": 65,
             "p": 38,
             "on": true,
-            "ref": "28Ã¢ÂÂ55 Ã¢ÂÂ¬/mÃÂ²"
+            "ref": "28–55 €/m²"
           },
           {
-            "d": "RodapiÃÂ©",
+            "d": "Rodapié",
             "u": "ml",
             "q": 55,
             "p": 8,
             "on": true,
-            "ref": "6Ã¢ÂÂ12 Ã¢ÂÂ¬/ml"
+            "ref": "6–12 €/ml"
           },
           {
             "d": "Pulido terrazo existente",
-            "u": "mÃÂ²",
+            "u": "m²",
             "q": 65,
             "p": 15,
             "on": false,
-            "ref": "12Ã¢ÂÂ20 Ã¢ÂÂ¬/mÃÂ²"
+            "ref": "12–20 €/m²"
           },
           {
             "d": "Parquet laminado (alternativa)",
-            "u": "mÃÂ²",
+            "u": "m²",
             "q": 65,
             "p": 25,
             "on": false,
-            "ref": "18Ã¢ÂÂ35 Ã¢ÂÂ¬/mÃÂ²"
+            "ref": "18–35 €/m²"
           }
         ]
       },
@@ -2281,50 +2843,50 @@
         "open": true,
         "items": [
           {
-            "d": "Picado de gotelÃÂ© + alisado",
-            "u": "mÃÂ²",
+            "d": "Picado de gotelé + alisado",
+            "u": "m²",
             "q": 180,
             "p": 9,
             "on": true,
-            "ref": "7Ã¢ÂÂ13 Ã¢ÂÂ¬/mÃÂ²"
+            "ref": "7–13 €/m²"
           },
           {
-            "d": "ReparaciÃÂ³n humedades puntuales",
+            "d": "Reparación humedades puntuales",
             "u": "ud",
             "q": 1,
             "p": 250,
             "on": false,
-            "ref": "150Ã¢ÂÂ500 Ã¢ÂÂ¬"
+            "ref": "150–500 €"
           },
           {
             "d": "Falso techo pladur",
-            "u": "mÃÂ²",
+            "u": "m²",
             "q": 30,
             "p": 32,
             "on": false,
-            "ref": "25Ã¢ÂÂ45 Ã¢ÂÂ¬/mÃÂ²"
+            "ref": "25–45 €/m²"
           }
         ]
       },
       {
-        "n": "BaÃÂ±o/s",
+        "n": "Baño/s",
         "open": true,
         "items": [
           {
-            "d": "Reforma integral baÃÂ±o (alicatado+sanitarios)",
+            "d": "Reforma integral baño (alicatado+sanitarios)",
             "u": "ud",
             "q": 1,
             "p": 3800,
             "on": true,
-            "ref": "3.000Ã¢ÂÂ5.500 Ã¢ÂÂ¬"
+            "ref": "3.000–5.500 €"
           },
           {
-            "d": "BaÃÂ±o adicional (si hay 2)",
+            "d": "Baño adicional (si hay 2)",
             "u": "ud",
             "q": 0,
             "p": 3200,
             "on": false,
-            "ref": "2.500Ã¢ÂÂ4.500 Ã¢ÂÂ¬"
+            "ref": "2.500–4.500 €"
           },
           {
             "d": "Mampara de ducha",
@@ -2332,15 +2894,15 @@
             "q": 1,
             "p": 400,
             "on": true,
-            "ref": "280Ã¢ÂÂ650 Ã¢ÂÂ¬"
+            "ref": "280–650 €"
           },
           {
-            "d": "Mueble de baÃÂ±o con lavabo",
+            "d": "Mueble de baño con lavabo",
             "u": "ud",
             "q": 1,
             "p": 350,
             "on": true,
-            "ref": "250Ã¢ÂÂ600 Ã¢ÂÂ¬"
+            "ref": "250–600 €"
           }
         ]
       },
@@ -2354,7 +2916,7 @@
             "q": 1,
             "p": 2200,
             "on": true,
-            "ref": "1.500Ã¢ÂÂ3.500 Ã¢ÂÂ¬"
+            "ref": "1.500–3.500 €"
           },
           {
             "d": "Encimera (silestone o compacto)",
@@ -2362,7 +2924,7 @@
             "q": 1,
             "p": 450,
             "on": true,
-            "ref": "300Ã¢ÂÂ800 Ã¢ÂÂ¬"
+            "ref": "300–800 €"
           },
           {
             "d": "Fregadero + grifo monomando",
@@ -2370,36 +2932,36 @@
             "q": 1,
             "p": 220,
             "on": true,
-            "ref": "150Ã¢ÂÂ350 Ã¢ÂÂ¬"
+            "ref": "150–350 €"
           },
           {
-            "d": "ElectrodomÃÂ©sticos (horno+placa+campana)",
+            "d": "Electrodomésticos (horno+placa+campana)",
             "u": "ud",
             "q": 1,
             "p": 900,
             "on": true,
-            "ref": "600Ã¢ÂÂ1.500 Ã¢ÂÂ¬"
+            "ref": "600–1.500 €"
           },
           {
             "d": "Alicatado frente cocina",
-            "u": "mÃÂ²",
+            "u": "m²",
             "q": 8,
             "p": 35,
             "on": true,
-            "ref": "25Ã¢ÂÂ50 Ã¢ÂÂ¬/mÃÂ²"
+            "ref": "25–50 €/m²"
           },
           {
-            "d": "FrigorÃÂ­fico (BTR)",
+            "d": "Frigorífico (BTR)",
             "u": "ud",
             "q": 1,
             "p": 500,
             "on": false,
-            "ref": "350Ã¢ÂÂ900 Ã¢ÂÂ¬"
+            "ref": "350–900 €"
           }
         ]
       },
       {
-        "n": "CarpinterÃÂ­a interior",
+        "n": "Carpintería interior",
         "open": false,
         "items": [
           {
@@ -2408,7 +2970,7 @@
             "q": 5,
             "p": 320,
             "on": true,
-            "ref": "250Ã¢ÂÂ420 Ã¢ÂÂ¬/ud"
+            "ref": "250–420 €/ud"
           },
           {
             "d": "Puerta de entrada (blindada)",
@@ -2416,15 +2978,15 @@
             "q": 1,
             "p": 1100,
             "on": true,
-            "ref": "800Ã¢ÂÂ1.600 Ã¢ÂÂ¬"
+            "ref": "800–1.600 €"
           },
           {
-            "d": "Armario empotrado (~60cm/mÃÂ³dulo)",
+            "d": "Armario empotrado (~60cm/módulo)",
             "u": "ud",
             "q": 4,
             "p": 480,
             "on": false,
-            "ref": "350Ã¢ÂÂ700 Ã¢ÂÂ¬/ud"
+            "ref": "350–700 €/ud"
           }
         ]
       },
@@ -2438,37 +3000,37 @@
             "q": 6,
             "p": 480,
             "on": false,
-            "ref": "320Ã¢ÂÂ650 Ã¢ÂÂ¬/ud"
+            "ref": "320–650 €/ud"
           },
           {
-            "d": "Persiana (sustituciÃÂ³n motorizada)",
+            "d": "Persiana (sustitución motorizada)",
             "u": "ud",
             "q": 4,
             "p": 220,
             "on": false,
-            "ref": "150Ã¢ÂÂ320 Ã¢ÂÂ¬/ud"
+            "ref": "150–320 €/ud"
           }
         ]
       },
       {
-        "n": "ClimatizaciÃÂ³n",
+        "n": "Climatización",
         "open": false,
         "items": [
           {
-            "d": "Split 1ÃÂ1 inverter instalado",
+            "d": "Split 1×1 inverter instalado",
             "u": "ud",
             "q": 2,
             "p": 950,
             "on": false,
-            "ref": "750Ã¢ÂÂ1.300 Ã¢ÂÂ¬/ud"
+            "ref": "750–1.300 €/ud"
           },
           {
-            "d": "PreinstalaciÃÂ³n (sin unidad)",
+            "d": "Preinstalación (sin unidad)",
             "u": "ud",
             "q": 2,
             "p": 200,
             "on": false,
-            "ref": "150Ã¢ÂÂ280 Ã¢ÂÂ¬/ud"
+            "ref": "150–280 €/ud"
           }
         ]
       },
@@ -2478,11 +3040,11 @@
         "items": [
           {
             "d": "Pintura interior completa (2 manos)",
-            "u": "mÃÂ²",
+            "u": "m²",
             "q": 200,
             "p": 7,
             "on": true,
-            "ref": "5Ã¢ÂÂ10 Ã¢ÂÂ¬/mÃÂ²"
+            "ref": "5–10 €/m²"
           },
           {
             "d": "Limpieza de obra final",
@@ -2490,29 +3052,29 @@
             "q": 1,
             "p": 280,
             "on": true,
-            "ref": "200Ã¢ÂÂ400 Ã¢ÂÂ¬"
+            "ref": "200–400 €"
           },
           {
-            "d": "PequeÃÂ±os remates y ajustes",
+            "d": "Pequeños remates y ajustes",
             "u": "ud",
             "q": 1,
             "p": 300,
             "on": true,
-            "ref": "200Ã¢ÂÂ500 Ã¢ÂÂ¬"
+            "ref": "200–500 €"
           }
         ]
       },
       {
-        "n": "GestiÃÂ³n y licencias",
+        "n": "Gestión y licencias",
         "open": false,
         "items": [
           {
-            "d": "Aparejador / arquitecto tÃÂ©cnico",
+            "d": "Aparejador / arquitecto técnico",
             "u": "ud",
             "q": 1,
             "p": 1200,
             "on": true,
-            "ref": "800Ã¢ÂÂ2.000 Ã¢ÂÂ¬"
+            "ref": "800–2.000 €"
           },
           {
             "d": "Licencia de obras menor",
@@ -2520,15 +3082,15 @@
             "q": 1,
             "p": 350,
             "on": true,
-            "ref": "200Ã¢ÂÂ600 Ã¢ÂÂ¬"
+            "ref": "200–600 €"
           },
           {
-            "d": "Certificado energÃÂ©tico",
+            "d": "Certificado energético",
             "u": "ud",
             "q": 1,
             "p": 180,
             "on": true,
-            "ref": "150Ã¢ÂÂ250 Ã¢ÂÂ¬"
+            "ref": "150–250 €"
           }
         ]
       },
@@ -2537,20 +3099,20 @@
         "open": false,
         "items": [
           {
-            "d": "Home staging bÃÂ¡sico",
+            "d": "Home staging básico",
             "u": "ud",
             "q": 1,
             "p": 1200,
             "on": false,
-            "ref": "800Ã¢ÂÂ2.500 Ã¢ÂÂ¬"
+            "ref": "800–2.500 €"
           },
           {
-            "d": "FotografÃÂ­a profesional",
+            "d": "Fotografía profesional",
             "u": "ud",
             "q": 1,
             "p": 200,
             "on": false,
-            "ref": "150Ã¢ÂÂ350 Ã¢ÂÂ¬"
+            "ref": "150–350 €"
           },
           {
             "d": "Tour virtual 3D",
@@ -2558,7 +3120,7 @@
             "q": 1,
             "p": 350,
             "on": false,
-            "ref": "250Ã¢ÂÂ600 Ã¢ÂÂ¬"
+            "ref": "250–600 €"
           }
         ]
       }
@@ -2590,7 +3152,7 @@
       },
       "descripcion_breve": "Vivienda luminosa con terraza y rentabilidad asegurada en La Macarena",
       "plataforma": "idealista",
-      "notas_inversor": "Excelente oportunidad para inversores que busquen rentabilidad desde el primer dÃÂ­a, con gran potencial tanto para alquiler por dormitorios como para residencia habitual.",
+      "notas_inversor": "Excelente oportunidad para inversores que busquen rentabilidad desde el primer día, con gran potencial tanto para alquiler por dormitorios como para residencia habitual.",
       "foto_urls": null
     },
     "resultado": {
@@ -2621,7 +3183,7 @@
       "mun": "",
       "bar": "",
       "sub": "",
-      "_municipio": "Villegas - Los PrÃÂ­ncipes",
+      "_municipio": "Villegas - Los Príncipes",
       "_provincia": "Sevilla"
     },
     "fotos": [],
@@ -2661,32 +3223,32 @@
     "presupuesto": 27390,
     "CATS": [
       {
-        "n": "Vaciado y demoliciÃÂ³n",
+        "n": "Vaciado y demolición",
         "open": true,
         "items": [
           {
             "d": "Levantado de pavimento existente",
-            "u": "mÃÂ²",
+            "u": "m²",
             "q": 65,
             "p": 10,
             "on": true,
-            "ref": "8Ã¢ÂÂ14 Ã¢ÂÂ¬/mÃÂ²"
+            "ref": "8–14 €/m²"
           },
           {
             "d": "Derribo tabiques (si aplica)",
-            "u": "mÃÂ²",
+            "u": "m²",
             "q": 15,
             "p": 20,
             "on": false,
-            "ref": "15Ã¢ÂÂ28 Ã¢ÂÂ¬/mÃÂ²"
+            "ref": "15–28 €/m²"
           },
           {
-            "d": "GestiÃÂ³n de escombros y contenedor",
+            "d": "Gestión de escombros y contenedor",
             "u": "ud",
             "q": 1,
             "p": 450,
             "on": true,
-            "ref": "350Ã¢ÂÂ600 Ã¢ÂÂ¬"
+            "ref": "350–600 €"
           },
           {
             "d": "Retirada muebles y enseres",
@@ -2694,29 +3256,29 @@
             "q": 1,
             "p": 200,
             "on": false,
-            "ref": "150Ã¢ÂÂ400 Ã¢ÂÂ¬"
+            "ref": "150–400 €"
           }
         ]
       },
       {
-        "n": "InstalaciÃÂ³n elÃÂ©ctrica",
+        "n": "Instalación eléctrica",
         "open": true,
         "items": [
           {
-            "d": "InstalaciÃÂ³n elÃÂ©ctrica completa (~65mÃÂ²)",
+            "d": "Instalación eléctrica completa (~65m²)",
             "u": "ud",
             "q": 1,
             "p": 3200,
             "on": true,
-            "ref": "2.800Ã¢ÂÂ4.500 Ã¢ÂÂ¬"
+            "ref": "2.800–4.500 €"
           },
           {
-            "d": "Cuadro elÃÂ©ctrico y protecciones",
+            "d": "Cuadro eléctrico y protecciones",
             "u": "ud",
             "q": 1,
             "p": 350,
             "on": true,
-            "ref": "300Ã¢ÂÂ500 Ã¢ÂÂ¬"
+            "ref": "300–500 €"
           },
           {
             "d": "Puntos de luz adicionales",
@@ -2724,45 +3286,45 @@
             "q": 4,
             "p": 80,
             "on": false,
-            "ref": "60Ã¢ÂÂ120 Ã¢ÂÂ¬/ud"
+            "ref": "60–120 €/ud"
           },
           {
-            "d": "BoletÃÂ­n elÃÂ©ctrico",
+            "d": "Boletín eléctrico",
             "u": "ud",
             "q": 1,
             "p": 150,
             "on": true,
-            "ref": "120Ã¢ÂÂ200 Ã¢ÂÂ¬"
+            "ref": "120–200 €"
           }
         ]
       },
       {
-        "n": "FontanerÃÂ­a y saneamiento",
+        "n": "Fontanería y saneamiento",
         "open": true,
         "items": [
           {
-            "d": "RenovaciÃÂ³n fontanerÃÂ­a completa",
+            "d": "Renovación fontanería completa",
             "u": "ud",
             "q": 1,
             "p": 2500,
             "on": true,
-            "ref": "2.000Ã¢ÂÂ3.500 Ã¢ÂÂ¬"
+            "ref": "2.000–3.500 €"
           },
           {
-            "d": "SustituciÃÂ³n bajante",
+            "d": "Sustitución bajante",
             "u": "ud",
             "q": 1,
             "p": 550,
             "on": false,
-            "ref": "350Ã¢ÂÂ900 Ã¢ÂÂ¬"
+            "ref": "350–900 €"
           },
           {
-            "d": "BaÃÂ±era por plato de ducha",
+            "d": "Bañera por plato de ducha",
             "u": "ud",
             "q": 1,
             "p": 550,
             "on": true,
-            "ref": "400Ã¢ÂÂ800 Ã¢ÂÂ¬"
+            "ref": "400–800 €"
           }
         ]
       },
@@ -2771,36 +3333,36 @@
         "open": true,
         "items": [
           {
-            "d": "PorcelÃÂ¡nico o gres (mat.+inst.)",
-            "u": "mÃÂ²",
+            "d": "Porcelánico o gres (mat.+inst.)",
+            "u": "m²",
             "q": 65,
             "p": 38,
             "on": true,
-            "ref": "28Ã¢ÂÂ55 Ã¢ÂÂ¬/mÃÂ²"
+            "ref": "28–55 €/m²"
           },
           {
-            "d": "RodapiÃÂ©",
+            "d": "Rodapié",
             "u": "ml",
             "q": 55,
             "p": 8,
             "on": true,
-            "ref": "6Ã¢ÂÂ12 Ã¢ÂÂ¬/ml"
+            "ref": "6–12 €/ml"
           },
           {
             "d": "Pulido terrazo existente",
-            "u": "mÃÂ²",
+            "u": "m²",
             "q": 65,
             "p": 15,
             "on": false,
-            "ref": "12Ã¢ÂÂ20 Ã¢ÂÂ¬/mÃÂ²"
+            "ref": "12–20 €/m²"
           },
           {
             "d": "Parquet laminado (alternativa)",
-            "u": "mÃÂ²",
+            "u": "m²",
             "q": 65,
             "p": 25,
             "on": false,
-            "ref": "18Ã¢ÂÂ35 Ã¢ÂÂ¬/mÃÂ²"
+            "ref": "18–35 €/m²"
           }
         ]
       },
@@ -2809,50 +3371,50 @@
         "open": true,
         "items": [
           {
-            "d": "Picado de gotelÃÂ© + alisado",
-            "u": "mÃÂ²",
+            "d": "Picado de gotelé + alisado",
+            "u": "m²",
             "q": 180,
             "p": 9,
             "on": true,
-            "ref": "7Ã¢ÂÂ13 Ã¢ÂÂ¬/mÃÂ²"
+            "ref": "7–13 €/m²"
           },
           {
-            "d": "ReparaciÃÂ³n humedades puntuales",
+            "d": "Reparación humedades puntuales",
             "u": "ud",
             "q": 1,
             "p": 250,
             "on": false,
-            "ref": "150Ã¢ÂÂ500 Ã¢ÂÂ¬"
+            "ref": "150–500 €"
           },
           {
             "d": "Falso techo pladur",
-            "u": "mÃÂ²",
+            "u": "m²",
             "q": 30,
             "p": 32,
             "on": false,
-            "ref": "25Ã¢ÂÂ45 Ã¢ÂÂ¬/mÃÂ²"
+            "ref": "25–45 €/m²"
           }
         ]
       },
       {
-        "n": "BaÃÂ±o/s",
+        "n": "Baño/s",
         "open": true,
         "items": [
           {
-            "d": "Reforma integral baÃÂ±o (alicatado+sanitarios)",
+            "d": "Reforma integral baño (alicatado+sanitarios)",
             "u": "ud",
             "q": 1,
             "p": 3800,
             "on": true,
-            "ref": "3.000Ã¢ÂÂ5.500 Ã¢ÂÂ¬"
+            "ref": "3.000–5.500 €"
           },
           {
-            "d": "BaÃÂ±o adicional (si hay 2)",
+            "d": "Baño adicional (si hay 2)",
             "u": "ud",
             "q": 0,
             "p": 3200,
             "on": false,
-            "ref": "2.500Ã¢ÂÂ4.500 Ã¢ÂÂ¬"
+            "ref": "2.500–4.500 €"
           },
           {
             "d": "Mampara de ducha",
@@ -2860,15 +3422,15 @@
             "q": 1,
             "p": 400,
             "on": true,
-            "ref": "280Ã¢ÂÂ650 Ã¢ÂÂ¬"
+            "ref": "280–650 €"
           },
           {
-            "d": "Mueble de baÃÂ±o con lavabo",
+            "d": "Mueble de baño con lavabo",
             "u": "ud",
             "q": 1,
             "p": 350,
             "on": true,
-            "ref": "250Ã¢ÂÂ600 Ã¢ÂÂ¬"
+            "ref": "250–600 €"
           }
         ]
       },
@@ -2882,7 +3444,7 @@
             "q": 1,
             "p": 2200,
             "on": true,
-            "ref": "1.500Ã¢ÂÂ3.500 Ã¢ÂÂ¬"
+            "ref": "1.500–3.500 €"
           },
           {
             "d": "Encimera (silestone o compacto)",
@@ -2890,7 +3452,7 @@
             "q": 1,
             "p": 450,
             "on": true,
-            "ref": "300Ã¢ÂÂ800 Ã¢ÂÂ¬"
+            "ref": "300–800 €"
           },
           {
             "d": "Fregadero + grifo monomando",
@@ -2898,36 +3460,36 @@
             "q": 1,
             "p": 220,
             "on": true,
-            "ref": "150Ã¢ÂÂ350 Ã¢ÂÂ¬"
+            "ref": "150–350 €"
           },
           {
-            "d": "ElectrodomÃÂ©sticos (horno+placa+campana)",
+            "d": "Electrodomésticos (horno+placa+campana)",
             "u": "ud",
             "q": 1,
             "p": 900,
             "on": true,
-            "ref": "600Ã¢ÂÂ1.500 Ã¢ÂÂ¬"
+            "ref": "600–1.500 €"
           },
           {
             "d": "Alicatado frente cocina",
-            "u": "mÃÂ²",
+            "u": "m²",
             "q": 8,
             "p": 35,
             "on": true,
-            "ref": "25Ã¢ÂÂ50 Ã¢ÂÂ¬/mÃÂ²"
+            "ref": "25–50 €/m²"
           },
           {
-            "d": "FrigorÃÂ­fico (BTR)",
+            "d": "Frigorífico (BTR)",
             "u": "ud",
             "q": 1,
             "p": 500,
             "on": false,
-            "ref": "350Ã¢ÂÂ900 Ã¢ÂÂ¬"
+            "ref": "350–900 €"
           }
         ]
       },
       {
-        "n": "CarpinterÃÂ­a interior",
+        "n": "Carpintería interior",
         "open": false,
         "items": [
           {
@@ -2936,7 +3498,7 @@
             "q": 5,
             "p": 320,
             "on": true,
-            "ref": "250Ã¢ÂÂ420 Ã¢ÂÂ¬/ud"
+            "ref": "250–420 €/ud"
           },
           {
             "d": "Puerta de entrada (blindada)",
@@ -2944,15 +3506,15 @@
             "q": 1,
             "p": 1100,
             "on": true,
-            "ref": "800Ã¢ÂÂ1.600 Ã¢ÂÂ¬"
+            "ref": "800–1.600 €"
           },
           {
-            "d": "Armario empotrado (~60cm/mÃÂ³dulo)",
+            "d": "Armario empotrado (~60cm/módulo)",
             "u": "ud",
             "q": 4,
             "p": 480,
             "on": false,
-            "ref": "350Ã¢ÂÂ700 Ã¢ÂÂ¬/ud"
+            "ref": "350–700 €/ud"
           }
         ]
       },
@@ -2966,37 +3528,37 @@
             "q": 6,
             "p": 480,
             "on": false,
-            "ref": "320Ã¢ÂÂ650 Ã¢ÂÂ¬/ud"
+            "ref": "320–650 €/ud"
           },
           {
-            "d": "Persiana (sustituciÃÂ³n motorizada)",
+            "d": "Persiana (sustitución motorizada)",
             "u": "ud",
             "q": 4,
             "p": 220,
             "on": false,
-            "ref": "150Ã¢ÂÂ320 Ã¢ÂÂ¬/ud"
+            "ref": "150–320 €/ud"
           }
         ]
       },
       {
-        "n": "ClimatizaciÃÂ³n",
+        "n": "Climatización",
         "open": false,
         "items": [
           {
-            "d": "Split 1ÃÂ1 inverter instalado",
+            "d": "Split 1×1 inverter instalado",
             "u": "ud",
             "q": 2,
             "p": 950,
             "on": false,
-            "ref": "750Ã¢ÂÂ1.300 Ã¢ÂÂ¬/ud"
+            "ref": "750–1.300 €/ud"
           },
           {
-            "d": "PreinstalaciÃÂ³n (sin unidad)",
+            "d": "Preinstalación (sin unidad)",
             "u": "ud",
             "q": 2,
             "p": 200,
             "on": false,
-            "ref": "150Ã¢ÂÂ280 Ã¢ÂÂ¬/ud"
+            "ref": "150–280 €/ud"
           }
         ]
       },
@@ -3006,11 +3568,11 @@
         "items": [
           {
             "d": "Pintura interior completa (2 manos)",
-            "u": "mÃÂ²",
+            "u": "m²",
             "q": 200,
             "p": 7,
             "on": true,
-            "ref": "5Ã¢ÂÂ10 Ã¢ÂÂ¬/mÃÂ²"
+            "ref": "5–10 €/m²"
           },
           {
             "d": "Limpieza de obra final",
@@ -3018,29 +3580,29 @@
             "q": 1,
             "p": 280,
             "on": true,
-            "ref": "200Ã¢ÂÂ400 Ã¢ÂÂ¬"
+            "ref": "200–400 €"
           },
           {
-            "d": "PequeÃÂ±os remates y ajustes",
+            "d": "Pequeños remates y ajustes",
             "u": "ud",
             "q": 1,
             "p": 300,
             "on": true,
-            "ref": "200Ã¢ÂÂ500 Ã¢ÂÂ¬"
+            "ref": "200–500 €"
           }
         ]
       },
       {
-        "n": "GestiÃÂ³n y licencias",
+        "n": "Gestión y licencias",
         "open": false,
         "items": [
           {
-            "d": "Aparejador / arquitecto tÃÂ©cnico",
+            "d": "Aparejador / arquitecto técnico",
             "u": "ud",
             "q": 1,
             "p": 1200,
             "on": true,
-            "ref": "800Ã¢ÂÂ2.000 Ã¢ÂÂ¬"
+            "ref": "800–2.000 €"
           },
           {
             "d": "Licencia de obras menor",
@@ -3048,15 +3610,15 @@
             "q": 1,
             "p": 350,
             "on": true,
-            "ref": "200Ã¢ÂÂ600 Ã¢ÂÂ¬"
+            "ref": "200–600 €"
           },
           {
-            "d": "Certificado energÃÂ©tico",
+            "d": "Certificado energético",
             "u": "ud",
             "q": 1,
             "p": 180,
             "on": true,
-            "ref": "150Ã¢ÂÂ250 Ã¢ÂÂ¬"
+            "ref": "150–250 €"
           }
         ]
       },
@@ -3065,20 +3627,20 @@
         "open": false,
         "items": [
           {
-            "d": "Home staging bÃÂ¡sico",
+            "d": "Home staging básico",
             "u": "ud",
             "q": 1,
             "p": 1200,
             "on": false,
-            "ref": "800Ã¢ÂÂ2.500 Ã¢ÂÂ¬"
+            "ref": "800–2.500 €"
           },
           {
-            "d": "FotografÃÂ­a profesional",
+            "d": "Fotografía profesional",
             "u": "ud",
             "q": 1,
             "p": 200,
             "on": false,
-            "ref": "150Ã¢ÂÂ350 Ã¢ÂÂ¬"
+            "ref": "150–350 €"
           },
           {
             "d": "Tour virtual 3D",
@@ -3086,7 +3648,7 @@
             "q": 1,
             "p": 350,
             "on": false,
-            "ref": "250Ã¢ÂÂ600 Ã¢ÂÂ¬"
+            "ref": "250–600 €"
           }
         ]
       }
@@ -3103,7 +3665,7 @@
       "ano_construccion": null,
       "direccion": "Avenida de la Barzola",
       "cp": null,
-      "municipio": "Villegas - Los PrÃÂ­ncipes",
+      "municipio": "Villegas - Los Príncipes",
       "barrio": null,
       "provincia": "Sevilla",
       "gastos_comunidad": null,
@@ -3112,10 +3674,10 @@
       "garaje": null,
       "trastero": true,
       "orientacion": "sur",
-      "certificado_energetico": "en trÃÂ¡mite",
+      "certificado_energetico": "en trámite",
       "descripcion_breve": null,
       "plataforma": "idealista",
-      "notas_inversor": "Gran posibilidad de rentabilizar en alquiler, cercano a la nueva lÃÂ­nea de metro de Sevilla en construcciÃÂ³n.",
+      "notas_inversor": "Gran posibilidad de rentabilizar en alquiler, cercano a la nueva línea de metro de Sevilla en construcción.",
       "foto_urls": null
     },
     "resultado": {
@@ -3185,32 +3747,32 @@
     "presupuesto": 27390,
     "CATS": [
       {
-        "n": "Vaciado y demoliciÃÂ³n",
+        "n": "Vaciado y demolición",
         "open": true,
         "items": [
           {
             "d": "Levantado de pavimento existente",
-            "u": "mÃÂ²",
+            "u": "m²",
             "q": 65,
             "p": 10,
             "on": true,
-            "ref": "8Ã¢ÂÂ14 Ã¢ÂÂ¬/mÃÂ²"
+            "ref": "8–14 €/m²"
           },
           {
             "d": "Derribo tabiques (si aplica)",
-            "u": "mÃÂ²",
+            "u": "m²",
             "q": 15,
             "p": 20,
             "on": false,
-            "ref": "15Ã¢ÂÂ28 Ã¢ÂÂ¬/mÃÂ²"
+            "ref": "15–28 €/m²"
           },
           {
-            "d": "GestiÃÂ³n de escombros y contenedor",
+            "d": "Gestión de escombros y contenedor",
             "u": "ud",
             "q": 1,
             "p": 450,
             "on": true,
-            "ref": "350Ã¢ÂÂ600 Ã¢ÂÂ¬"
+            "ref": "350–600 €"
           },
           {
             "d": "Retirada muebles y enseres",
@@ -3218,29 +3780,29 @@
             "q": 1,
             "p": 200,
             "on": false,
-            "ref": "150Ã¢ÂÂ400 Ã¢ÂÂ¬"
+            "ref": "150–400 €"
           }
         ]
       },
       {
-        "n": "InstalaciÃÂ³n elÃÂ©ctrica",
+        "n": "Instalación eléctrica",
         "open": true,
         "items": [
           {
-            "d": "InstalaciÃÂ³n elÃÂ©ctrica completa (~65mÃÂ²)",
+            "d": "Instalación eléctrica completa (~65m²)",
             "u": "ud",
             "q": 1,
             "p": 3200,
             "on": true,
-            "ref": "2.800Ã¢ÂÂ4.500 Ã¢ÂÂ¬"
+            "ref": "2.800–4.500 €"
           },
           {
-            "d": "Cuadro elÃÂ©ctrico y protecciones",
+            "d": "Cuadro eléctrico y protecciones",
             "u": "ud",
             "q": 1,
             "p": 350,
             "on": true,
-            "ref": "300Ã¢ÂÂ500 Ã¢ÂÂ¬"
+            "ref": "300–500 €"
           },
           {
             "d": "Puntos de luz adicionales",
@@ -3248,45 +3810,45 @@
             "q": 4,
             "p": 80,
             "on": false,
-            "ref": "60Ã¢ÂÂ120 Ã¢ÂÂ¬/ud"
+            "ref": "60–120 €/ud"
           },
           {
-            "d": "BoletÃÂ­n elÃÂ©ctrico",
+            "d": "Boletín eléctrico",
             "u": "ud",
             "q": 1,
             "p": 150,
             "on": true,
-            "ref": "120Ã¢ÂÂ200 Ã¢ÂÂ¬"
+            "ref": "120–200 €"
           }
         ]
       },
       {
-        "n": "FontanerÃÂ­a y saneamiento",
+        "n": "Fontanería y saneamiento",
         "open": true,
         "items": [
           {
-            "d": "RenovaciÃÂ³n fontanerÃÂ­a completa",
+            "d": "Renovación fontanería completa",
             "u": "ud",
             "q": 1,
             "p": 2500,
             "on": true,
-            "ref": "2.000Ã¢ÂÂ3.500 Ã¢ÂÂ¬"
+            "ref": "2.000–3.500 €"
           },
           {
-            "d": "SustituciÃÂ³n bajante",
+            "d": "Sustitución bajante",
             "u": "ud",
             "q": 1,
             "p": 550,
             "on": false,
-            "ref": "350Ã¢ÂÂ900 Ã¢ÂÂ¬"
+            "ref": "350–900 €"
           },
           {
-            "d": "BaÃÂ±era por plato de ducha",
+            "d": "Bañera por plato de ducha",
             "u": "ud",
             "q": 1,
             "p": 550,
             "on": true,
-            "ref": "400Ã¢ÂÂ800 Ã¢ÂÂ¬"
+            "ref": "400–800 €"
           }
         ]
       },
@@ -3295,36 +3857,36 @@
         "open": true,
         "items": [
           {
-            "d": "PorcelÃÂ¡nico o gres (mat.+inst.)",
-            "u": "mÃÂ²",
+            "d": "Porcelánico o gres (mat.+inst.)",
+            "u": "m²",
             "q": 65,
             "p": 38,
             "on": true,
-            "ref": "28Ã¢ÂÂ55 Ã¢ÂÂ¬/mÃÂ²"
+            "ref": "28–55 €/m²"
           },
           {
-            "d": "RodapiÃÂ©",
+            "d": "Rodapié",
             "u": "ml",
             "q": 55,
             "p": 8,
             "on": true,
-            "ref": "6Ã¢ÂÂ12 Ã¢ÂÂ¬/ml"
+            "ref": "6–12 €/ml"
           },
           {
             "d": "Pulido terrazo existente",
-            "u": "mÃÂ²",
+            "u": "m²",
             "q": 65,
             "p": 15,
             "on": false,
-            "ref": "12Ã¢ÂÂ20 Ã¢ÂÂ¬/mÃÂ²"
+            "ref": "12–20 €/m²"
           },
           {
             "d": "Parquet laminado (alternativa)",
-            "u": "mÃÂ²",
+            "u": "m²",
             "q": 65,
             "p": 25,
             "on": false,
-            "ref": "18Ã¢ÂÂ35 Ã¢ÂÂ¬/mÃÂ²"
+            "ref": "18–35 €/m²"
           }
         ]
       },
@@ -3333,50 +3895,50 @@
         "open": true,
         "items": [
           {
-            "d": "Picado de gotelÃÂ© + alisado",
-            "u": "mÃÂ²",
+            "d": "Picado de gotelé + alisado",
+            "u": "m²",
             "q": 180,
             "p": 9,
             "on": true,
-            "ref": "7Ã¢ÂÂ13 Ã¢ÂÂ¬/mÃÂ²"
+            "ref": "7–13 €/m²"
           },
           {
-            "d": "ReparaciÃÂ³n humedades puntuales",
+            "d": "Reparación humedades puntuales",
             "u": "ud",
             "q": 1,
             "p": 250,
             "on": false,
-            "ref": "150Ã¢ÂÂ500 Ã¢ÂÂ¬"
+            "ref": "150–500 €"
           },
           {
             "d": "Falso techo pladur",
-            "u": "mÃÂ²",
+            "u": "m²",
             "q": 30,
             "p": 32,
             "on": false,
-            "ref": "25Ã¢ÂÂ45 Ã¢ÂÂ¬/mÃÂ²"
+            "ref": "25–45 €/m²"
           }
         ]
       },
       {
-        "n": "BaÃÂ±o/s",
+        "n": "Baño/s",
         "open": true,
         "items": [
           {
-            "d": "Reforma integral baÃÂ±o (alicatado+sanitarios)",
+            "d": "Reforma integral baño (alicatado+sanitarios)",
             "u": "ud",
             "q": 1,
             "p": 3800,
             "on": true,
-            "ref": "3.000Ã¢ÂÂ5.500 Ã¢ÂÂ¬"
+            "ref": "3.000–5.500 €"
           },
           {
-            "d": "BaÃÂ±o adicional (si hay 2)",
+            "d": "Baño adicional (si hay 2)",
             "u": "ud",
             "q": 0,
             "p": 3200,
             "on": false,
-            "ref": "2.500Ã¢ÂÂ4.500 Ã¢ÂÂ¬"
+            "ref": "2.500–4.500 €"
           },
           {
             "d": "Mampara de ducha",
@@ -3384,15 +3946,15 @@
             "q": 1,
             "p": 400,
             "on": true,
-            "ref": "280Ã¢ÂÂ650 Ã¢ÂÂ¬"
+            "ref": "280–650 €"
           },
           {
-            "d": "Mueble de baÃÂ±o con lavabo",
+            "d": "Mueble de baño con lavabo",
             "u": "ud",
             "q": 1,
             "p": 350,
             "on": true,
-            "ref": "250Ã¢ÂÂ600 Ã¢ÂÂ¬"
+            "ref": "250–600 €"
           }
         ]
       },
@@ -3406,7 +3968,7 @@
             "q": 1,
             "p": 2200,
             "on": true,
-            "ref": "1.500Ã¢ÂÂ3.500 Ã¢ÂÂ¬"
+            "ref": "1.500–3.500 €"
           },
           {
             "d": "Encimera (silestone o compacto)",
@@ -3414,7 +3976,7 @@
             "q": 1,
             "p": 450,
             "on": true,
-            "ref": "300Ã¢ÂÂ800 Ã¢ÂÂ¬"
+            "ref": "300–800 €"
           },
           {
             "d": "Fregadero + grifo monomando",
@@ -3422,36 +3984,36 @@
             "q": 1,
             "p": 220,
             "on": true,
-            "ref": "150Ã¢ÂÂ350 Ã¢ÂÂ¬"
+            "ref": "150–350 €"
           },
           {
-            "d": "ElectrodomÃÂ©sticos (horno+placa+campana)",
+            "d": "Electrodomésticos (horno+placa+campana)",
             "u": "ud",
             "q": 1,
             "p": 900,
             "on": true,
-            "ref": "600Ã¢ÂÂ1.500 Ã¢ÂÂ¬"
+            "ref": "600–1.500 €"
           },
           {
             "d": "Alicatado frente cocina",
-            "u": "mÃÂ²",
+            "u": "m²",
             "q": 8,
             "p": 35,
             "on": true,
-            "ref": "25Ã¢ÂÂ50 Ã¢ÂÂ¬/mÃÂ²"
+            "ref": "25–50 €/m²"
           },
           {
-            "d": "FrigorÃÂ­fico (BTR)",
+            "d": "Frigorífico (BTR)",
             "u": "ud",
             "q": 1,
             "p": 500,
             "on": false,
-            "ref": "350Ã¢ÂÂ900 Ã¢ÂÂ¬"
+            "ref": "350–900 €"
           }
         ]
       },
       {
-        "n": "CarpinterÃÂ­a interior",
+        "n": "Carpintería interior",
         "open": false,
         "items": [
           {
@@ -3460,7 +4022,7 @@
             "q": 5,
             "p": 320,
             "on": true,
-            "ref": "250Ã¢ÂÂ420 Ã¢ÂÂ¬/ud"
+            "ref": "250–420 €/ud"
           },
           {
             "d": "Puerta de entrada (blindada)",
@@ -3468,15 +4030,15 @@
             "q": 1,
             "p": 1100,
             "on": true,
-            "ref": "800Ã¢ÂÂ1.600 Ã¢ÂÂ¬"
+            "ref": "800–1.600 €"
           },
           {
-            "d": "Armario empotrado (~60cm/mÃÂ³dulo)",
+            "d": "Armario empotrado (~60cm/módulo)",
             "u": "ud",
             "q": 4,
             "p": 480,
             "on": false,
-            "ref": "350Ã¢ÂÂ700 Ã¢ÂÂ¬/ud"
+            "ref": "350–700 €/ud"
           }
         ]
       },
@@ -3490,37 +4052,37 @@
             "q": 6,
             "p": 480,
             "on": false,
-            "ref": "320Ã¢ÂÂ650 Ã¢ÂÂ¬/ud"
+            "ref": "320–650 €/ud"
           },
           {
-            "d": "Persiana (sustituciÃÂ³n motorizada)",
+            "d": "Persiana (sustitución motorizada)",
             "u": "ud",
             "q": 4,
             "p": 220,
             "on": false,
-            "ref": "150Ã¢ÂÂ320 Ã¢ÂÂ¬/ud"
+            "ref": "150–320 €/ud"
           }
         ]
       },
       {
-        "n": "ClimatizaciÃÂ³n",
+        "n": "Climatización",
         "open": false,
         "items": [
           {
-            "d": "Split 1ÃÂ1 inverter instalado",
+            "d": "Split 1×1 inverter instalado",
             "u": "ud",
             "q": 2,
             "p": 950,
             "on": false,
-            "ref": "750Ã¢ÂÂ1.300 Ã¢ÂÂ¬/ud"
+            "ref": "750–1.300 €/ud"
           },
           {
-            "d": "PreinstalaciÃÂ³n (sin unidad)",
+            "d": "Preinstalación (sin unidad)",
             "u": "ud",
             "q": 2,
             "p": 200,
             "on": false,
-            "ref": "150Ã¢ÂÂ280 Ã¢ÂÂ¬/ud"
+            "ref": "150–280 €/ud"
           }
         ]
       },
@@ -3530,11 +4092,11 @@
         "items": [
           {
             "d": "Pintura interior completa (2 manos)",
-            "u": "mÃÂ²",
+            "u": "m²",
             "q": 200,
             "p": 7,
             "on": true,
-            "ref": "5Ã¢ÂÂ10 Ã¢ÂÂ¬/mÃÂ²"
+            "ref": "5–10 €/m²"
           },
           {
             "d": "Limpieza de obra final",
@@ -3542,29 +4104,29 @@
             "q": 1,
             "p": 280,
             "on": true,
-            "ref": "200Ã¢ÂÂ400 Ã¢ÂÂ¬"
+            "ref": "200–400 €"
           },
           {
-            "d": "PequeÃÂ±os remates y ajustes",
+            "d": "Pequeños remates y ajustes",
             "u": "ud",
             "q": 1,
             "p": 300,
             "on": true,
-            "ref": "200Ã¢ÂÂ500 Ã¢ÂÂ¬"
+            "ref": "200–500 €"
           }
         ]
       },
       {
-        "n": "GestiÃÂ³n y licencias",
+        "n": "Gestión y licencias",
         "open": false,
         "items": [
           {
-            "d": "Aparejador / arquitecto tÃÂ©cnico",
+            "d": "Aparejador / arquitecto técnico",
             "u": "ud",
             "q": 1,
             "p": 1200,
             "on": true,
-            "ref": "800Ã¢ÂÂ2.000 Ã¢ÂÂ¬"
+            "ref": "800–2.000 €"
           },
           {
             "d": "Licencia de obras menor",
@@ -3572,15 +4134,15 @@
             "q": 1,
             "p": 350,
             "on": true,
-            "ref": "200Ã¢ÂÂ600 Ã¢ÂÂ¬"
+            "ref": "200–600 €"
           },
           {
-            "d": "Certificado energÃÂ©tico",
+            "d": "Certificado energético",
             "u": "ud",
             "q": 1,
             "p": 180,
             "on": true,
-            "ref": "150Ã¢ÂÂ250 Ã¢ÂÂ¬"
+            "ref": "150–250 €"
           }
         ]
       },
@@ -3589,20 +4151,20 @@
         "open": false,
         "items": [
           {
-            "d": "Home staging bÃÂ¡sico",
+            "d": "Home staging básico",
             "u": "ud",
             "q": 1,
             "p": 1200,
             "on": false,
-            "ref": "800Ã¢ÂÂ2.500 Ã¢ÂÂ¬"
+            "ref": "800–2.500 €"
           },
           {
-            "d": "FotografÃÂ­a profesional",
+            "d": "Fotografía profesional",
             "u": "ud",
             "q": 1,
             "p": 200,
             "on": false,
-            "ref": "150Ã¢ÂÂ350 Ã¢ÂÂ¬"
+            "ref": "150–350 €"
           },
           {
             "d": "Tour virtual 3D",
@@ -3610,7 +4172,7 @@
             "q": 1,
             "p": 350,
             "on": false,
-            "ref": "250Ã¢ÂÂ600 Ã¢ÂÂ¬"
+            "ref": "250–600 €"
           }
         ]
       }
