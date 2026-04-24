@@ -1,33 +1,33 @@
 {
   "S": {
-    "pc": 70000,
+    "pc": 62000,
     "itp": 7,
     "not": 1.5,
     "dd": 350,
     "hon": 0,
     "fin": true,
     "ltv": 70,
-    "ti": 4.5,
-    "hip": 30,
-    "_direccion": "Calle Manises",
-    "_transporte": true
+    "ti": -6.5,
+    "hip": 25,
+    "_direccion": "Calle Hermano Pablo",
+    "_cp": "41008"
   },
   "F": {
-    "sup": 56,
+    "sup": 67,
     "rm2": 350,
     "ct": 15,
     "ind": 2000,
     "pl": 8,
-    "pv": 83824,
+    "pv": 130000,
     "gv": 5
   },
   "B": {
     "ref": 8000,
-    "ct": 10,
-    "rnt": 527,
+    "ct": 15,
+    "rnt": 757,
     "vac": 5,
     "ibi": 300,
-    "com": 360,
+    "com": 74280,
     "seg": 180,
     "imp": true,
     "mnt": 1,
@@ -35,11 +35,11 @@
   },
   "SEL": {
     "prov": "Sevilla",
-    "mun": "San Juan de Aznalfarache",
-    "bar": "Barrio Bajo",
+    "mun": "Sevilla",
+    "bar": "",
     "sub": ""
   },
-  "presupuesto": 650,
+  "presupuesto": null,
   "CATS": [
     {
       "n": "Vaciado y demolición",
@@ -50,7 +50,7 @@
           "u": "m²",
           "q": 65,
           "p": 10,
-          "on": true,
+          "on": false,
           "ref": "8–14 €/m²"
         },
         {
@@ -472,5 +472,5 @@
       ]
     }
   ],
-  "savedAt": "2026-04-24T17:56:16.562Z"
+  "savedAt": "2026-04-24T18:07:41.655Z"
 }
