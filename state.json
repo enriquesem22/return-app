@@ -1,45 +1,45 @@
 {
   "S": {
-    "pc": 93000,
+    "pc": 94900,
     "itp": 7,
     "not": 1.5,
     "dd": 350,
     "hon": 0,
-    "fin": true,
+    "fin": false,
     "ltv": 70,
-    "ti": -6.5,
-    "hip": 25,
-    "_direccion": "Calle Constantina, 17",
-    "_cp": "41008"
+    "ti": 4.5,
+    "hip": 20,
+    "_direccion": "Barrio Alto, San Juan de Aznalfarache",
+    "_transporte": true
   },
   "F": {
-    "sup": 60,
+    "sup": 62,
     "rm2": 350,
     "ct": 15,
     "ind": 2000,
     "pl": 8,
-    "pv": 130000,
+    "pv": 83824,
     "gv": 5
   },
   "B": {
     "ref": 8000,
     "ct": 15,
-    "rnt": 642,
+    "rnt": 550,
     "vac": 5,
     "ibi": 300,
-    "com": 420,
+    "com": 600,
     "seg": 180,
     "imp": true,
     "mnt": 1,
     "ges": 0
   },
   "SEL": {
-    "prov": "",
-    "mun": "",
-    "bar": "",
+    "prov": "Sevilla",
+    "mun": "San Juan de Aznalfarache",
+    "bar": "Barrio Alto",
     "sub": ""
   },
-  "presupuesto": 15780,
+  "presupuesto": 27390,
   "CATS": [
     {
       "n": "Vaciado y demolición",
@@ -50,7 +50,7 @@
           "u": "m²",
           "q": 65,
           "p": 10,
-          "on": false,
+          "on": true,
           "ref": "8–14 €/m²"
         },
         {
@@ -66,7 +66,7 @@
           "u": "ud",
           "q": 1,
           "p": 450,
-          "on": false,
+          "on": true,
           "ref": "350–600 €"
         },
         {
@@ -88,7 +88,7 @@
           "u": "ud",
           "q": 1,
           "p": 3200,
-          "on": false,
+          "on": true,
           "ref": "2.800–4.500 €"
         },
         {
@@ -96,7 +96,7 @@
           "u": "ud",
           "q": 1,
           "p": 350,
-          "on": false,
+          "on": true,
           "ref": "300–500 €"
         },
         {
@@ -112,7 +112,7 @@
           "u": "ud",
           "q": 1,
           "p": 150,
-          "on": false,
+          "on": true,
           "ref": "120–200 €"
         }
       ]
@@ -156,7 +156,7 @@
           "u": "m²",
           "q": 65,
           "p": 38,
-          "on": false,
+          "on": true,
           "ref": "28–55 €/m²"
         },
         {
@@ -164,7 +164,7 @@
           "u": "ml",
           "q": 55,
           "p": 8,
-          "on": false,
+          "on": true,
           "ref": "6–12 €/ml"
         },
         {
@@ -309,14 +309,14 @@
     },
     {
       "n": "Carpintería interior",
-      "open": true,
+      "open": false,
       "items": [
         {
           "d": "Puertas de paso lacadas (mat.+inst.)",
           "u": "ud",
           "q": 5,
           "p": 320,
-          "on": false,
+          "on": true,
           "ref": "250–420 €/ud"
         },
         {
@@ -324,7 +324,7 @@
           "u": "ud",
           "q": 1,
           "p": 1100,
-          "on": false,
+          "on": true,
           "ref": "800–1.600 €"
         },
         {
@@ -413,14 +413,14 @@
     },
     {
       "n": "Gestión y licencias",
-      "open": true,
+      "open": false,
       "items": [
         {
           "d": "Aparejador / arquitecto técnico",
           "u": "ud",
           "q": 1,
           "p": 1200,
-          "on": false,
+          "on": true,
           "ref": "800–2.000 €"
         },
         {
@@ -472,5 +472,5 @@
       ]
     }
   ],
-  "savedAt": "2026-04-20T11:35:18.515Z"
+  "savedAt": "2026-04-24T17:39:24.538Z"
 }
