@@ -23,7 +23,7 @@
   "B": {
     "ref": 8000,
     "ct": 15,
-    "rnt": 504,
+    "rnt": 750,
     "vac": 5,
     "ibi": 300,
     "com": 6072,
@@ -38,7 +38,7 @@
     "bar": "Doctor Fedriani",
     "sub": ""
   },
-  "presupuesto": null,
+  "presupuesto": 1620,
   "CATS": [
     {
       "n": "Vaciado y demolición",
@@ -193,7 +193,7 @@
           "u": "m²",
           "q": 180,
           "p": 9,
-          "on": false,
+          "on": true,
           "ref": "7–13 €/m²"
         },
         {
@@ -471,7 +471,7 @@
       ]
     }
   ],
-  "savedAt": "2026-04-29T16:12:38.563Z",
+  "savedAt": "2026-04-29T16:18:40.431Z",
   "selectedTrackingProperty": {
     "id": "solvia_sanjuan_28_febrero_69000",
     "title": "Piso en Av 28 de Febrero",
